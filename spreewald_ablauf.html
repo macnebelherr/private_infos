@@ -1,0 +1,328 @@
+<meta charset="UTF-8">
+<title>Spreewald-Wochenende 2026</title>
+<style>
+  :root {
+    --wald: #3B6D11;
+    --wald-dunkel: #173404;
+    --wald-hell: #EAF3DE;
+    --wasser: #185FA5;
+    --wasser-dunkel: #042C53;
+    --wasser-hell: #E6F1FB;
+    --erde: #993C1D;
+    --erde-dunkel: #4A1B0C;
+    --erde-hell: #FAECE7;
+    --papier: #FFFDF8;
+    --text: #2C2C2A;
+    --text-mild: #5F5E5A;
+    --linie: #D3D1C7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --papier: #201F1B;
+      --text: #F1EFE8;
+      --text-mild: #B4B2A9;
+      --linie: #444441;
+      --wald-hell: #1D2A10;
+      --wasser-hell: #0E2438;
+      --erde-hell: #331A10;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papier: #201F1B;
+    --text: #F1EFE8;
+    --text-mild: #B4B2A9;
+    --linie: #444441;
+    --wald-hell: #1D2A10;
+    --wasser-hell: #0E2438;
+    --erde-hell: #331A10;
+  }
+  :root[data-theme="light"] {
+    --papier: #FFFDF8;
+    --text: #2C2C2A;
+    --text-mild: #5F5E5A;
+    --linie: #D3D1C7;
+    --wald-hell: #EAF3DE;
+    --wasser-hell: #E6F1FB;
+    --erde-hell: #FAECE7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--papier);
+    color: var(--text);
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 3rem;
+    line-height: 1.55;
+  }
+  .kopf {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 3px solid var(--wald);
+  }
+  .kopf h1 {
+    font-size: 30px;
+    margin: 0 0 0.35rem;
+    color: var(--wald-dunkel);
+  }
+  .kopf p {
+    margin: 0;
+    color: var(--text-mild);
+    font-size: 16px;
+  }
+  .hotel-box {
+    background: var(--wald-hell);
+    border-left: 5px solid var(--wald);
+    border-radius: 0 10px 10px 0;
+    padding: 0.9rem 1.1rem;
+    margin: 1.5rem 0 2rem;
+    font-size: 15px;
+  }
+  .hotel-box strong { color: var(--wald-dunkel); }
+
+  .tag {
+    border-radius: 12px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+    border: 1px solid var(--linie);
+  }
+  .tag-kopf {
+    padding: 0.85rem 1.25rem;
+    font-size: 19px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .tag.fr .tag-kopf { background: var(--wald); }
+  .tag.sa .tag-kopf { background: var(--wasser); }
+  .tag.so .tag-kopf { background: var(--erde); }
+
+  .tag-inhalt { padding: 1.1rem 1.25rem 0.5rem; }
+
+  .termin {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.1rem;
+    position: relative;
+  }
+  .termin::before {
+    content: "";
+    position: absolute;
+    left: 27px;
+    top: 26px;
+    bottom: 0;
+    width: 2px;
+    background: var(--linie);
+  }
+  .termin:last-child::before { display: none; }
+  .uhrzeit {
+    flex: 0 0 56px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 15px;
+    padding-top: 3px;
+    color: var(--text-mild);
+  }
+  .punkt {
+    flex: 0 0 12px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: 6px;
+    z-index: 1;
+  }
+  .fr .punkt { background: var(--wald); }
+  .sa .punkt { background: var(--wasser); }
+  .so .punkt { background: var(--erde); }
+  .termin-text { flex: 1; }
+  .termin-text .titel {
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0 0 0.2rem;
+  }
+  .termin-text .ort {
+    font-size: 14px;
+    color: var(--text-mild);
+    margin: 0 0 0.15rem;
+  }
+  .termin-text .preis {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    margin-top: 0.3rem;
+  }
+  .fr .preis { background: var(--wald-hell); color: var(--wald-dunkel); }
+  .sa .preis { background: var(--wasser-hell); color: var(--wasser-dunkel); }
+  .so .preis { background: var(--erde-hell); color: var(--erde-dunkel); }
+
+  .summe {
+    background: var(--erde-hell);
+    border-left: 5px solid var(--erde);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.25rem;
+    margin: 0.5rem 0 1.75rem;
+    font-size: 16px;
+  }
+  .summe strong { color: var(--erde-dunkel); font-size: 19px; }
+
+  .zahlung {
+    background: var(--wasser-hell);
+    border: 1px dashed var(--wasser);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.75rem;
+    font-size: 14.5px;
+  }
+  .zahlung h2 {
+    margin: 0 0 0.6rem;
+    font-size: 17px;
+    color: var(--wasser-dunkel);
+  }
+  .zahlung table { width: 100%; border-collapse: collapse; }
+  .zahlung td { padding: 0.2rem 0; vertical-align: top; }
+  .zahlung td:first-child {
+    color: var(--text-mild);
+    width: 130px;
+    white-space: nowrap;
+  }
+  .zahlung td:last-child { font-weight: 700; }
+
+  .fuss {
+    text-align: center;
+    color: var(--text-mild);
+    font-size: 14px;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--linie);
+  }
+
+  .druck-hinweis {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .druck-hinweis button {
+    background: var(--wald);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.3rem;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  @media print {
+    .druck-hinweis { display: none; }
+    body { padding: 0; }
+  }
+</style>
+
+<div class="druck-hinweis">
+  <button onclick="window.print()">Als PDF speichern / drucken</button>
+</div>
+
+<div class="kopf">
+  <h1>Spreewald-Wochenende</h1>
+  <p>Freitag, 18. September &ndash; Sonntag, 20. September 2026</p>
+</div>
+
+<div class="hotel-box">
+  <strong>Unterkunft:</strong> Hotel &bdquo;Zum alten Ratskeller Vetschau&ldquo;, Markt 5&ndash;6, 03226 Vetschau<br>
+  Zimmer ab <strong>11:00 Uhr</strong> am Anreisetag beziehbar.
+</div>
+
+<div class="tag fr">
+  <div class="tag-kopf">Freitag, 18.9. &mdash; Anreise &amp; Grillabend</div>
+  <div class="tag-inhalt">
+    <div class="termin">
+      <div class="uhrzeit">17:15</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Gemeinsame Abfahrt</p>
+        <p class="ort">Treffpunkt vor dem Hotel &bdquo;Zum alten Ratskeller Vetschau&ldquo;</p>
+      </div>
+    </div>
+    <div class="termin">
+      <div class="uhrzeit">18:00</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Spreewälder Grillbuffet auf der Terrasse</p>
+        <p class="ort">Restaurant &bdquo;Zum Schlangenkönig&ldquo;, Waldschlößchenstr. 14, 03096 Burg<br>(wer direkt kommt, trifft hier um 18:00 Uhr ein)</p>
+        <span class="preis">55,50 € / Person &middot; im Voraus bis 17.9.</span>
+      </div>
+    </div>
+    <div class="termin">
+      <div class="uhrzeit">20:00</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Kahnfahrt</p>
+        <p class="ort">Start am &bdquo;Schlangenkönig&ldquo; &middot; Getränke werden vor Ort extra abgerechnet</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tag sa">
+  <div class="tag-kopf">Samstag, 19.9. &mdash; Tagebau &amp; Abendessen</div>
+  <div class="tag-inhalt">
+    <div class="termin">
+      <div class="uhrzeit">9:45</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Treffen nach dem Frühstück</p>
+        <p class="ort">Vor dem Hotel &middot; gemeinsame Weiterfahrt mit den Autos (Fahrzeit ca. 40 Min.)</p>
+      </div>
+    </div>
+    <div class="termin">
+      <div class="uhrzeit">10:45</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Führung Kohletagebau Welzow</p>
+        <p class="ort">Bergbautourismus-Verein, Heinrich-Heine-Str. 2, 03119 Welzow<br>Bitte festes, geschlossenes Schuhwerk tragen</p>
+        <span class="preis">57,50 € / Person (ermäßigt 53,50 €) inkl. Bergmannsvesper &middot; im Voraus bis 17.9.</span>
+      </div>
+    </div>
+    <div class="termin">
+      <div class="uhrzeit">19:30</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Abendessen &amp; gemütliches Beisammensein</p>
+        <p class="ort">Hotel Radduscher Hafen, Radduscher Dorfstr. 10, 03226 Vetschau</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tag so">
+  <div class="tag-kopf">Sonntag, 20.9. &mdash; Abreise</div>
+  <div class="tag-inhalt">
+    <div class="termin">
+      <div class="uhrzeit">&ndash;</div>
+      <div class="punkt"></div>
+      <div class="termin-text">
+        <p class="titel">Individuelle Abreise</p>
+        <p class="ort">Keine weiteren gemeinsamen Programmpunkte bekannt</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="summe">
+  Gesamtkosten für Grillabend + Tagebau-Führung: <strong style="white-space: nowrap;">113,00&nbsp;€ pro Person</strong> (ermäßigt <strong style="white-space: nowrap;">109,50&nbsp;€</strong>)
+</div>
+
+<div class="zahlung">
+  <h2>Überweisung (bis 17.9.2026)</h2>
+  <table>
+    <tr><td>Empfängerin</td><td>Susann</td></tr>
+    <tr><td>Bank</td><td>Berliner Sparkasse</td></tr>
+    <tr><td>IBAN</td><td>DE87 1005 0000 4144 6102 20</td></tr>
+    <tr><td>Betrag</td><td>113,00 € (ermäßigt 109,50 €) pro Person</td></tr>
+  </table>
+</div>
+
+<div class="fuss">
+  Fragen gern jederzeit an Constance und Susann.<br>
+  Wir freuen uns auf ein schönes Wochenende im Spreewald!
+</div>
