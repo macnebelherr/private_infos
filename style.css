@@ -174,9 +174,107 @@ main.page {
 }
 .btn:hover { opacity: .9; }
 
+main.page.projekte-page {
+  max-width: 900px;
+}
+.projekte-intro {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+.projekte-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  border: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 480px;
+  padding: 20px 0;
+  margin-bottom: 40px;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+.stat-num {
+  color: var(--accent);
+  font-size: 26px;
+  font-weight: 500;
+}
+.stat-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.project-card {
+  background: var(--bg-tile);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.project-card h3 {
+  font-size: 17px;
+  font-weight: 500;
+  margin: 8px 0 8px;
+}
+.project-card p {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+.project-status {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.status-live {
+  color: var(--accent);
+  background: rgba(255, 122, 26, 0.12);
+}
+.status-planned {
+  color: var(--text-muted);
+  background: rgba(128, 128, 128, 0.15);
+}
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: 13px;
+  text-decoration: none;
+}
+.project-link:hover { text-decoration: underline; }
+.inspo-note {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.inspo-note a {
+  color: var(--text-muted);
+}
+
 @media (max-width: 640px) {
   main { grid-template-columns: 1fr; text-align: center; }
   p.lead { margin: 0 auto; }
+
+  .projekte-intro { flex-direction: column; text-align: center; }
+  .stats-row { max-width: 100%; margin-left: auto; margin-right: auto; }
+  .projects-grid { grid-template-columns: 1fr; }
 
   .hero { padding: 4vh 6vw 8vh; min-height: 0; }
   .hero-photo {
