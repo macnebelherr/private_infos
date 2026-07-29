@@ -112,6 +112,52 @@ main.page {
   display: block;
   max-width: 640px;
 }
+
+.hero {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 6vh 6vw 10vh;
+  overflow: hidden;
+  min-height: 420px;
+}
+.hero-photo {
+  position: absolute;
+  right: -20px;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+}
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+.hero-photo::before,
+.hero-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.hero-photo::before {
+  background: linear-gradient(to left, rgba(10, 10, 10, 0) 40%, var(--bg) 100%);
+}
+.hero-photo::after {
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0) 55%, var(--bg) 100%);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 58%;
+}
+.hero-content h1 {
+  white-space: nowrap;
+}
+.hero-content .tiles {
+  margin-top: 24px;
+}
 .btn {
   display: inline-flex;
   align-items: center;
@@ -131,4 +177,18 @@ main.page {
 @media (max-width: 640px) {
   main { grid-template-columns: 1fr; text-align: center; }
   p.lead { margin: 0 auto; }
+
+  .hero { padding: 4vh 6vw 8vh; min-height: 0; }
+  .hero-photo {
+    position: static;
+    width: 100%;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .hero-photo::before { display: none; }
+  .hero-content { max-width: 100%; text-align: center; }
+  .hero-content h1 { white-space: normal; }
+  .hero-content .tiles { max-width: 320px; margin-left: auto; margin-right: auto; }
 }
