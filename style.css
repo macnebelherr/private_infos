@@ -175,13 +175,15 @@ main.page {
 .btn:hover { opacity: .9; }
 
 main.page.projekte-page {
-  max-width: 900px;
+  max-width: 1180px;
 }
 .projekte-intro {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 24px;
-  margin-bottom: 36px;
+  text-align: center;
+  gap: 16px;
+  margin: 0 auto 36px;
 }
 .projekte-avatar {
   width: 84px;
@@ -198,9 +200,10 @@ main.page.projekte-page {
   gap: 16px;
   max-width: 480px;
   padding: 20px 0;
-  margin-bottom: 40px;
+  margin: 0 auto 40px;
   border-top: 0.5px solid var(--border);
   border-bottom: 0.5px solid var(--border);
+  text-align: center;
 }
 .stat-num {
   color: var(--accent);
@@ -214,7 +217,7 @@ main.page.projekte-page {
 }
 .projects-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 28px;
 }
@@ -281,6 +284,10 @@ main.page.projekte-page {
 }
 .inspo-note a {
   color: var(--text-muted);
+}
+
+@media (max-width: 1000px) {
+  .projects-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 640px) {
