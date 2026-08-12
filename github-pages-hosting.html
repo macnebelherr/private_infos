@@ -1,0 +1,329 @@
+<title>GitHub Pages als Hosting-Lösung</title>
+<style>
+  :root{
+    --ground:#f4f6f8;
+    --surface:#ffffff;
+    --surface-2:#e9edf1;
+    --ink:#1a232c;
+    --muted:#54626d;
+    --faint:#7c8994;
+    --accent:#2f6fb0;
+    --accent-strong:#1f5589;
+    --warm:#b5651d;
+    --warn-bg:#fdf3d8;
+    --warn-border:#c98a15;
+    --warn-ink:#5c4207;
+    --danger-bg:#fbe4e2;
+    --danger-border:#c23b32;
+    --danger-ink:#7a201a;
+    --line:#dde3e8;
+    --line-strong:#c7d0d7;
+    --shadow: 0 1px 2px rgba(15,25,35,.06), 0 10px 26px rgba(15,25,35,.07);
+
+    --sans: -apple-system, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+    --wrap: 42rem;
+    --step-0: 1.15rem;
+    --step-1: 1.35rem;
+    --step-2: 1.7rem;
+    --step-3: 2.1rem;
+    --step-4: clamp(2.2rem, 6vw, 3.2rem);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0d1218;
+      --surface:#141c24;
+      --surface-2:#1a2530;
+      --ink:#e7edf2;
+      --muted:#93a3b0;
+      --faint:#66757f;
+      --accent:#6fb2e6;
+      --accent-strong:#9bc9ee;
+      --warm:#e0954f;
+      --warn-bg:#2c2510;
+      --warn-border:#c9922a;
+      --warn-ink:#f0cf8a;
+      --danger-bg:#2e1613;
+      --danger-border:#c9534a;
+      --danger-ink:#f0a89f;
+      --line:#223140;
+      --line-strong:#2c4052;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0d1218;
+    --surface:#141c24;
+    --surface-2:#1a2530;
+    --ink:#e7edf2;
+    --muted:#93a3b0;
+    --faint:#66757f;
+    --accent:#6fb2e6;
+    --accent-strong:#9bc9ee;
+    --warm:#e0954f;
+    --warn-bg:#2c2510;
+    --warn-border:#c9922a;
+    --warn-ink:#f0cf8a;
+    --danger-bg:#2e1613;
+    --danger-border:#c9534a;
+    --danger-ink:#f0a89f;
+    --line:#223140;
+    --line-strong:#2c4052;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:var(--step-0);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{ padding:0 1.3rem 5rem; }
+  .wrap{ max-width:var(--wrap); margin:0 auto; }
+
+  a{ color:var(--accent-strong); }
+  a:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  header.hero{ padding:4rem 0 2.6rem; border-bottom:1px solid var(--line); }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.76rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 1.1rem;
+  }
+  h1{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:var(--step-4);
+    line-height:1.1;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+    margin:0 0 1.1rem;
+  }
+  .lede{
+    font-size:var(--step-1);
+    color:var(--muted);
+    max-width:38rem;
+    margin:0;
+  }
+
+  section{ padding:2.6rem 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:0; }
+  .kicker{
+    font-family:var(--mono);
+    font-size:.74rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin:0 0 .8rem;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:750;
+    font-size:var(--step-2);
+    line-height:1.2;
+    letter-spacing:-.01em;
+    margin:0 0 .9rem;
+  }
+  section p{ margin:0 0 1rem; }
+  section p:last-child{ margin-bottom:0; }
+  section ul{ margin:0 0 1rem; padding-left:1.3em; }
+  section ul li{ margin-bottom:.5rem; }
+
+  .box{
+    border-radius:10px;
+    padding:1.2rem 1.4rem;
+    margin:1.3rem 0;
+    box-shadow:var(--shadow);
+  }
+  .box-warn{
+    background:var(--warn-bg);
+    border:1.5px solid var(--warn-border);
+    color:var(--warn-ink);
+  }
+  .box-danger{
+    background:var(--danger-bg);
+    border:1.5px solid var(--danger-border);
+    color:var(--danger-ink);
+  }
+  .box .tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:.7rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:.6rem;
+  }
+  .box .box-title{ font-weight:700; font-size:1.02em; margin-bottom:.5rem; }
+  .box ul{ margin:.6rem 0 0; padding-left:1.3em; color:inherit; }
+  .box ul li{ margin-bottom:.4rem; }
+  .box p{ margin:0; color:inherit; }
+
+  .steps{
+    counter-reset:schritt;
+    list-style:none;
+    margin:.5rem 0 0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:.8rem;
+  }
+  .steps li{
+    counter-increment:schritt;
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:.9rem 1.1rem .9rem 3rem;
+    box-shadow:var(--shadow);
+  }
+  .steps li::before{
+    content:counter(schritt);
+    position:absolute;
+    left:1rem; top:50%; transform:translateY(-50%);
+    font-family:var(--mono);
+    font-weight:700;
+    color:var(--accent);
+    font-size:.9rem;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:.6rem;
+    font-size:.95em;
+  }
+  th, td{
+    text-align:left;
+    padding:.6rem .8rem;
+    border:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{ background:var(--surface-2); font-weight:700; }
+
+  .checklist{ list-style:none; padding-left:0; margin:.5rem 0 0; }
+  .checklist li{
+    position:relative;
+    padding-left:1.8em;
+    margin-bottom:.7rem;
+  }
+  .checklist li::before{
+    content:"☐";
+    position:absolute;
+    left:0;
+    color:var(--accent);
+  }
+
+  footer.quelle{
+    padding-top:2.4rem;
+    font-family:var(--mono);
+    font-size:.8rem;
+    color:var(--faint);
+    letter-spacing:.02em;
+  }
+
+  @media (max-width:640px){
+    header.hero{ padding:2.8rem 0 2rem; }
+    section{ padding:2rem 0; }
+  }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <header class="hero">
+      <p class="eyebrow">Interne Notiz · Hosting-Empfehlung</p>
+      <h1>GitHub Pages für die Lehrer-Infoseite</h1>
+      <p class="lede">Wir wollen eine einfache, öffentliche Infoseite mit Link zum Schul-Moodle veröffentlichen — ohne Schülerdaten, ohne Namen, ohne Noten, keine kommerzielle Nutzung. Diese Notiz begründet die Empfehlung für GitHub Pages und hält fest, worauf zu achten ist.</p>
+    </header>
+
+    <section>
+      <p class="kicker">Überblick / Ziel</p>
+      <h2>Was die Seite sein soll — und was nicht</h2>
+      <p>Eine einfache, öffentliche Infoseite mit einem sichtbaren Link zum Schul-Moodle, über den sich Schüler ganz normal einloggen können, um Tests zu machen. Es geht nicht ums Geldverdienen, sondern um eine reine Informationsseite.</p>
+    </section>
+
+    <section>
+      <p class="kicker">Warum GitHub Pages</p>
+      <h2>Kostenlos, dauerhaft, werbefrei</h2>
+      <ul>
+        <li>Kostenlos und dauerhaft — kein „1 Jahr gratis, dann Kosten"-Modell.</li>
+        <li>Kein Werbebanner auf der Seite.</li>
+        <li>Kann später mit einer eigenen Domain verbunden werden.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="kicker">Grenzen von GitHub Pages</p>
+      <h2>Was zu beachten ist</h2>
+
+      <div class="box box-warn">
+        <div class="tag">Technische Grenzen</div>
+        <div class="box-title">Für unsere Zwecke unkritisch</div>
+        <ul>
+          <li>Max. 1 GB Seitengröße, 100 GB Bandbreite/Monat (Soft Limit)</li>
+          <li>Nicht gedacht für kommerzielle Nutzung/Zahlungsabwicklung — für uns irrelevant</li>
+        </ul>
+      </div>
+
+      <div class="box box-danger">
+        <div class="tag">Wichtigster Punkt</div>
+        <div class="box-title">Das Repository ist im kostenlosen Plan öffentlich</div>
+        <p>Jeder kann den kompletten Quellcode und die gesamte Versionshistorie einsehen. Auch gelöschte Commits bleiben in der Historie technisch auffindbar.</p>
+        <ul>
+          <li>Daher: niemals Namen, Noten, E-Mail-Adressen oder andere personenbezogene Schülerdaten in den Code oder ins Repo einfügen — auch nicht in alten Commits.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <p class="kicker">Rechtliche Punkte</p>
+      <h2>Vor dem Livegang zu klären</h2>
+      <ul class="checklist">
+        <li>Impressum ist auch bei einer simplen Info-Seite ohne Kommerz Pflicht (TMG/DDG).</li>
+        <li>Vor dem Livegang: Rücksprache mit dem/der Datenschutzbeauftragten der Schule, ob eine extern gehostete Seite mit Link zum internen Moodle so in Ordnung ist — Vorgaben können je nach Bundesland/Schule abweichen.</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="kicker">Alternative Option</p>
+      <h2>Klassisches Hosting im Vergleich</h2>
+      <table>
+        <thead>
+          <tr><th></th><th>GitHub Pages</th><th>Hostinger / IONOS</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Kosten</td><td>Kostenlos, dauerhaft</td><td>Kostenpflichtig</td></tr>
+          <tr><td>Kontrolle</td><td>Eingeschränkt, aber ausreichend</td><td>Mehr Kontrolle, eigener Dateimanager</td></tr>
+          <tr><td>Deployment</td><td>Automatisch bei jedem Push</td><td>Manuell, z. B. per FTP</td></tr>
+          <tr><td>Sichtbarkeit des Codes</td><td>Öffentlich (kostenloser Plan)</td><td>Nicht öffentlich</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <p class="kicker">Nächste Schritte für die Kollegin</p>
+      <h2>So geht's los</h2>
+      <ol class="steps">
+        <li><strong>GitHub-Account erstellen</strong> auf github.com — kostenloser Plan reicht.</li>
+        <li><strong>E-Mail bestätigen</strong> über die Bestätigungs-Mail von GitHub.</li>
+        <li><strong>Zwei-Faktor-Authentifizierung aktivieren.</strong></li>
+        <li><strong>Als Collaborator hinzufügen lassen</strong> — nicht eigenes Pages-Repo aufsetzen, damit es nur eine gemeinsame Seite gibt.</li>
+      </ol>
+    </section>
+
+    <footer class="quelle">
+      Interne Notiz · nicht öffentlich indexiert · erstellt am 12.08.2026
+    </footer>
+
+  </div>
+</div>
