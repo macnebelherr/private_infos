@@ -9,6 +9,17 @@
 <link rel="stylesheet" href="style.css">
 <style>
   .btn.lila { background: #d9b8f5; color: #2b1146; }
+  .btn-list {
+    display: grid;
+    grid-template-columns: minmax(0, max-content);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .btn-list .btn {
+    margin-top: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
 </style>
 </head>
 <body>
@@ -22,12 +33,14 @@
 
 <main class="page">
   <h1>Notizen</h1>
-  <a class="btn" href="claude-code-einstellungen.html">Claude Code – meine Einstellungen</a>
-  <a class="btn lila" href="ki-agenten-basics.html">KI-Agenten sicher nutzen — die Basics</a>
-  <a class="btn lila" href="wie-wir-arbeiten.html">Struktur, die mitwächst — Wie wir arbeiten</a>
-  <a class="btn lila" href="vortrag-kollegium.html">Mit Claude Code Unterricht bauen — Vortrag Kollegium</a>
-  <a class="btn lila" href="grenze-fragen.html">Bis an die Grenze fragen — Notiz zu einem Short</a>
-  <a class="btn" href="github-pages-hosting.html">GitHub Pages für die Lehrer-Infoseite — Hosting-Empfehlung</a>
+  <div class="btn-list">
+    <a class="btn" href="claude-code-einstellungen.html">Claude Code – meine Einstellungen</a>
+    <a class="btn" href="github-pages-hosting.html">GitHub Pages für die Lehrer-Infoseite — Hosting-Empfehlung</a>
+    <a class="btn lila" href="ki-agenten-basics.html">KI-Agenten sicher nutzen — die Basics</a>
+    <a class="btn lila" href="wie-wir-arbeiten.html">Struktur, die mitwächst — Wie wir arbeiten</a>
+    <a class="btn lila" href="vortrag-kollegium.html">Mit Claude Code Unterricht bauen — Vortrag Kollegium</a>
+    <a class="btn lila" href="grenze-fragen.html">Bis an die Grenze fragen — Notiz zu einem Short</a>
+  </div>
 </main>
 
 <script src="theme.js"></script>
