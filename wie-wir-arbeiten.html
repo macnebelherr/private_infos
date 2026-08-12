@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Struktur, die mitwächst — Arbeiten mit Claude</title>
+  <style>html,body{margin:0;padding:0;background:#f6f8f6}@media (prefers-color-scheme:dark){html,body{background:#0d1310}}</style>
+</head>
+<body>
+<style>
+  :root {
+    --ground: #f6f8f6;
+    --surface: #ffffff;
+    --surface-2: #eef2ef;
+    --ink: #182420;
+    --muted: #566a61;
+    --faint: #7d8f86;
+    --accent: #0f6f5b;
+    --accent-strong: #0a5545;
+    --secured: #8a5a2b;
+    --line: #dde4e0;
+    --line-strong: #c6d0cb;
+    --shadow: 0 1px 2px rgba(20,40,32,.05), 0 8px 28px rgba(20,40,32,.06);
+
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, monospace;
+
+    --wrap: 44rem;
+    --step-0: 1.0625rem;
+    --step-1: 1.25rem;
+    --step-2: 1.65rem;
+    --step-3: 2.25rem;
+    --step-4: clamp(2.4rem, 6vw, 3.6rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0d1310;
+      --surface: #141c17;
+      --surface-2: #1a231d;
+      --ink: #e9efea;
+      --muted: #9db0a6;
+      --faint: #7a8d83;
+      --accent: #52d3b6;
+      --accent-strong: #7ee0c9;
+      --secured: #d69a5c;
+      --line: #26312b;
+      --line-strong: #33413a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f6f8f6; --surface: #ffffff; --surface-2: #eef2ef; --ink: #182420;
+    --muted: #566a61; --faint: #7d8f86; --accent: #0f6f5b; --accent-strong: #0a5545;
+    --secured: #8a5a2b; --line: #dde4e0; --line-strong: #c6d0cb;
+    --shadow: 0 1px 2px rgba(20,40,32,.05), 0 8px 28px rgba(20,40,32,.06);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1310; --surface: #141c17; --surface-2: #1a231d; --ink: #e9efea;
+    --muted: #9db0a6; --faint: #7a8d83; --accent: #52d3b6; --accent-strong: #7ee0c9;
+    --secured: #d69a5c; --line: #26312b; --line-strong: #33413a;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  .page {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0 1.25rem 5rem;
+  }
+  .wrap { max-width: var(--wrap); margin: 0 auto; }
+  .wrap-wide { max-width: 58rem; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .78rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1.1rem;
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; line-height: 1.14; }
+  h1 { font-size: var(--step-4); letter-spacing: -.01em; margin: 0 0 1.1rem; }
+  h2 { font-size: var(--step-3); margin: 0 0 .7rem; letter-spacing: -.005em; }
+  h3 { font-size: var(--step-1); margin: 0 0 .35rem; }
+  p { margin: 0 0 1.1rem; }
+  strong { font-weight: 640; color: var(--ink); }
+  a { color: var(--accent-strong); }
+  code, .file {
+    font-family: var(--mono);
+    font-size: .86em;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: .08em .4em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ---- Hero ---- */
+  header.hero { padding: 5.5rem 0 3.5rem; border-bottom: 1px solid var(--line); }
+  .hero .lede {
+    font-size: var(--step-1);
+    color: var(--muted);
+    max-width: 38rem;
+    margin-bottom: 1.9rem;
+  }
+  .byline {
+    font-family: var(--mono);
+    font-size: .8rem;
+    color: var(--faint);
+    letter-spacing: .03em;
+    display: flex; flex-wrap: wrap; gap: .4rem 1rem;
+    border-top: 1px dashed var(--line-strong);
+    padding-top: 1.1rem;
+  }
+
+  /* ---- Sections ---- */
+  section { padding: 3.4rem 0; border-bottom: 1px solid var(--line); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 .9rem;
+  }
+  .lead-in { font-size: var(--step-1); color: var(--ink); }
+
+  /* ---- Layer stack (the system) ---- */
+  .stack { display: flex; flex-direction: column; gap: .8rem; margin-top: 1.8rem; }
+  .layer {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 1.15rem 1.3rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+  .layer .tag {
+    font-family: var(--mono);
+    font-size: .74rem;
+    color: var(--accent);
+    letter-spacing: .04em;
+    display: block;
+    margin-bottom: .5rem;
+    word-break: break-all;
+  }
+  .layer p { margin: 0; color: var(--muted); font-size: .98rem; }
+  .layer h3 { margin-bottom: .3rem; }
+  .layer .scope {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+
+  /* ---- Two-column public/secured ---- */
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.8rem; }
+  .col {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.4rem 1.4rem 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .col .badge {
+    display: inline-flex; align-items: center; gap: .45rem;
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .08em;
+    text-transform: uppercase; padding: .3rem .6rem; border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .col.public .badge { color: var(--accent-strong); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .col.secured .badge { color: var(--secured); background: color-mix(in srgb, var(--secured) 14%, transparent); }
+  .col ul { margin: 0; padding: 0; list-style: none; }
+  .col li { padding: .5rem 0 .5rem 1.4rem; position: relative; color: var(--muted); border-top: 1px solid var(--line); font-size: .96rem; }
+  .col li:first-child { border-top: 0; }
+  .col li::before { content: ""; position: absolute; left: 0; top: .95rem; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); }
+  .col.secured li::before { background: var(--secured); }
+
+  /* ---- Benefits ---- */
+  .benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.6rem; margin-top: 1.6rem; }
+  .benefit { padding-top: 1.1rem; border-top: 2px solid var(--accent); }
+  .benefit h3 { font-family: var(--sans); font-weight: 680; font-size: 1.02rem; }
+  .benefit p { color: var(--muted); font-size: .96rem; margin: .2rem 0 0; }
+
+  /* ---- Inventory ---- */
+  .inv { margin-top: 1.6rem; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .inv-row { display: grid; grid-template-columns: 10.5rem 1fr; gap: 1rem; padding: 1rem 1.3rem; background: var(--surface); border-top: 1px solid var(--line); }
+  .inv-row:first-child { border-top: 0; }
+  .inv-row .name { font-family: var(--serif); font-size: 1.08rem; }
+  .inv-row .name span { display: block; font-family: var(--mono); font-size: .72rem; color: var(--faint); letter-spacing: .03em; margin-top: .25rem; }
+  .inv-row .desc { color: var(--muted); font-size: .95rem; align-self: center; }
+
+  .pull {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 0;
+    padding-left: 1.2rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  footer.foot { padding-top: 3rem; color: var(--faint); font-family: var(--mono); font-size: .8rem; letter-spacing: .02em; }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  @media (max-width: 640px) {
+    .cols, .benefits { grid-template-columns: 1fr; }
+    .inv-row { grid-template-columns: 1fr; gap: .3rem; }
+    .layer .scope { position: static; display: block; margin-bottom: .4rem; }
+    header.hero { padding: 3.5rem 0 2.5rem; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Arbeiten mit Claude · Schuljahr 2026 / 27</p>
+      <h1>Struktur, die mitwächst</h1>
+      <p class="lede">Warum ich mein digitales Schuljahr nicht als Sammlung loser Dateien, sondern als durchdachtes System aufbaue — und warum sich das schon beim ersten Klick auszahlt, nicht erst nach Monaten.</p>
+      <div class="byline">
+        <span>Guido Walther</span>
+        <span>BBS Walsrode</span>
+        <span>Eine Erklärung für Kolleginnen und Kollegen</span>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap reveal">
+      <p class="kicker">Das Problem</p>
+      <h2>Jeder Neuanfang begann bei null</h2>
+      <p>Wer mit einer KI arbeitet, kennt das: In jedem neuen Gespräch erklärt man dieselben Dinge noch einmal. Antworte auf Deutsch. So ist die Seite aufgebaut. Diese Datei mit den echten Daten bitte niemals überschreiben. Das kostet Zeit, es kostet Nerven — und die Ergebnisse schwankten, weil die KI mal dies, mal jenes voraussetzte.</p>
+      <p>Das ist kein Fehler der KI. Es liegt daran, dass ihr Gedächtnis <strong>pro Projektordner getrennt</strong> ist. Was sie in meinem Sekretariats-Projekt weiß, weiß sie im Schulportal-Ordner erst einmal nicht. Ohne bewusste Ablage geht Wissen bei jedem Wechsel verloren.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap reveal">
+      <p class="kicker">Die Idee</p>
+      <h2>Wissen an die richtige Stelle legen</h2>
+      <p class="lead-in">Statt jedes Mal neu zu erklären, wird das Wiederkehrende einmal an genau der Stelle hinterlegt, an der die KI ohnehin nachschaut. Vier Ebenen — von „gilt überall" bis „gilt nur hier".</p>
+      <div class="stack">
+        <div class="layer">
+          <span class="scope">gilt überall</span>
+          <span class="tag">~/.claude/CLAUDE.md</span>
+          <h3>Globale Regeln</h3>
+          <p>Grundsätze für jedes Projekt: auf Deutsch antworten, sensible Daten schützen, vor großen Umbauten erst einen Plan zeigen, und meine wiederkehrenden Gestaltungs-Vorlieben. Einmal geschrieben, nie wieder wiederholt.</p>
+        </div>
+        <div class="layer">
+          <span class="scope">je Projekt</span>
+          <span class="tag">Projekt/CLAUDE.md</span>
+          <h3>Der Projekt-Steckbrief</h3>
+          <p>Für jedes Vorhaben eine kurze Karte: Wie ist es aufgebaut, unter welcher Adresse läuft es, was darf auf keinen Fall angefasst werden. Jedes neue Gespräch startet damit informiert — statt sich erst durch alle Dateien zu lesen.</p>
+        </div>
+        <div class="layer">
+          <span class="scope">wiederverwendbar</span>
+          <span class="tag">Skill · Vorlage</span>
+          <h3>Bau-Vorlagen</h3>
+          <p>Die immer gleiche, bewährte Bauweise einer Schul-Anwendung als fertiges Startgerüst. Das nächste Werkzeug beginnt nicht mit einem leeren Blatt, sondern zu großen Teilen schon fertig — angelehnt an mein saubersten gebautes Projekt.</p>
+        </div>
+        <div class="layer">
+          <span class="scope">laufend</span>
+          <span class="tag">Memory</span>
+          <h3>Das Gedächtnis</h3>
+          <p>Kleine Notizen, die im Lauf der Arbeit entstehen: Entscheidungen, Besonderheiten, Stolperfallen. So bleibt Kontext erhalten, auch wenn ich bewusst ein neues Gespräch beginne, um Ressourcen zu sparen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap-wide reveal">
+      <p class="kicker">Das Schuljahr im Netz</p>
+      <h2>Öffentlich und gesichert — sauber getrennt</h2>
+      <p class="wrap" style="margin:0 0 0;">Der Kern meines Plans für 2026/27: eine Webseite, auf der klar getrennt ist, was alle sehen dürfen und was geschützt bleibt. Diese Trennung ist kein Detail, sondern das Fundament — technisch wie datenschutzrechtlich.</p>
+      <div class="cols">
+        <div class="col public">
+          <span class="badge">● Öffentlich · ohne Login</span>
+          <ul>
+            <li>Termine, Fristen und Prüfungspläne</li>
+            <li>Aushänge und Informationen für alle</li>
+            <li>Formulare für Anträge (z. B. Bescheinigungen)</li>
+            <li>Ausgabe-Links, die gezielt verteilt werden</li>
+          </ul>
+        </div>
+        <div class="col secured">
+          <span class="badge">🔒 Gesichert · mit Passwort / Rolle</span>
+          <ul>
+            <li>Verwaltung aller Inhalte im Browser</li>
+            <li>Schüler- und Prüfungsdaten</li>
+            <li>Eingegangene Anmeldungen und Bestellungen</li>
+            <li>Passwörter liegen geschützt, nie im Netz sichtbar</li>
+          </ul>
+        </div>
+      </div>
+      <p class="wrap" style="margin:1.6rem auto 0;">Dahinter liegt ein einfaches, robustes Prinzip: sensible Daten werden außerhalb des öffentlich erreichbaren Bereichs gespeichert, vor jedem Speichern entsteht automatisch eine Sicherung, und geschützte Bereiche sind mit einem Passwort abgeriegelt. Kein Server-Schnickschnack — reines, wartbares Handwerk, das auf einfachem Schul-Hosting läuft.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap reveal">
+      <p class="kicker">Dazugelernt</p>
+      <h2>Hochladen, ohne den Atem anzuhalten</h2>
+      <p>Am Anfang habe ich jede geänderte Datei von Hand ins FTP-Programm gezogen — und jedes Mal kurz gezögert: Ist das wirklich die richtige Datei? Überschreibe ich gerade die echten Anmeldungen? Inzwischen erledigt das ein kleines Skript, und das Zögern ist einer Reihenfolge gewichen: erst ein <strong>Trockenlauf</strong>, der nur zeigt, was passieren würde, dann die Übertragung, danach eine automatische Kontrolle, ob die Seite live noch das tut, was sie soll.</p>
+      <p>Zwei Vorsichtsmaßnahmen sind fest eingebaut. Die Zugangsdaten liegen <strong>außerhalb des Projekts</strong> in einer geschützten Datei — sie stehen in keinem Ordner, den ich weitergebe, und tauchen in keinem Gespräch auf. Und alles, was echte Daten enthält — eingegangene Anträge, Prüfungsdaten, Passwörter — steht auf einer harten Ausschlussliste, die vor jeder Übertragung ein zweites Mal geprüft wird. Was dem Server gehört, bleibt beim Server.</p>
+      <p>Zum System gehört auch das Aufräumen, und das ist der unbequeme Teil. Beim Durchsehen der Serverstruktur Ende Juli kamen Reste der Vorgängerseite zum Vorschein: Ordner, deren Nachfolger längst im Portal laufen — und in denen Listen mit Schülernamen noch ohne jede Passwortabfrage abrufbar waren. Sie sind gelöscht, und die letzte Seite mit Klarnamen liegt jetzt hinter der Anmeldung. Das ist keine Randnotiz, sondern genau der Grund für die ganze Struktur: <strong>Altlasten verschwinden nicht von selbst</strong> — man muss sie suchen, und man findet sie nur, wenn man weiß, wo überall etwas liegt.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap reveal">
+      <p class="kicker">Warum das zählt</p>
+      <h2>Vier Gründe, warum Struktur die Arbeit trägt</h2>
+      <div class="benefits">
+        <div class="benefit">
+          <h3>Verlässlichkeit statt Zufall</h3>
+          <p>Gleiche Vorgaben führen zu gleichbleibender Qualität — nicht mal so, mal so, je nachdem, woran die KI sich gerade erinnert.</p>
+        </div>
+        <div class="benefit">
+          <h3>Weniger Wiederholung</h3>
+          <p>Was einmal festgehalten ist, muss ich nie wieder erklären. Die gesparte Zeit fließt in den Inhalt, nicht in die Einrichtung.</p>
+        </div>
+        <div class="benefit">
+          <h3>Sicherheit eingebaut</h3>
+          <p>Klare Regeln schützen echte Daten vor versehentlichem Überschreiben. Was geschützt gehört, bleibt geschützt.</p>
+        </div>
+        <div class="benefit">
+          <h3>Übergabefähig</h3>
+          <p>Weil alles dokumentiert ist, könnten Kolleginnen und Kollegen anknüpfen — das Wissen steckt nicht nur in meinem Kopf.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap reveal">
+      <p class="kicker">Konkret eingerichtet</p>
+      <h2>Was jetzt schon steht</h2>
+      <p>Kein Konzept auf dem Papier — die Bausteine liegen bereits an ihrem Platz:</p>
+      <div class="inv">
+        <div class="inv-row">
+          <div class="name">Schulportal<span>Abteilung A</span></div>
+          <div class="desc">Das reifste Projekt — und Architektur-Vorbild für alles Neue. Öffentlich liegt davor das <strong>Whiteboard</strong> mit Terminen, Fristen, Konferenzen und Nachschreibeplänen; alles dahinter ist nach Rolle getrennt: Lehrkräfte sehen die internen Pläne, ändern darf nur die Verwaltung.
+          <br><br>
+          Zwei Werkzeuge stechen heraus. Eines organisiert die <strong>P5-Prüfungen im Abitur</strong> — von der Terminfindung über die Zuordnung von Prüferinnen, Prüfern und Räumen bis zum fertigen, konfliktfreien Plan; Schülerinnen und Schüler rufen ihren eigenen Termin mit Nummer und Zugangscode ab. Das zweite plant die <strong>Aufsichten für die schriftlichen Abiturprüfungen</strong> und verteilt sie gleichmäßig und nachvollziehbar aufs Kollegium — Arbeit, die von Hand Stunden kostet und leicht zu Fehlern führt.
+          <br><br>
+          Dazu der Bereich <strong>Nachprüfung</strong> mit zwei getrennten Seiten: ein Rechner, der nach den schriftlichen Ergebnissen durchspielt, ob und wie das Abitur über mündliche Nachprüfungen noch erreichbar ist — inklusive druckfertigem Beratungsbogen für das Gespräch — und daneben der Ablaufplan des Prüfungstags selbst. Und die <strong>Sportkurswahl</strong>, über die zwei Jahrgänge ihre Kurse online wählen und das Tool sie anschließend fair verteilt; dazu gehören eine ausführliche Anleitung und eine neunteilige Vorstellung, mit der sich das Verfahren im Kollegium erklären lässt.
+          <br><br>
+          Was man von außen nicht sieht: eine eigene <strong>Hilfeseite für die Verwaltung</strong>, die jedes dieser Werkzeuge Schritt für Schritt erklärt, und ein Sicherheitsnetz darunter — vor jedem Speichern legt das Portal automatisch eine Sicherung an.</div>
+        </div>
+        <div class="inv-row">
+          <div class="name">Sekretariat<span>Online-Dienste</span></div>
+          <div class="desc">Öffentliche Anträge und ein passwortgeschützter Verwaltungsbereich — das Muster für „öffentlich plus gesichert". Im Betrieb sind der Antrag auf <strong>Schulzeitbescheinigung</strong>, aus dem im Sekretariat auf Knopfdruck das fertige Schreiben entsteht, die <strong>Papierbestellung</strong> für Klausurpapier samt druckbarem Abholbeleg, und das interne <strong>Telefonverzeichnis</strong> mit Live-Suche, das Lehrkräfte lesen und die Verwaltung im Browser pflegt — Löschen, Umsortieren und Anlegen sind derselbe Handgriff.
+          <br><br>
+          Das Detail, an dem am längsten gefeilt wurde, ist das Unscheinbarste: die <strong>Hinweiskästen auf der Startseite</strong>. Ferienöffnungszeiten, Vertretungen, Urlaubsmeldungen — die Verwaltung schreibt sie selbst im Browser und blendet sie ein und wieder aus, wenn sie erledigt sind. Kein Anruf, keine Mail an mich, keine Datei, die jemand hochladen muss. Wer die Seite pflegt, soll das ohne Umweg über die Technik können.</div>
+        </div>
+        <div class="inv-row">
+          <div class="name">Fotos Social Media<span>Instagram-Redaktion</span></div>
+          <div class="desc">Das Kollegium lädt Veranstaltungsfotos per Handy hoch — ein sechsstelliger Code je Veranstaltung genügt, kein Konto, kein Passwort. Die Redaktion sichtet die Bilder, gibt sie frei oder lehnt sie ab und lädt die Freigegebenen gebündelt herunter. Dazu gehören ein Aushang mit QR-Code für den Veranstaltungsort und eine Fotowand, die sich am Beamer von selbst aktualisiert. Wieder „öffentlich plus gesichert", mit code-geschützter Foto-Ablage außerhalb des Netzes und einer Einwilligung, die vor dem Hochladen bestätigt werden muss.</div>
+        </div>
+        <div class="inv-row">
+          <div class="name">CAD-Unterricht<span>Unterrichtsmaterial</span></div>
+          <div class="desc">Der Einstieg in FreeCAD: Lernaufträge als Webseite fürs Handy, dieselben Aufträge als druckbare Blätter und die Einführungsfolien — alles aus <em>einer</em> Datenquelle. Ein neuer Auftrag ist ein einziger neuer Eintrag; Webseite, Druck und Folien ziehen automatisch nach. Hier fließen keine Schülerdaten, es ist reines Material.</div>
+        </div>
+        <div class="inv-row">
+          <div class="name">Portfolio<span>privat</span></div>
+          <div class="desc">Meine Fotografie-Seite. Ihre Gestaltungs-Entscheidungen sind jetzt festgehalten, damit sie ihren Charakter behält.</div>
+        </div>
+        <div class="inv-row">
+          <div class="name">Das System<span>Regeln · Vorlagen · Gedächtnis</span></div>
+          <div class="desc">Globale Regeln, ein Steckbrief je Projekt, eine Bau-Vorlage und laufende Notizen — die vier Ebenen von oben, jetzt aktiv.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="border-bottom:0;">
+    <div class="wrap reveal">
+      <p class="pull">„Nicht die KI macht die Arbeit strukturiert — die Struktur, die ich ihr gebe, macht die Arbeit gut. Genau wie im Unterricht."</p>
+      <footer class="foot">
+        Stand: 28. Juli 2026 · Guido Walther · Zum Weitergeben an Kolleginnen und Kollegen
+      </footer>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: .12 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+</script>
+</body>
+</html>
