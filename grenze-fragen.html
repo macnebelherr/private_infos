@@ -1,0 +1,240 @@
+<title>Bis an die Grenze fragen</title>
+<style>
+  :root{
+    --ground:#eef2f4;
+    --surface:#ffffff;
+    --surface-2:#e4eaed;
+    --ink:#16232c;
+    --muted:#51636d;
+    --faint:#7c8b93;
+    --accent:#1f6f8f;
+    --accent-strong:#155a75;
+    --warm:#b5651d;
+    --line:#ccd8dd;
+    --line-strong:#b7c6cc;
+    --shadow: 0 1px 2px rgba(15,30,38,.06), 0 10px 26px rgba(15,30,38,.07);
+
+    --sans: -apple-system, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+    --wrap: 42rem;
+    --step-0: 1.15rem;
+    --step-1: 1.35rem;
+    --step-2: 1.7rem;
+    --step-3: 2.1rem;
+    --step-4: clamp(2.3rem, 6.5vw, 3.4rem);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0d1218;
+      --surface:#141c24;
+      --surface-2:#1a2530;
+      --ink:#e7edf2;
+      --muted:#93a3b0;
+      --faint:#66757f;
+      --accent:#5fb0d1;
+      --accent-strong:#8ccbe5;
+      --warm:#e0954f;
+      --line:#223140;
+      --line-strong:#2c4052;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0d1218;
+    --surface:#141c24;
+    --surface-2:#1a2530;
+    --ink:#e7edf2;
+    --muted:#93a3b0;
+    --faint:#66757f;
+    --accent:#5fb0d1;
+    --accent-strong:#8ccbe5;
+    --warm:#e0954f;
+    --line:#223140;
+    --line-strong:#2c4052;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 30px rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:var(--step-0);
+    line-height:1.66;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{ padding:0 1.3rem 5rem; }
+  .wrap{ max-width:var(--wrap); margin:0 auto; }
+
+  a{ color:var(--accent-strong); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  code{
+    font-family:var(--mono);
+    font-size:.85em;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.06em .4em;
+  }
+
+  header.hero{ padding:4.5rem 0 3rem; border-bottom:1px solid var(--line); }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.76rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 1.1rem;
+    display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+  }
+  .eyebrow .dur{ color:var(--faint); letter-spacing:.06em; }
+  h1{
+    font-family:var(--sans);
+    font-weight:800;
+    font-size:var(--step-4);
+    line-height:1.08;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+    margin:0 0 1.1rem;
+  }
+  .lede{
+    font-size:var(--step-1);
+    color:var(--muted);
+    max-width:36rem;
+    margin:0;
+  }
+
+  section{ padding:2.8rem 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:0; }
+  .kicker{
+    font-family:var(--mono);
+    font-size:.74rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin:0 0 .8rem;
+  }
+  h2{
+    font-family:var(--sans);
+    font-weight:750;
+    font-size:var(--step-2);
+    line-height:1.2;
+    letter-spacing:-.01em;
+    text-wrap:balance;
+    margin:0 0 .9rem;
+  }
+  section p{ margin:0 0 1rem; }
+  section p:last-child{ margin-bottom:0; }
+
+  .steps{
+    counter-reset:schritt;
+    list-style:none;
+    margin:1.6rem 0 0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:.9rem;
+  }
+  .steps li{
+    counter-increment:schritt;
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:.95rem 1.1rem .95rem 3.2rem;
+    box-shadow:var(--shadow);
+    color:var(--ink);
+  }
+  .steps li::before{
+    content:counter(schritt);
+    position:absolute;
+    left:1rem; top:50%; transform:translateY(-50%);
+    font-family:var(--mono);
+    font-weight:700;
+    color:var(--accent);
+    font-size:.95rem;
+  }
+  .steps li strong{ display:block; margin-bottom:.15rem; }
+  .steps li span{ color:var(--muted); font-size:.95rem; }
+
+  .pull{
+    margin:0;
+    padding:1.4rem 1.6rem;
+    background:var(--surface-2);
+    border-left:3px solid var(--warm);
+    border-radius:10px;
+    font-size:var(--step-1);
+    line-height:1.45;
+    color:var(--ink);
+  }
+  .pull cite{
+    display:block;
+    margin-top:.7rem;
+    font-style:normal;
+    font-family:var(--mono);
+    font-size:.76rem;
+    letter-spacing:.06em;
+    color:var(--faint);
+  }
+
+  footer.quelle{
+    padding-top:2.6rem;
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--faint);
+    letter-spacing:.02em;
+    display:flex; flex-direction:column; gap:.4rem;
+  }
+  footer.quelle a{ color:var(--accent-strong); }
+
+  @media (max-width:640px){
+    header.hero{ padding:3.2rem 0 2.2rem; }
+    section{ padding:2.2rem 0; }
+  }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <header class="hero">
+      <p class="eyebrow">Notiz zu einem Short · @christophmagnussen <span class="dur">· 91 Sek.</span></p>
+      <h1>Bis an die Grenze fragen</h1>
+      <p class="lede">Der wichtigste KI-Skill ist laut Christoph Magnussen nicht Prompting, sondern eine Fähigkeit, die die meisten als Kind schon hatten: Dinge so lange hinterfragen, bis man an die eigene Wissensgrenze stößt — und genau dort weiterzumachen.</p>
+    </header>
+
+    <section>
+      <p class="kicker">Die Beobachtung</p>
+      <h2>Nicht Feature-Wissen, sondern Neugier</h2>
+      <p>Wer mit KI arbeitet, fragt Magnussen oft nach dem einen entscheidenden Skill. Seine Antwort überrascht: Es geht nicht darum, jedes Feature oder jeden Agenten-Trick zu kennen. Es geht um dieselbe Grundhaltung, die man als Kind hatte — Dinge bis in die Tiefe verstehen wollen, statt sich mit der Oberfläche zufriedenzugeben.</p>
+    </section>
+
+    <section>
+      <p class="kicker">Die Methode</p>
+      <h2>Der Kipppunkt ist der Anfang, nicht das Ende</h2>
+      <p>Er beschreibt eine Lernmethode mit einem klaren Wendepunkt: Man arbeitet konkret an etwas, bis man an eine echte Grenze stößt — den Moment, an dem man nicht mehr weiterweiß. Genau dieser Moment ist der eigentliche Ausgangspunkt der Arbeit, nicht das Scheitern daran.</p>
+      <ol class="steps">
+        <li><strong>Konkret arbeiten</strong><span>An einer echten Aufgabe bleiben, nicht nur Konzepte lesen</span></li>
+        <li><strong>Grenze erkennen</strong><span>Den Punkt benennen, an dem es wirklich nicht weitergeht</span></li>
+        <li><strong>Nachlesen, was längst geteilt ist</strong><span>Videos, Paper, Erfahrungsberichte — im KI-Bereich ist fast alles öffentlich</span></li>
+        <li><strong>Mit KI-Werkzeugen verstehen und umsetzen</strong><span>Erst hier wird der Agent zur „Superpower" — als Erklärer und Ausführer</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <p class="kicker">Warum das gerade jetzt zählt</p>
+      <p class="pull">„Es liegt an euch zu entscheiden: Setze ich mich daran oder nicht?"<cite>Christoph Magnussen, YouTube Short</cite></p>
+      <p style="margin-top:1.4rem;">Im KI-Bereich wird nahezu alles offen geteilt. Die Information ist da — was oft fehlt, ist laut Magnussen kein Wissen, sondern die Bereitschaft, sich hinzusetzen und es sich anzueignen. Einen fertigen Knopf dafür liefert kein Unternehmen; das Aneignen bleibt Handarbeit, so wie es das schon vor KI war.</p>
+    </section>
+
+    <footer class="quelle">
+      <span>Quelle: YouTube Short von <a href="https://www.youtube.com/@christophmagnussen/shorts" target="_blank" rel="noopener">@christophmagnussen</a></span>
+      <span><a href="https://www.youtube.com/shorts/qLC8T-rn010" target="_blank" rel="noopener">youtube.com/shorts/qLC8T-rn010</a></span>
+      <span>Notiz erstellt am 12.08.2026 · Zusammenfassung in eigenen Worten, kein Transkript</span>
+    </footer>
+
+  </div>
+</div>
