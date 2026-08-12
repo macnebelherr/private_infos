@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mit Claude Code Unterricht bauen – Vortrag Kollegium</title>
+<style>
+  body { margin: 0; background: #09090b; }
+  a { color: #fb923c; text-decoration: none; }
+  a:hover { color: #fdba74; }
+  deck-stage:not(:defined) { visibility: hidden; }
+  @keyframes om-up { from { opacity: 0; transform: translateY(30px); } }
+  @keyframes om-in { from { opacity: 0; transform: translateY(20px) scale(.97); } }
+  @keyframes om-fade { from { opacity: 0; } }
+  @keyframes om-wide { from { transform: scaleX(0); } }
+  @keyframes om-grow { from { transform: scaleY(0); } }
+  @keyframes om-draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-deck-active] [data-a="up"] { animation: om-up .62s cubic-bezier(.16,1,.3,1) both; }
+    [data-deck-active] [data-a="in"] { animation: om-in .7s cubic-bezier(.16,1,.3,1) both; }
+    [data-deck-active] [data-a="fade"] { animation: om-fade .8s ease both; }
+    [data-deck-active] [data-a="wide"] { animation: om-wide .75s cubic-bezier(.16,1,.3,1) both; }
+    [data-deck-active] [data-a="grow"] { animation: om-grow .85s cubic-bezier(.16,1,.3,1) both; }
+    [data-deck-active] [data-a="draw"] { animation: om-draw 1.15s cubic-bezier(.33,.9,.4,1) both; }
+  }
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+  <section data-label="Titel" data-speaker-notes="Begrüßung. Kurz sagen: kein Werkzeug-Vortrag, sondern ein Arbeitsweg. Bild: erst kochen, dann das Rezept aufschreiben." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:96px 120px 72px;display:flex;flex-direction:column;">
+    <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:96px;align-items:center;flex:1;">
+      <div>
+        <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+        <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:32px 0 0;animation-delay:.12s;">BBS Walsrode · Kollegium</p>
+        <h1 data-a="up" style="font-size:96px;font-weight:200;letter-spacing:-.025em;line-height:1.04;margin:28px 0 0;color:#fafafa;animation-delay:.22s;">Unterricht bauen<br>mit Claude&nbsp;Code</h1>
+        <p data-a="up" style="font-size:34px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:40px 0 0;max-width:20ch;animation-delay:.34s;">Wie aus einer Regel-Datei ein Rezept wird – und aus Rezepten ein Kochbuch, das mitwächst.</p>
+      </div>
+      <div data-a="in" style="position:relative;animation-delay:.46s;">
+        <div style="position:absolute;inset:0;transform:translate(26px,26px);border:1px solid rgba(251,146,60,.3);border-radius:16px;"></div>
+        <div style="position:relative;background:#18181b;border:1px solid #27272a;border-radius:16px;padding:44px 46px 52px;">
+          <div style="width:56px;height:3px;background:var(--accent,#fb923c);"></div>
+          <p style="font-size:26px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#fafafa;margin:26px 0 0;">CLAUDE.md</p>
+          <p style="font-size:24px;font-weight:400;line-height:1.5;color:#a1a1aa;margin:14px 0 34px;">Das Rezept des Projekts</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div style="height:2px;background:#27272a;width:92%;"></div>
+            <div style="height:2px;background:#27272a;width:78%;"></div>
+            <div style="height:2px;background:#27272a;width:86%;"></div>
+            <div style="height:2px;background:#27272a;width:64%;"></div>
+            <div style="height:2px;background:#27272a;width:81%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:48px;">
+      <span>Guido Walther</span>
+      <span>unterricht.bbs-walsrode.de</span>
+    </div>
+  </section>
+
+  <section data-label="Das Portal" data-speaker-notes="Kurz: das Portal soll mehrere Bildungsgänge bündeln. Pilot ist Mathematik 3.1 mit sechs Lerneinheiten – eine pro Woche. Bild: sechs Gänge eines Menüs." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Das Portal</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Sechs Gänge, einer pro Woche</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:start;flex:1;padding-top:58px;">
+      <div style="display:flex;flex-direction:column;gap:32px;">
+        <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:0;animation-delay:.28s;">unterricht.bbs-walsrode.de bündelt Material für Metalltechnik, Kunststoff-/Kautschuktechnik, Mathematik und weitere Bildungsgänge.</p>
+        <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:0;animation-delay:.38s;">Im Pilot: Mathematik, Kapitel 3.1 „Steigungen und Änderungsraten“ – sechs Lerneinheiten.</p>
+        <p data-a="up" style="font-size:28px;font-weight:400;line-height:1.5;color:#fafafa;margin:8px 0 0;animation-delay:.48s;">Jede Einheit bei null anzufangen wäre enorm aufwändig – und Struktur, Barrierefreiheit und Urheberrecht kaum konstant zu halten.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#a1a1aa;margin:0 0 26px;animation-delay:.3s;">Kapitel 3.1 · Die Speisekarte</p>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;animation-delay:.4s;">
+          <span style="font-size:24px;font-weight:400;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">3.1.1</span>
+          <span style="font-size:30px;font-weight:300;color:#fafafa;">Zeichnerisches Differenzieren</span>
+        </div>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;animation-delay:.5s;">
+          <span style="font-size:24px;font-weight:400;color:#71717a;font-variant-numeric:tabular-nums;">3.1.2</span>
+          <span style="font-size:30px;font-weight:300;color:#a1a1aa;">Mittlere Änderungsrate</span>
+        </div>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;animation-delay:.58s;">
+          <span style="font-size:24px;font-weight:400;color:#71717a;font-variant-numeric:tabular-nums;">3.1.3</span>
+          <span style="font-size:30px;font-weight:300;color:#a1a1aa;">Lokale Änderungsrate</span>
+        </div>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;animation-delay:.66s;">
+          <span style="font-size:24px;font-weight:400;color:#71717a;font-variant-numeric:tabular-nums;">3.1.4</span>
+          <span style="font-size:30px;font-weight:300;color:#a1a1aa;">Ableitungsfunktion</span>
+        </div>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;animation-delay:.74s;">
+          <span style="font-size:24px;font-weight:400;color:#71717a;font-variant-numeric:tabular-nums;">3.1.5</span>
+          <span style="font-size:30px;font-weight:300;color:#a1a1aa;">Ableitungsregeln</span>
+        </div>
+        <div data-a="in" style="display:flex;gap:28px;align-items:baseline;padding:22px 0;border-top:1px solid #27272a;border-bottom:1px solid #27272a;animation-delay:.82s;">
+          <span style="font-size:24px;font-weight:400;color:#71717a;font-variant-numeric:tabular-nums;">3.1.6</span>
+          <span style="font-size:30px;font-weight:300;color:#a1a1aa;">Handlungssituationen</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Das Problem" data-speaker-notes="Ohne Rezept kocht man jedes Mal neu: dieselben Vorgaben erklären, Punkte vergessen, das Ergebnis hängt vom Tag ab. Sechs Einheiten, sechs Mal von vorn." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Das Problem</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Jedes Mal neu kochen</h2>
+    <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:34px 0 0;max-width:44ch;animation-delay:.28s;">Sechs Einheiten aus dem Kopf – und jede fällt ein bisschen anders aus.</p>
+    <div style="display:flex;gap:34px;align-items:flex-end;justify-content:flex-start;padding:58px 0 0;">
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.4s;">
+        <div style="width:168px;height:96px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 1</span>
+      </div>
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.48s;">
+        <div style="width:168px;height:138px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 2</span>
+      </div>
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.56s;">
+        <div style="width:168px;height:72px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 3</span>
+      </div>
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.64s;">
+        <div style="width:168px;height:120px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 4</span>
+      </div>
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.72s;">
+        <div style="width:168px;height:86px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 5</span>
+      </div>
+      <div data-a="in" style="display:flex;flex-direction:column;gap:18px;align-items:flex-start;animation-delay:.8s;">
+        <div style="width:168px;height:148px;background:#18181b;border:1px solid #27272a;border-radius:12px;"></div>
+        <span style="font-size:24px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#71717a;">Einheit 6</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:56px;padding:52px 0 0;flex:1;">
+      <p data-a="up" style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;animation-delay:.9s;">Jede Sitzung erklärt dieselben Vorgaben neu.</p>
+      <p data-a="up" style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;animation-delay:.98s;">Vergessene Punkte fallen erst spät auf.</p>
+      <p data-a="up" style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;animation-delay:1.06s;">Die Qualität hängt vom Moment ab.</p>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:24px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Das Rezept" data-speaker-notes="CLAUDE.md ist die dauerhafte Projekt-Datei: Design-Entscheidungen, Struktur, rechtliche Leitplanken. Wird in jedem neuen Gespräch automatisch mitgelesen." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Das Rezept</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Eine Datei, die jedes Gespräch mitliest</h2>
+    <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:32px 0 0;max-width:68ch;animation-delay:.28s;">CLAUDE.md hält jede Design-Entscheidung, jede Struktur-Vorgabe und jede rechtliche Leitplanke fest – wie ein Rezept, das nicht im Kopf bleibt.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:56px 0 0;flex:1;">
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:44px 46px;display:flex;flex-direction:column;gap:30px;animation-delay:.42s;">
+        <p style="font-size:26px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#a1a1aa;margin:0;">Ohne Rezept</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#a1a1aa;margin:0;">Jede Sitzung erklärt dieselben Vorgaben neu.</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#a1a1aa;margin:0;">Vergessene Punkte fallen erst spät auf.</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#a1a1aa;margin:0;">Qualität hängt vom Moment ab.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:44px 46px;display:flex;flex-direction:column;gap:30px;animation-delay:.56s;">
+        <p style="font-size:26px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#fb923c);margin:0;">Mit Rezept</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#fafafa;margin:0;">Eine Datei liest in jedem Gespräch automatisch mit.</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#fafafa;margin:0;">Entscheidungen stehen fest, keine Wiederholung.</p>
+        <p style="font-size:30px;font-weight:300;line-height:1.45;color:#fafafa;margin:0;">Qualität hängt am Projekt, nicht am Tag.</p>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Erste Einheit" data-speaker-notes="Die erste Lerneinheit war fertig gebaut – beim eigenen Durchsehen fielen vier Lücken auf. Jede wurde sofort ins Rezept eingetragen." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Erste Einheit</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Vier Zutaten fehlten</h2>
+    <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:32px 0 0;max-width:66ch;animation-delay:.28s;">„Zeichnerisches Differenzieren“ war fertig gebaut – beim Durchsehen fielen trotzdem vier Lücken auf.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;padding:52px 0 0;flex:1;">
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:16px;animation-delay:.42s;">
+        <span style="font-size:24px;font-weight:400;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">01</span>
+        <p style="font-size:30px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Einführungsfolien</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">fürs Kapitel fehlten komplett</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:16px;animation-delay:.52s;">
+        <span style="font-size:24px;font-weight:400;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">02</span>
+        <p style="font-size:30px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Druckversion</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">als PDF für die Aufgaben fehlte</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:16px;animation-delay:.62s;">
+        <span style="font-size:24px;font-weight:400;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">03</span>
+        <p style="font-size:30px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Quellenangabe</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">stand nur im PDF, nicht auf der Seite</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:16px;animation-delay:.72s;">
+        <span style="font-size:24px;font-weight:400;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">04</span>
+        <p style="font-size:30px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Didaktische Feinheit</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">die Antwort nahm die Schlussfolgerung vorweg</p>
+      </div>
+    </div>
+    <p data-a="up" style="font-size:30px;font-weight:300;line-height:1.5;color:#fafafa;margin:44px 0 0;animation-delay:.9s;">Alle vier stehen jetzt im Rezept – und gelten damit für jede künftige Einheit.</p>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Der Kreislauf" data-speaker-notes="Der Kreislauf ist der eigentliche Trick: nicht perfekt planen, sondern jeden gefundenen Fehler dauerhaft verhindern." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Der Kreislauf</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Kochen, probieren, notieren</h2>
+    <div style="display:flex;align-items:stretch;gap:24px;padding:70px 0 0;flex:1;">
+      <div data-a="in" style="flex:1;display:flex;flex-direction:column;gap:18px;animation-delay:.34s;">
+        <span style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#fb923c);">01 · Kochen</span>
+        <div style="height:2px;background:#27272a;"></div>
+        <p style="font-size:34px;font-weight:300;line-height:1.35;color:#fafafa;margin:14px 0 0;">Lerneinheit nach aktuellem Regelstand bauen</p>
+      </div>
+      <span data-a="fade" style="font-size:40px;color:#71717a;align-self:flex-start;margin-top:40px;animation-delay:.44s;">→</span>
+      <div data-a="in" style="flex:1;display:flex;flex-direction:column;gap:18px;animation-delay:.5s;">
+        <span style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#fb923c);">02 · Probieren</span>
+        <div style="height:2px;background:#27272a;"></div>
+        <p style="font-size:34px;font-weight:300;line-height:1.35;color:#fafafa;margin:14px 0 0;">Gemeinsam durchsehen – wirklich hinsehen</p>
+      </div>
+      <span data-a="fade" style="font-size:40px;color:#71717a;align-self:flex-start;margin-top:40px;animation-delay:.6s;">→</span>
+      <div data-a="in" style="flex:1;display:flex;flex-direction:column;gap:18px;animation-delay:.66s;">
+        <span style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#fb923c);">03 · Notieren</span>
+        <div style="height:2px;background:#27272a;"></div>
+        <p style="font-size:34px;font-weight:300;line-height:1.35;color:#fafafa;margin:14px 0 0;">Die Lücke landet im Rezept</p>
+      </div>
+      <span data-a="fade" style="font-size:40px;color:#71717a;align-self:flex-start;margin-top:40px;animation-delay:.76s;">→</span>
+      <div data-a="in" style="flex:1;display:flex;flex-direction:column;gap:18px;animation-delay:.82s;">
+        <span style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#fb923c);">04 · Nie wieder</span>
+        <div style="height:2px;background:#27272a;"></div>
+        <p style="font-size:34px;font-weight:300;line-height:1.35;color:#fafafa;margin:14px 0 0;">Ab dem nächsten Mal automatisch dabei</p>
+      </div>
+    </div>
+    <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;max-width:62ch;animation-delay:.98s;">Nicht perfekt planen, sondern jeden gefundenen Fehler dauerhaft verhindern.</p>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:40px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Der Skill" data-speaker-notes="Ein Skill ist eine benannte Anleitungs-Datei, hier unterricht-bauen. Wichtig: er ist nie fertig – Ergänzungen gelten ab dem nächsten Aufruf, auch in ganz neuen Gesprächen." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Der Skill</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Aus Rezepten wird ein Kochbuch</h2>
+    <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:88px;align-items:center;flex:1;padding-top:52px;">
+      <div style="display:flex;flex-direction:column;gap:34px;">
+        <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:0;animation-delay:.3s;">Ein Skill ist eine benannte Anleitungs-Datei – hier „unterricht-bauen“. Soll eine neue Lerneinheit entstehen, liest die KI sie automatisch mit.</p>
+        <p data-a="up" style="font-size:32px;font-weight:400;line-height:1.5;color:#fafafa;margin:0;animation-delay:.42s;">Das Kochbuch ist nie fertig: Fällt etwas auf, kommt es hinein – ab dem nächsten Aufruf gilt es überall.</p>
+        <p data-a="up" style="font-size:26px;font-weight:300;line-height:1.5;color:#71717a;margin:0;animation-delay:.54s;">Kein Neubau, keine Version, kein Aufwand.</p>
+      </div>
+      <div data-a="in" style="position:relative;animation-delay:.62s;">
+        <div style="position:absolute;inset:0;transform:translate(26px,26px);border:1px solid rgba(251,146,60,.3);border-radius:16px;"></div>
+        <div style="position:relative;background:#18181b;border:1px solid #27272a;border-radius:16px;padding:46px 48px;display:flex;flex-direction:column;gap:26px;">
+          <div style="width:56px;height:3px;background:var(--accent,#fb923c);"></div>
+          <p style="font-size:26px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#fafafa;margin:8px 0 0;">Skill · unterricht-bauen</p>
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <div data-a="up" style="display:flex;gap:20px;align-items:baseline;animation-delay:.66s;">
+              <span style="font-size:26px;color:var(--accent,#fb923c);">+</span>
+              <span style="font-size:26px;font-weight:300;color:#a1a1aa;">Einführungsfolien je Kapitel</span>
+            </div>
+            <div data-a="up" style="display:flex;gap:20px;align-items:baseline;animation-delay:.74s;">
+              <span style="font-size:26px;color:var(--accent,#fb923c);">+</span>
+              <span style="font-size:26px;font-weight:300;color:#a1a1aa;">Druckversion als PDF</span>
+            </div>
+            <div data-a="up" style="display:flex;gap:20px;align-items:baseline;animation-delay:.82s;">
+              <span style="font-size:26px;color:var(--accent,#fb923c);">+</span>
+              <span style="font-size:26px;font-weight:300;color:#a1a1aa;">Quellenangabe auf der Seite</span>
+            </div>
+            <div data-a="up" style="display:flex;gap:20px;align-items:baseline;animation-delay:.9s;">
+              <span style="font-size:26px;color:var(--accent,#fb923c);">+</span>
+              <span style="font-size:26px;font-weight:300;color:#a1a1aa;">Didaktische Reihenfolge wahren</span>
+            </div>
+            <div data-a="up" style="display:flex;gap:20px;align-items:baseline;animation-delay:.98s;">
+              <span style="font-size:26px;color:#71717a;">+</span>
+              <span style="font-size:26px;font-weight:300;color:#71717a;">… was als Nächstes auffällt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+
+  <section data-label="Der erste Gang" data-speaker-notes="Metapher vor der Kurve: Der erste Gang dauert am längsten, weil dabei das Rezept entsteht. Danach liegt es bereit." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Der Aufwand</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Der erste Gang dauert am längsten</h2>
+    <div style="display:grid;grid-template-columns:1.55fr repeat(5,1fr);gap:24px;align-items:end;padding:56px 0 0;">
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:28px 30px 32px;display:flex;flex-direction:column;gap:20px;height:252px;box-sizing:border-box;animation-delay:.28s;">
+        <div style="width:44px;height:3px;background:var(--accent,#fb923c);"></div>
+        <span style="font-size:24px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#a1a1aa;">Rezept wird geschrieben</span>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:auto;">
+          <div data-a="wide" style="height:3px;background:var(--accent,#fb923c);width:92%;transform-origin:left center;animation-delay:.42s;"></div>
+          <div data-a="wide" style="height:3px;background:var(--accent,#fb923c);width:74%;transform-origin:left center;animation-delay:.54s;"></div>
+          <div data-a="wide" style="height:3px;background:var(--accent,#fb923c);width:86%;transform-origin:left center;animation-delay:.66s;"></div>
+          <div data-a="wide" style="height:3px;background:var(--accent,#fb923c);width:63%;transform-origin:left center;animation-delay:.78s;"></div>
+          <div data-a="wide" style="height:3px;background:var(--accent,#fb923c);width:80%;transform-origin:left center;animation-delay:.9s;"></div>
+        </div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;justify-content:flex-end;height:180px;box-sizing:border-box;animation-delay:1.02s;">
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:78%;transform-origin:left center;animation-delay:1.08s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:62%;transform-origin:left center;animation-delay:1.13s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:84%;transform-origin:left center;animation-delay:1.18s;"></div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;justify-content:flex-end;height:180px;box-sizing:border-box;animation-delay:1.14s;">
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:78%;transform-origin:left center;animation-delay:1.20s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:62%;transform-origin:left center;animation-delay:1.25s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:84%;transform-origin:left center;animation-delay:1.30s;"></div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;justify-content:flex-end;height:180px;box-sizing:border-box;animation-delay:1.26s;">
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:78%;transform-origin:left center;animation-delay:1.32s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:62%;transform-origin:left center;animation-delay:1.37s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:84%;transform-origin:left center;animation-delay:1.42s;"></div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;justify-content:flex-end;height:180px;box-sizing:border-box;animation-delay:1.38s;">
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:78%;transform-origin:left center;animation-delay:1.44s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:62%;transform-origin:left center;animation-delay:1.49s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:84%;transform-origin:left center;animation-delay:1.54s;"></div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:14px;padding:26px 26px 30px;display:flex;flex-direction:column;gap:14px;justify-content:flex-end;height:180px;box-sizing:border-box;animation-delay:1.5s;">
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:78%;transform-origin:left center;animation-delay:1.56s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:62%;transform-origin:left center;animation-delay:1.61s;"></div>
+          <div data-a="wide" style="height:3px;background:rgba(251,146,60,.5);width:84%;transform-origin:left center;animation-delay:1.66s;"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.55fr repeat(5,1fr);gap:24px;padding:22px 0 0;">
+      <span data-a="up" style="font-size:26px;font-weight:400;color:var(--accent,#fb923c);animation-delay:.96s;">Gang 1 · Einheit 1</span>
+      <span data-a="up" style="font-size:26px;font-weight:400;color:#a1a1aa;animation-delay:1.08s;">Gang 2</span>
+      <span data-a="up" style="font-size:26px;font-weight:400;color:#a1a1aa;animation-delay:1.2s;">Gang 3</span>
+      <span data-a="up" style="font-size:26px;font-weight:400;color:#a1a1aa;animation-delay:1.32s;">Gang 4</span>
+      <span data-a="up" style="font-size:26px;font-weight:400;color:#a1a1aa;animation-delay:1.44s;">Gang 5</span>
+      <span data-a="up" style="font-size:26px;font-weight:400;color:#a1a1aa;animation-delay:1.56s;">Gang 6</span>
+    </div>
+    <div data-a="fade" style="display:grid;grid-template-columns:1.55fr repeat(5,1fr);gap:24px;padding:18px 0 0;animation-delay:1.68s;">
+      <span></span>
+      <span style="grid-column:2 / -1;text-align:center;font-size:26px;font-weight:300;color:#a1a1aa;">Dieselbe Anleitung, fünf Mal genutzt.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:88px;padding:64px 0 0;flex:1;">
+      <p data-a="up" style="font-size:30px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;animation-delay:1.06s;">Einheit 1 kostet mehr: Regeln aufbauen, Fehler finden, den Skill formulieren.</p>
+      <p data-a="up" style="font-size:30px;font-weight:400;line-height:1.5;color:#fafafa;margin:0;animation-delay:1.16s;">Ab Einheit 2 steht das meiste schon – Folien, Druckversion, Quellen, Struktur sind mitgedacht.</p>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:24px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+
+  <section data-label="Break-even" data-speaker-notes="Schematisch, keine gemessenen Werte. Break-even ab der zweiten Einheit: weniger Nacharbeit, weil alles Wiederkehrende schon im Rezept steht." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Break-even</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Aufwand je Lerneinheit</h2>
+    <div style="display:grid;grid-template-columns:1.35fr .65fr;gap:80px;align-items:end;flex:1;padding-top:44px;">
+      <div style="display:flex;flex-direction:column;">
+        <div style="position:relative;height:344px;">
+          <svg viewBox="0 0 1000 344" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;">
+            <line x1="0" y1="322" x2="1000" y2="322" stroke="#27272a" stroke-width="2"></line>
+            <polyline data-a="draw" points="83,146 250,152 417,143 583,149 750,145 917,154" fill="none" stroke="#71717a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" style="stroke-dasharray:1000;animation-delay:.34s;"></polyline>
+            <polyline data-a="draw" points="83,35 250,197 417,227 583,244 750,254 917,260" fill="none" stroke="var(--accent,#fb923c)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" style="stroke-dasharray:1000;animation-delay:.52s;"></polyline>
+            <line data-a="fade" x1="202" y1="150" x2="202" y2="322" stroke="var(--accent,#fb923c)" stroke-width="2" stroke-dasharray="6 9" opacity=".5" style="animation-delay:1.18s;"></line>
+            <circle data-a="in" cx="202" cy="150" r="11" fill="#09090b" stroke="var(--accent,#fb923c)" stroke-width="4" style="animation-delay:1.24s;"></circle>
+          </svg>
+          <span data-a="up" style="position:absolute;left:21.5%;top:88px;font-size:26px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#fb923c);animation-delay:1.32s;">Break-even</span>
+        </div>
+        <div style="display:flex;gap:0;padding:20px 0 0;">
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">Einheit 1</span>
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">2</span>
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">3</span>
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">4</span>
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">5</span>
+          <span style="flex:1;text-align:center;font-size:26px;font-weight:400;color:#a1a1aa;">6</span>
+        </div>
+        <div style="display:flex;gap:56px;padding:30px 0 0;">
+          <span data-a="fade" style="display:flex;align-items:center;gap:14px;font-size:24px;font-weight:400;color:#a1a1aa;white-space:nowrap;animation-delay:1.4s;"><span style="width:34px;height:4px;background:#71717a;"></span>Ohne System</span>
+          <span data-a="fade" style="display:flex;align-items:center;gap:14px;font-size:24px;font-weight:400;color:#fafafa;white-space:nowrap;animation-delay:1.46s;"><span style="width:34px;height:4px;background:var(--accent,#fb923c);"></span>Mit Rezept und Kochbuch</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:28px;padding-bottom:24px;">
+        <p data-a="up" style="font-size:40px;font-weight:300;line-height:1.2;color:#fafafa;margin:0;animation-delay:1.4s;">Break-even ab der zweiten Einheit</p>
+        <p data-a="up" style="font-size:28px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:0;animation-delay:1.5s;">Einheit 1 kostet mehr. Ab Einheit 2 zahlt es sich aus: weniger Nacharbeit, weil Folien, Druckversion, Quellenangabe und Struktur automatisch mitgedacht sind.</p>
+      
+        <p data-a="up" style="font-size:24px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:8px 0 0;animation-delay:1.6s;">Schematische Darstellung zur Veranschaulichung, keine gemessenen Zeitwerte.</p>
+      
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:32px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Im Kollegium" data-speaker-notes="Sechs Vorteile, die für alle gelten – nicht nur für Mathematik. Ruhig durchgehen, nicht vorlesen." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Im Kollegium</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Was dabei herauskommt</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:36px;padding:52px 0 0;flex:1;">
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.36s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Gleiche Struktur überall</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Jedes Fach, jede Einheit folgt demselben bewährten Aufbau.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.44s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Barrierefreiheit inklusive</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Handytauglich und lesbar, ohne dass jemand extra daran denken muss.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.52s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Druckversion immer dabei</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Jede Übung funktioniert auch ohne Internet, auf Papier.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.6s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Urheberrecht mitgedacht</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Quellen, eigene Zahlen, saubere Zitierweise – von Anfang an.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.68s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Nichts geht verloren</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Das Wissen steckt in Dateien, nicht im Gedächtnis einer Sitzung.</p>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:38px 40px;display:flex;flex-direction:column;gap:16px;justify-content:center;animation-delay:.76s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.25;color:#fafafa;margin:0;">Für jedes Fach nutzbar</p>
+        <p style="font-size:25px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Das Prinzip ist nicht Mathe-spezifisch – jeder kann mitmachen.</p>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+
+  <section data-label="Nachgefragt" data-speaker-notes="Die Antworten hier bitte vorher an die eigene Situation anpassen: Kosten, Speicherort und Sichtbarkeit sind hausspezifisch." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Nachgefragt</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Fragen, die zu Recht kommen</h2>
+    <div style="display:flex;flex-direction:column;flex:1;padding-top:44px;">
+      <div data-a="up" style="display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:28px 0;border-top:1px solid #27272a;animation-delay:.32s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.3;color:#fafafa;margin:0;">Was kostet das?</p>
+        <p style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Ein Abo, das ich privat nutze – kein Schulbudget, keine neue Lizenz für das Kollegium.</p>
+      </div>
+      <div data-a="up" style="display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:28px 0;border-top:1px solid #27272a;animation-delay:.42s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.3;color:#fafafa;margin:0;">Dauert das nicht zu lange?</p>
+        <p style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Die erste Einheit ja. Danach ist es weniger Arbeit als die gewohnte Nacharbeit.</p>
+      </div>
+      <div data-a="up" style="display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:28px 0;border-top:1px solid #27272a;animation-delay:.52s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.3;color:#fafafa;margin:0;">Ist das rechtlich stabil?</p>
+        <p style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Quellen und Zitierweise stehen als Regel in der Datei – sie werden nicht vergessen, weil sie nicht im Kopf liegen.</p>
+      </div>
+      <div data-a="up" style="display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:28px 0;border-top:1px solid #27272a;animation-delay:.62s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.3;color:#fafafa;margin:0;">Wo liegt das alles?</p>
+        <p style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Als einfache Dateien im Projekt, dazu die veröffentlichte Seite. Nichts steckt in einer App fest.</p>
+      </div>
+      <div data-a="up" style="display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;padding:28px 0;border-top:1px solid #27272a;border-bottom:1px solid #27272a;animation-delay:.72s;">
+        <p style="font-size:32px;font-weight:400;line-height:1.3;color:#fafafa;margin:0;">Öffentlich für jeden sichtbar?</p>
+        <p style="font-size:28px;font-weight:300;line-height:1.5;color:#a1a1aa;margin:0;">Die Lerneinheiten sind öffentlich lesbar – ohne Namen, ohne Noten, ohne Daten von Schülerinnen und Schülern.</p>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:32px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+
+  <section data-label="Einladung" data-speaker-notes="Einladung ohne Druck: Das Prinzip hängt an keinem Fach. Wer ein Thema mitbringt, bekommt dieselbe Struktur und dieselbe Prüf-Sorgfalt." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:88px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Einladung</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Jedes Fach, sein eigenes Rezept</h2>
+    <p data-a="up" style="font-size:32px;font-weight:300;line-height:1.55;color:#a1a1aa;margin:32px 0 0;max-width:70ch;animation-delay:.28s;">Eine Regel-Datei je Projekt, ein wachsender Skill daraus – das hängt an keinem bestimmten Fach. Wer ein eigenes Thema einbringt, bekommt dieselbe Struktur und dieselbe Prüf-Sorgfalt.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;padding:60px 0 0;flex:1;align-items:stretch;">
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:18px;animation-delay:0.42s;">
+        <div style="width:44px;height:3px;background:var(--accent,#fb923c);"></div>
+        <span style="font-size:24px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa;">Eigenes Rezept</span>
+        <p style="font-size:32px;font-weight:300;line-height:1.25;color:#fafafa;margin:0;">Metalltechnik</p>
+        <div style="display:flex;flex-direction:column;gap:12px;padding-top:6px;">
+          <div style="height:2px;background:#27272a;width:88%;"></div>
+          <div style="height:2px;background:#27272a;width:70%;"></div>
+          <div style="height:2px;background:#27272a;width:80%;"></div>
+        </div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:18px;animation-delay:0.52s;">
+        <div style="width:44px;height:3px;background:var(--accent,#fb923c);"></div>
+        <span style="font-size:24px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa;">Eigenes Rezept</span>
+        <p style="font-size:32px;font-weight:300;line-height:1.25;color:#fafafa;margin:0;">Kunststoff- und Kautschuktechnik</p>
+        <div style="display:flex;flex-direction:column;gap:12px;padding-top:6px;">
+          <div style="height:2px;background:#27272a;width:88%;"></div>
+          <div style="height:2px;background:#27272a;width:70%;"></div>
+          <div style="height:2px;background:#27272a;width:80%;"></div>
+        </div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px solid #27272a;border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:18px;animation-delay:0.62s;">
+        <div style="width:44px;height:3px;background:var(--accent,#fb923c);"></div>
+        <span style="font-size:24px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa;">Eigenes Rezept</span>
+        <p style="font-size:32px;font-weight:300;line-height:1.25;color:#fafafa;margin:0;">Weitere Bildungsgänge</p>
+        <div style="display:flex;flex-direction:column;gap:12px;padding-top:6px;">
+          <div style="height:2px;background:#27272a;width:88%;"></div>
+          <div style="height:2px;background:#27272a;width:70%;"></div>
+          <div style="height:2px;background:#27272a;width:80%;"></div>
+        </div>
+      </div>
+      <div data-a="in" style="background:#18181b;border:1px dashed rgba(251,146,60,.5);border-radius:16px;padding:36px 34px;display:flex;flex-direction:column;gap:18px;animation-delay:.74s;">
+        <div style="width:44px;height:3px;background:var(--accent,#fb923c);"></div>
+        <span style="font-size:24px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#fb923c);">Noch leeres Blatt</span>
+        <p style="font-size:32px;font-weight:300;line-height:1.25;color:var(--accent,#fb923c);margin:0;">Dein Fach?</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.4;color:#a1a1aa;margin:6px 0 0;">Das erste Rezept schreiben wir zusammen.</p>
+      </div>
+    </div>
+    <div style="font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:#71717a;padding-top:36px;">Mit Claude Code Unterricht bauen</div>
+  </section>
+
+  <section data-label="Zum Mitnehmen" data-speaker-notes="Drei Sätze, dann Schluss. Kein Aufruf, kein Druck: einfach anbieten und für Fragen bereitstehen." style="background:#09090b;color:#fafafa;font-family:var(--font-sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif);padding:96px 120px 72px;display:flex;flex-direction:column;">
+    <div data-a="wide" style="width:64px;height:3px;background:var(--accent,#fb923c);transform-origin:left center;"></div>
+    <p data-a="up" style="font-size:24px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#fb923c);margin:30px 0 0;animation-delay:.1s;">Zum Mitnehmen</p>
+    <h2 data-a="up" style="font-size:72px;font-weight:200;letter-spacing:-.02em;line-height:1.06;margin:20px 0 0;color:#fafafa;animation-delay:.18s;">Drei Sätze</h2>
+    <div style="display:flex;flex-direction:column;gap:44px;padding:64px 0 0;flex:1;">
+      <div data-a="up" style="display:flex;gap:40px;align-items:baseline;animation-delay:.34s;">
+        <span style="font-size:34px;font-weight:300;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">01</span>
+        <p style="font-size:44px;font-weight:200;line-height:1.3;color:#fafafa;margin:0;max-width:44ch;">Eine Regel-Datei hält fest, was sich sonst niemand merken kann.</p>
+      </div>
+      <div data-a="up" style="display:flex;gap:40px;align-items:baseline;animation-delay:.46s;">
+        <span style="font-size:34px;font-weight:300;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">02</span>
+        <p style="font-size:44px;font-weight:200;line-height:1.3;color:#fafafa;margin:0;max-width:44ch;">Ein Skill macht daraus etwas, das automatisch mitläuft – Gespräch für Gespräch.</p>
+      </div>
+      <div data-a="up" style="display:flex;gap:40px;align-items:baseline;animation-delay:.58s;">
+        <span style="font-size:34px;font-weight:300;color:var(--accent,#fb923c);font-variant-numeric:tabular-nums;">03</span>
+        <p style="font-size:44px;font-weight:200;line-height:1.3;color:#fafafa;margin:0;max-width:44ch;">Der Aufwand liegt am Anfang. Der Gewinn zeigt sich später – und bleibt.</p>
+      </div>
+    </div>
+    <p data-a="up" style="font-size:34px;font-weight:300;line-height:1.4;color:#a1a1aa;margin:0 0 40px;animation-delay:.7s;">Probiert es einfach an eurem eigenen Thema aus.</p>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:#a1a1aa;border-top:1px solid #27272a;padding-top:36px;">
+      <span>unterricht.bbs-walsrode.de</span>
+      <span>guido.walther@bbs-walsrode.eu</span>
+    </div>
+  </section>
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>
