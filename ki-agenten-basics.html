@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>KI-Agenten sicher nutzen — die Basics</title>
+<style>
+  :root {
+    --bg: #120e0a;
+    --bg-soft: #17120d;
+    --card: #1c1610;
+    --card-border: #35291e;
+    --ink: #f1e8db;
+    --ink-dim: #b9ab98;
+    --ink-faint: #8a7c6b;
+    --accent: #ff7a29;
+    --accent-2: #ffb347;
+    --accent-ink: #2a1204;
+    --danger: #ff5a3c;
+    --safe: #57c98a;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: "Avenir Next", "Century Gothic", "Segoe UI Semibold", ui-sans-serif, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    --max: 740px;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #faf6f0;
+    --bg-soft: #f2ebe1;
+    --card: #ffffff;
+    --card-border: #e7dccb;
+    --ink: #2a2117;
+    --ink-dim: #5c503f;
+    --ink-faint: #8a7c6b;
+    --accent: #e0641a;
+    --accent-2: #c9531a;
+    --accent-ink: #ffffff;
+    --danger: #d13a1f;
+    --safe: #1f8a54;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #faf6f0;
+      --bg-soft: #f2ebe1;
+      --card: #ffffff;
+      --card-border: #e7dccb;
+      --ink: #2a2117;
+      --ink-dim: #5c503f;
+      --ink-faint: #8a7c6b;
+      --accent: #e0641a;
+      --accent-2: #c9531a;
+      --accent-ink: #ffffff;
+      --danger: #d13a1f;
+      --safe: #1f8a54;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent-2); text-decoration-color: color-mix(in srgb, var(--accent-2) 40%, transparent); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent-2); }
+
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; letter-spacing: -0.01em; }
+
+  /* ---------- top progress bar ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    z-index: 60;
+    transition: width 80ms linear;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 60;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--ink-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { color: var(--accent-2); border-color: var(--accent); }
+  .theme-toggle svg { width: 18px; height: 18px; }
+
+  /* ---------- layout shell ---------- */
+  .shell {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px;
+    display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- route strip (desktop side nav) ---------- */
+  .route {
+    position: sticky; top: 28px; align-self: start;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 18px 0 18px 4px;
+    max-height: calc(100vh - 56px);
+  }
+  @media (max-width: 900px) { .route { display: none; } }
+
+  .route-title {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 0 0 10px 18px;
+  }
+  .route a {
+    position: relative; display: flex; align-items: baseline; gap: 10px;
+    padding: 7px 10px 7px 18px; border-radius: 8px;
+    color: var(--ink-dim); text-decoration: none; font-size: 14.5px;
+    border-left: 2px solid var(--card-border);
+    transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+  }
+  .route a .t { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-faint); flex-shrink: 0; }
+  .route a:hover { color: var(--ink); background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 8%, transparent); }
+  .route a.active {
+    color: var(--ink); font-weight: 600;
+    border-left-color: var(--sektion-farbe, var(--accent));
+    background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 12%, transparent);
+  }
+  .route a.active .t { color: var(--sektion-farbe, var(--accent)); }
+
+  /* ---------- mobile chip nav ---------- */
+  .chipnav {
+    display: none;
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 16px; margin: 0 -16px 8px;
+    overflow-x: auto; white-space: nowrap;
+    gap: 8px;
+  }
+  @media (max-width: 900px) { .chipnav { display: flex; } }
+  .chipnav a {
+    display: inline-block; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--card-border); color: var(--ink-dim);
+    text-decoration: none; font-size: 13px; flex-shrink: 0;
+  }
+  .chipnav a.active { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+  main { min-width: 0; padding-bottom: 100px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 40px; max-width: var(--max); }
+  @media (max-width: 900px) { .hero { padding-top: 20px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-2); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--card-border));
+    padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--safe); box-shadow: 0 0 8px var(--safe); }
+
+  .hero h1 {
+    font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1.05; margin: 20px 0 18px; font-weight: 800;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 62%, color-mix(in srgb, var(--accent) 35%, transparent) 62%);
+  }
+  .hero .lede { font-size: 1.15rem; color: var(--ink-dim); max-width: 58ch; }
+
+  .hero-meta {
+    margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 15px;
+    text-decoration: none; border: 1px solid transparent; cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: var(--accent-ink); box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: transparent; color: var(--ink-dim); border-color: var(--card-border); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--accent); }
+
+  .source-line { color: var(--ink-faint); font-size: 14px; margin-top: 14px; }
+  .source-line a { color: var(--ink-dim); }
+
+  /* ---------- speedometer decoration ---------- */
+  .gauge-wrap { max-width: var(--max); margin: 8px 0 56px; }
+  .gauge {
+    display: flex; align-items: stretch; gap: 0; border: 1px solid var(--card-border);
+    border-radius: var(--radius); overflow: hidden; background: var(--card);
+  }
+  .gauge > div {
+    flex: 1; padding: 16px 18px; position: relative;
+  }
+  .gauge > div + div { border-left: 1px dashed var(--card-border); }
+  .gauge .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); }
+  .gauge .v { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; margin-top: 4px; }
+  @media (max-width: 620px) { .gauge { flex-wrap: wrap; } .gauge > div { flex: 1 1 50%; } .gauge > div:nth-child(2) { border-left: 1px dashed var(--card-border);} }
+
+  /* ---------- sections ---------- */
+  section.chapter {
+    max-width: var(--max);
+    margin: 0 0 64px;
+    scroll-margin-top: 24px;
+  }
+
+  .chapter-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 6px; }
+  .chapter-icon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--sektion-farbe) 16%, transparent);
+    color: var(--sektion-farbe);
+    border: 1px solid color-mix(in srgb, var(--sektion-farbe) 35%, transparent);
+  }
+  .chapter-icon svg { width: 20px; height: 20px; }
+
+  .chapter-kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sektion-farbe); margin: 2px 0 2px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .chapter-kicker a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+  .chapter-kicker a:hover { opacity: 0.75; }
+
+  .chapter h2 { font-size: 1.7rem; margin: 0 0 18px; font-weight: 800; }
+
+  .chapter-body {
+    background: color-mix(in srgb, var(--sektion-farbe) 6%, var(--card));
+    border-left: 3px solid var(--sektion-farbe);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 26px 28px;
+    border-top: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .chapter-body p { margin: 0 0 14px; color: var(--ink); }
+  .chapter-body p:last-child { margin-bottom: 0; }
+  .chapter-body strong { color: var(--ink); }
+  .chapter-body code {
+    font-family: var(--font-mono); font-size: 0.9em; background: color-mix(in srgb, var(--sektion-farbe) 16%, transparent);
+    padding: 2px 6px; border-radius: 5px; color: var(--ink);
+  }
+  .chapter-body ul { margin: 10px 0 14px; padding-left: 22px; }
+  .chapter-body li { margin-bottom: 8px; }
+
+  .tldr {
+    margin-top: 16px; padding-top: 14px; border-top: 1px dashed color-mix(in srgb, var(--sektion-farbe) 40%, var(--card-border));
+    font-size: 15px; color: var(--ink-dim);
+  }
+  .tldr b { color: var(--sektion-farbe); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; }
+
+  /* ---------- analogy callout (road sign) ---------- */
+  .analogie {
+    margin: 18px 0 0; padding: 16px 18px;
+    border: 1.5px dashed color-mix(in srgb, var(--sektion-farbe) 55%, var(--card-border));
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--sektion-farbe) 5%, transparent);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .analogie .sign {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px;
+    border: 2px solid var(--sektion-farbe); color: var(--sektion-farbe);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  }
+  .analogie p { margin: 0; font-size: 15px; color: var(--ink-dim); }
+  .analogie b { color: var(--ink); }
+
+  /* ---------- comparison cards (chatbot vs agent) ---------- */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; margin: 20px 0 0; }
+  @media (max-width: 560px) { .versus { grid-template-columns: 1fr; } .versus .vs { display: none; } }
+  .versus .card {
+    border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 16px 18px; background: var(--bg-soft);
+  }
+  .versus .card h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.05rem; }
+  .versus .card p { margin: 0; font-size: 14px; color: var(--ink-dim); }
+  .versus .vs { align-self: center; font-family: var(--font-mono); color: var(--ink-faint); font-size: 13px; }
+  .versus .card.agent { border-color: color-mix(in srgb, var(--sektion-farbe) 45%, var(--card-border)); }
+  .versus .card.agent h4 { color: var(--sektion-farbe); }
+
+  /* ---------- gauge / permission levels ---------- */
+  .levels { margin: 20px 0 0; }
+  .levels-track { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--card-border); }
+  .levels-track div { flex: 1; }
+  .levels-track .l1 { background: var(--safe); }
+  .levels-track .l2 { background: var(--accent-2); }
+  .levels-track .l3 { background: var(--danger); }
+  .levels-labels { display: flex; margin-top: 10px; gap: 10px; }
+  .levels-labels > div { flex: 1; font-size: 13px; }
+  .levels-labels .name { font-weight: 700; color: var(--ink); display: block; margin-bottom: 2px; }
+  .levels-labels .desc { color: var(--ink-faint); font-size: 12.5px; }
+
+  /* ---------- glossary ---------- */
+  .glossary-table { max-width: var(--max); margin: 0 0 64px; }
+  .glossary-table .scroll { overflow-x: auto; border: 1px solid var(--card-border); border-radius: var(--radius); }
+  table.gloss { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.gloss th {
+    text-align: left; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-faint); padding: 12px 16px; border-bottom: 1px solid var(--card-border); background: var(--bg-soft);
+  }
+  table.gloss td { padding: 14px 16px; border-bottom: 1px solid var(--card-border); vertical-align: top; font-size: 14.5px; }
+  table.gloss tr:last-child td { border-bottom: none; }
+  table.gloss td.term { font-weight: 700; white-space: nowrap; }
+  table.gloss td.ebene { color: var(--ink-faint); font-family: var(--font-mono); font-size: 12.5px; white-space: nowrap; }
+  table.gloss tr:hover td { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+  /* ---------- footer ---------- */
+  footer {
+    max-width: var(--max); padding-top: 32px; border-top: 1px solid var(--card-border);
+    color: var(--ink-faint); font-size: 13.5px; line-height: 1.7;
+  }
+  footer a { color: var(--ink-dim); }
+  footer .credit { margin-top: 18px; }
+
+  .section-label { max-width: var(--max); margin: 0 0 20px; }
+  .section-label h3 {
+    font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-faint); margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<button class="theme-toggle" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+
+<div class="shell">
+  <nav class="route" aria-label="Kapitel">
+    <div class="route-title">Route</div>
+    <a href="#intro" data-color="#ff7a29"><span class="t">00:00</span><span>Chatbot vs. Agent</span></a>
+    <a href="#lokal" data-color="#ffb347"><span class="t">01:33</span><span>Lokal oder Cloud</span></a>
+    <a href="#memory" data-color="#f0973a"><span class="t">02:45</span><span>Memory &amp; Agent-Datei</span></a>
+    <a href="#skills" data-color="#e8a93a"><span class="t">07:57</span><span>Skills</span></a>
+    <a href="#mcp" data-color="#dd8a35"><span class="t">11:47</span><span>MCP</span></a>
+    <a href="#plugins" data-color="#e07230"><span class="t">14:18</span><span>Plugins</span></a>
+    <a href="#hooks" data-color="#ff5a3c"><span class="t">17:12</span><span>Hooks &amp; Sandbox</span></a>
+    <a href="#ausblick" data-color="#ff7a29"><span class="t">21:23</span><span>Fazit</span></a>
+    <a href="#glossar" data-color="#ffb347"><span class="t">＋</span><span>Glossar</span></a>
+  </nav>
+
+  <main>
+    <div class="chipnav" id="chipnav">
+      <a href="#intro">Intro</a>
+      <a href="#lokal">Lokal/Cloud</a>
+      <a href="#memory">Memory</a>
+      <a href="#skills">Skills</a>
+      <a href="#mcp">MCP</a>
+      <a href="#plugins">Plugins</a>
+      <a href="#hooks">Hooks</a>
+      <a href="#ausblick">Fazit</a>
+      <a href="#glossar">Glossar</a>
+    </div>
+
+    <div class="hero">
+      <span class="eyebrow"><span class="dot"></span> Lernseite · Companion zum Video</span>
+      <h1>KI-Agenten sicher nutzen — die <em>Basics</em></h1>
+      <p class="lede">
+        Ein KI-Agent kann im Gegensatz zu einem Chatbot echte Aufgaben auf deinem Rechner ausführen.
+        Diese Seite übersetzt den Talk von Christoph Magnussen in eine Route zum Nachlesen: was Memory,
+        Skills, MCP, Plugins, Hooks und Sandboxes wirklich sind — und wie viel Zugriff dabei sinnvoll ist,
+        bevor es gefährlich wird.
+      </p>
+      <div class="hero-meta">
+        <a class="btn btn-primary" href="https://www.youtube.com/watch?v=GgYBe6I4aHQ" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Original-Video ansehen
+        </a>
+        <a class="btn btn-ghost" href="#glossar">Direkt zum Glossar</a>
+      </div>
+      <p class="source-line">
+        Quelle: „KI-Agenten richtig nutzen: Diese BASICS musst du kennen!" ·
+        <a href="https://www.youtube.com/@christophmagnussen" target="_blank" rel="noopener">Christoph Magnussen</a> · 11.08.2026 · 22:49 Min.
+      </p>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <div><div class="k">Textebene</div><div class="v">Vorschlag</div></div>
+        <div><div class="k">Technische Ebene</div><div class="v">Erzwungen</div></div>
+        <div><div class="k">6 Bausteine</div><div class="v">1 Prinzip</div></div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <section class="chapter" id="intro" style="--sektion-farbe:#ff7a29">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Einleitung · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=0s" target="_blank" rel="noopener">▶ 00:00 im Video</a></div>
+          <h2>Der Unterschied: Chatbot vs. Agent</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Der große Umbruch, der gerade passiert, ist der Wechsel von Chatbots zu <strong>Agenten</strong>.
+          Ein Chatbot bekommt eine Frage und liefert eine Antwort — Ende der Geschichte. Ein Agent bekommt
+          stattdessen einen Auftrag, arbeitet in <strong>Schleifen</strong> weiter, überprüft seine eigenen
+          Zwischenergebnisse und bekommt Werkzeuge auf dem Rechner, mit denen er Dinge wirklich erledigt.
+          Genau das ist die Autonomie, die man spürt, wenn man Claude Code, Codex oder Cursor benutzt.
+        </p>
+        <p>
+          Das Werkzeug, das so einen Agenten steuert, nennt man <strong>Agent Harness</strong>. Weil ein
+          Agent tatsächlich handelt statt nur zu antworten, stellt sich sofort die Frage aus dem Titel dieser
+          Seite: Wie sorge ich dafür, dass er nur vernünftige Dinge tut?
+        </p>
+        <div class="versus">
+          <div class="card">
+            <h4>Chatbot</h4>
+            <p>Auftrag rein → eine Antwort raus. Kein Zugriff auf deinen Rechner, keine eigene Handlung.</p>
+          </div>
+          <div class="vs">vs.</div>
+          <div class="card agent">
+            <h4>Agent</h4>
+            <p>Auftrag rein → arbeitet in Schleifen, nutzt Tools, prüft sich selbst, bis das Ergebnis passt.</p>
+          </div>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>Ein Agent handelt selbstständig mit echten Werkzeugen — deshalb lohnt sich ein Blick darauf, wie man ihn sicher einrichtet.</div>
+      </div>
+    </section>
+
+    <!-- LOKAL -->
+    <section class="chapter" id="lokal" style="--sektion-farbe:#ffb347">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Grundlagen · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=93s" target="_blank" rel="noopener">▶ 01:33 im Video</a></div>
+          <h2>Läuft dein Agent lokal oder in der Cloud?</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Bevor irgendetwas anderes wichtig wird, lohnt sich diese Unterscheidung: Arbeitest du im Browser mit
+          einer Cloud-App (z. B. der ChatGPT-Web-App), oder mit einem Tool wie <strong>Claude Code</strong>,
+          <strong>Codex</strong> oder <strong>Cursor</strong>, das als App direkt auf deinem Rechner läuft?
+        </p>
+        <p>
+          Ein Cloud-Agent lebt im Hintergrund bei einem Anbieter — der muss einiges an Aufwand betreiben,
+          damit das zuverlässig funktioniert. Ein lokaler Agent dagegen greift direkt auf deine Projekte und
+          Dateien zu. Beide Welten wachsen zwar zusammen, fühlen sich aber technisch und im Alltag noch
+          spürbar unterschiedlich an.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Cloud-Agenten sind bequemer und stärker abgesichert, lokale Agenten sind direkter mit deinen echten Dateien verbunden — und genau deshalb potenziell risikoreicher.</div>
+      </div>
+    </section>
+
+    <!-- MEMORY -->
+    <section class="chapter" id="memory" style="--sektion-farbe:#f0973a">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Grundlagen · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=165s" target="_blank" rel="noopener">▶ 02:45 im Video</a></div>
+          <h2>Memory &amp; die Agent-Datei</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Ein Agent nutzt ein sehr mächtiges Modell — aber jedes Modell braucht dauerhaften <strong>Kontext</strong>,
+          zusätzlich zum einzelnen Prompt. Dafür gibt es eine globale Agent-Datei: Bei Claude Code heißt sie
+          <code>CLAUDE.md</code>, bei anderen Tools <code>AGENTS.md</code>. Sie speichert zweierlei — Wissen
+          über dich (Erinnerungen) und Wissen darüber, <em>wie</em> du arbeiten möchtest (Anweisungen).
+        </p>
+        <p>
+          Diese Datei liegt ganz banal als Textdatei lokal auf deinem Rechner, meist in einem versteckten
+          Verzeichnis (auf dem Mac machst du das mit <code>⇧ ⌘ .</code> sichtbar). Du musst sie nicht selbst
+          schreiben: Du kannst den Agenten bitten, vergangene Chats auszuwerten, Vorschläge für die Datei zu
+          machen — und das regelmäßig, etwa alle vier Wochen, zu wiederholen.
+        </p>
+        <p>
+          Daneben gibt es die eigentliche <strong>Memory</strong>: einzelne Fakten, die sich das Modell entweder
+          merkt, weil du es ausdrücklich sagst, oder weil es sie selbst für wichtig hält. Anthropic und OpenAI
+          setzen dabei bewusst auf eine persönliche Note, Google und Microsoft eher auf Zurückhaltung. Und weil
+          Modelle dazu neigen, immer mehr hinzuzufügen, bleibt das Aufräumen vorerst deine Aufgabe — verlässlich
+          von allein aussortieren können sie noch nicht.
+        </p>
+        <div class="analogie">
+          <div class="sign">50</div>
+          <p><b>Straßenschild-Prinzip:</b> Eine Sicherheitsanweisung in der Agent-Datei ist wie ein Tempo-50-Schild.
+          Der Agent <em>könnte</em> schneller fahren — er hält sich nur freiwillig daran, weil so die Anweisung
+          lautet. Ein echter technischer Schutz ist das noch nicht (dazu später mehr bei Hooks).</p>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>CLAUDE.md/AGENTS.md ist der dauerhafte Kontext deines Agenten — lass sie dir vom Agenten selbst schreiben und pflegen, aber sieh sie als Empfehlung, nicht als Schutzmechanismus.</div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="chapter" id="skills" style="--sektion-farbe:#e8a93a">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Fähigkeiten · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=477s" target="_blank" rel="noopener">▶ 07:57 im Video</a></div>
+          <h2>Skills — feste Anleitungen, die der Agent selbst erkennt</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Wie bekommt ein Agent „Superkräfte" — Aufgaben zu übernehmen, die du sonst selbst machst? Der erste
+          Baustein dafür ist ein <strong>Skill</strong>: ein festgelegtes Format für eine ausführliche Anleitung,
+          das Modelle aus ihrem Training kennen. Technisch gesehen ist ein Skill nichts weiter als eine
+          Textdatei mit einer detaillierten Beschreibung.
+        </p>
+        <p>
+          Das Besondere: Du musst im Prompt nicht jedes Mal erklären, wie eine Aufgabe abläuft. Der Agent
+          durchsucht sein Skills-Verzeichnis selbst und entscheidet, ob gerade ein passender Skill vorhanden
+          ist — auch ohne dass du ihn ausdrücklich erwähnst. Im Video etwa ein „Brand Vibe Checker", der
+          prüft, ob ein Text oder eine Präsentation zum eigenen Marken-Stil passt.
+        </p>
+        <p>
+          Anthropic hat dieses Skills-Format zuerst entwickelt, andere Anbieter wie OpenAI sind mit eigenen,
+          leicht abweichenden Standards nachgezogen. Skills lassen sich außerdem zentral verwalten und für
+          ein ganzes Team ausrollen — praktisch, aber mit einem klaren Sicherheitshinweis: Skills aus fremden
+          Quellen solltest du vor dem Einsatz einmal durchlesen, denn der Agent hält sich auch hier nur
+          freiwillig an das, was darin steht.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Ein Skill ist eine wiederverwendbare, vom Agenten selbst erkannte Anleitung für eine bestimmte Aufgabe — geprüft von dir, bevor sie zum Einsatz kommt.</div>
+      </div>
+    </section>
+
+    <!-- MCP -->
+    <section class="chapter" id="mcp" style="--sektion-farbe:#dd8a35">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Fähigkeiten · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=707s" target="_blank" rel="noopener">▶ 11:47 im Video</a></div>
+          <h2>MCP — das Handbuch fürs Werkzeug</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Ein Skill sagt dem Agenten <em>was</em> zu tun ist — zum Beispiel „nutze Gmail". Aber woher weiß das
+          Modell, <em>wie</em> es Gmail überhaupt bedient? Dafür gibt es <strong>MCP</strong>, das Model
+          Context Protocol: ein offener Standard, mit dem eine KI lernt, wie sie ein bestimmtes Werkzeug
+          benutzen soll.
+        </p>
+        <p>
+          MCP-Server sollten von vertrauenswürdigen, etablierten Anbietern stammen — theoretisch kann sie
+          jeder erstellen, weil es ein offener Standard ist. Wie gut das Ergebnis am Ende wird, hängt sowohl
+          von der Intelligenz des Modells als auch davon ab, was in diesem MCP-Server konkret steht.
+        </p>
+        <div class="analogie">
+          <div class="sign">📖</div>
+          <p><b>Handbuch-Prinzip:</b> Stell dir vor, dein Agent soll Auto fahren, weiß aber nicht, wie das Auto
+          bedient wird. MCP ist das Handbuch dazu: So gibst du Gas, so lenkst du. Die Regel „maximal 50 in der
+          Stadt" steht dagegen in einem Skill oder der Agent-Datei — das Handbuch und die Regel sind zwei
+          unterschiedliche Dinge.</p>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>MCP ist der Standard, über den ein Modell erst versteht, wie es ein Werkzeug technisch bedienen kann — nutze nur MCP-Server von Anbietern, denen du vertraust.</div>
+      </div>
+    </section>
+
+    <!-- PLUGINS -->
+    <section class="chapter" id="plugins" style="--sektion-farbe:#e07230">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v3M15 3v3M6 8h12l-1 5a5 5 0 0 1-10 0L6 8z"/><path d="M9 18v3M15 18v3"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Fähigkeiten · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=858s" target="_blank" rel="noopener">▶ 14:18 im Video</a></div>
+          <h2>Plugins — Skills, MCP und Tools im Paket</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Ein <strong>Plugin</strong> bündelt mehrere Bestandteile in einem Paket: mehrere Skills, ein oder
+          mehrere MCP-Server und Tools. Ein Beispiel aus dem Video: Ein Security-Plugin für Codex enthält
+          13 Skills, einen MCP-Server und ein Tool — alles zusammen als ein Paket, das der Agent laden kann.
+        </p>
+        <p>
+          Der Grund dafür ist Übersichtlichkeit: Sobald du bei 100 oder 200 einzelnen Skills angekommen bist —
+          und das geht schneller, als man denkt — wird es für den Agenten schwer, den richtigen im richtigen
+          Moment zu finden. Ein Plugin ist eine weitere Bündelungsebene darüber. OpenAI hat gemeinsam mit
+          Vercel, Cursor und weiteren Unternehmen dafür einen offenen Standard veröffentlicht.
+        </p>
+        <p>
+          Praktisch dabei: Mit einer „Record &amp; Replay"-Funktion kann der Agent dir bei einer Aufgabe
+          zusehen und daraus automatisch einen fertigen Skill bauen, der später Teil eines Plugins wird. Eine
+          feste Regel, wie viele Plugins sinnvoll sind, gibt es nicht — wichtig ist, wie bei einem guten
+          Mitarbeitenden, ein klar abgegrenzter Aufgabenbereich pro Plugin.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Plugins bringen Ordnung, sobald einzelne Skills und MCP-Server unübersichtlich werden — ein Paket mit klarem, engem Aufgabenbereich statt einem riesigen Sammelsurium.</div>
+      </div>
+    </section>
+
+    <!-- HOOKS & SANDBOX -->
+    <section class="chapter" id="hooks" style="--sektion-farbe:#ff5a3c">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Sicherheit · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=1032s" target="_blank" rel="noopener">▶ 17:12 im Video</a></div>
+          <h2>Hooks &amp; Sandbox — jetzt wird es technisch</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Alles bisher Genannte — Agent-Datei, Memory, Skills, MCP — sind reine <strong>Textanweisungen</strong>.
+          Straßenschilder eben, an die sich der Agent freiwillig hält. Die eigentlich spannende Frage ist: Was,
+          wenn er es nicht tut? Könnte ein Agent auf deinem Rechner wirklich etwas löschen? Ja — wenn man es
+          nicht technisch verhindert. Dafür gibt es zwei Mechanismen.
+        </p>
+        <p>
+          Ein <strong>Hook</strong> ist eine erzwungene, technische Sperre für bestimmte Befehle — zum Beispiel
+          gegen destruktive Kommandos wie <code>rm</code> (löschen). Du findest Hooks in den meisten
+          Agent-Werkzeugen unter den Entwickler- oder Programmier-Einstellungen, und falls du nicht weißt, wie
+          man sie schreibt: Du kannst dein Agent-Werkzeug einfach selbst bitten, sinnvolle Hooks einzurichten
+          und dir zu erklären, warum.
+        </p>
+        <p>
+          Eine <strong>Sandbox</strong> ist der zweite Mechanismus: ein klar abgegrenzter Arbeitsbereich. Der
+          Agent darf sich darin frei bewegen, ihn aber nicht verlassen — wie eine Sandkiste. Anthropic und
+          OpenAI verfolgen hier unterschiedliche Philosophien: Anthropic gibt dem Modell von Anfang an mehr
+          Zugriff und verlässt sich stärker auf dessen Intelligenz, OpenAI arbeitet eher toolorientiert mit
+          eigenen, engeren Sandboxes pro Agent.
+        </p>
+        <div class="analogie">
+          <div class="sign">⛔</div>
+          <p><b>Der Unterschied zum Straßenschild:</b> Ein Hook ist wie eine technische Wegfahrsperre im Auto —
+          du kannst noch so sehr aufs Gas treten, schneller als erlaubt geht es einfach nicht, bis jemand die
+          Sperre bewusst abschaltet. Eine Sandbox ist die Sandkiste selbst: die Grenze, die der Agent gar nicht
+          erst überschreiten kann.</p>
+        </div>
+
+        <p style="margin-top:22px"><strong>Wie viel darf der Agent ohne Rückfrage tun?</strong> Dazu kommt eine letzte, sehr praktische Einstellung — die Berechtigungsstufe:</p>
+        <div class="levels">
+          <div class="levels-track"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div>
+          <div class="levels-labels">
+            <div><span class="name">Standard</span><span class="desc">Der Agent fragt bei jedem Schritt nach Erlaubnis. Langsam, aber sicher.</span></div>
+            <div><span class="name">Auto Review</span><span class="desc">Weitgehend automatisch, dieses Jahr deutlich besser geworden — höheres Risiko.</span></div>
+            <div><span class="name">Vollzugriff</span><span class="desc">Der Agent handelt ohne Rückfrage. Nur einschalten, wenn du dir wirklich sicher bist.</span></div>
+          </div>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>Hooks und Sandboxes sind der technische Unterbau, der Textanweisungen erst verlässlich macht — hier entscheidet sich, ob dein Agent nur „50 fahren soll" oder „technisch gar nicht schneller kann".</div>
+      </div>
+    </section>
+
+    <!-- AUSBLICK -->
+    <section class="chapter" id="ausblick" style="--sektion-farbe:#ff7a29">
+      <div class="chapter-head">
+        <div class="chapter-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+        <div>
+          <div class="chapter-kicker">Fazit · <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ&t=1283s" target="_blank" rel="noopener">▶ 21:23 im Video</a></div>
+          <h2>Und jetzt?</h2>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p>
+          Wenn du bis hierhin gelesen hast, kennst du die Grundlagen, um mit einem Agenten sicher zu arbeiten:
+          eine gepflegte Agent-Datei, sorgfältig ausgewählte Skills, vertrauenswürdige MCP-Server, sinnvoll
+          gebündelte Plugins — und als technischen Unterbau Hooks und eine Sandbox, statt dich allein auf
+          Textanweisungen zu verlassen.
+        </p>
+        <p>
+          Der praktische nächste Schritt: Verbinde nach und nach einzelne Tools, statt alles auf einmal
+          freizuschalten. So merkst du mit der Zeit selbst am besten, was ein Agent dir wirklich zuverlässig
+          abnehmen kann — und wann du lieber noch einmal nachfragst.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Grundlagen verstanden heißt: Schritt für Schritt ausprobieren statt alles auf einmal freizugeben.</div>
+      </div>
+    </section>
+
+    <div class="section-label" id="glossar"><h3>Zum Nachschlagen</h3></div>
+    <div class="glossary-table">
+      <div class="scroll">
+        <table class="gloss">
+          <thead>
+            <tr><th>Begriff</th><th>Ebene</th><th>Kurz erklärt</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="term">Agent Harness</td><td class="ebene">Werkzeug</td><td>Die App/Umgebung, die den Agenten steuert — z. B. Claude Code, Codex, Cursor.</td></tr>
+            <tr><td class="term">CLAUDE.md / AGENTS.md</td><td class="ebene">Text</td><td>Globale Agent-Datei: wer du bist und wie der Agent für dich arbeiten soll.</td></tr>
+            <tr><td class="term">Memory</td><td class="ebene">Text</td><td>Einzelne Fakten, die sich das Modell automatisch oder auf Zuruf merkt.</td></tr>
+            <tr><td class="term">Skill</td><td class="ebene">Text</td><td>Feste, vom Agenten selbst erkannte Anleitung für eine wiederkehrende Aufgabe.</td></tr>
+            <tr><td class="term">MCP</td><td class="ebene">Protokoll</td><td>Standard-„Handbuch", wie ein Modell ein bestimmtes Werkzeug technisch bedient.</td></tr>
+            <tr><td class="term">Plugin</td><td class="ebene">Bündel</td><td>Paket aus mehreren Skills, MCP-Servern und Tools für einen klaren Aufgabenbereich.</td></tr>
+            <tr><td class="term">Hook</td><td class="ebene">Technisch</td><td>Erzwungene Sperre, die bestimmte (destruktive) Aktionen technisch verhindert.</td></tr>
+            <tr><td class="term">Sandbox</td><td class="ebene">Technisch</td><td>Abgegrenzter Arbeitsbereich, den der Agent nicht verlassen kann.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Diese Seite ist eine eigenständige Lernzusammenfassung auf Basis des Videos
+        „KI-Agenten richtig nutzen: Diese BASICS musst du kennen!" von
+        <a href="https://www.youtube.com/@christophmagnussen" target="_blank" rel="noopener">Christoph Magnussen</a>
+        (veröffentlicht am 11.08.2026) — keine Abschrift. Für die Original-Erklärungen, Beispiele und den
+        vollen Kontext lohnt sich das <a href="https://www.youtube.com/watch?v=GgYBe6I4aHQ" target="_blank" rel="noopener">Original-Video</a>.
+        Im Video angekündigt: ein vertiefender Livestream am 19.08. um 19:00 Uhr auf dem Kanal.
+      </p>
+      <p class="credit">Zusammengestellt von Guido Walther mit Claude.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    // theme toggle
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var stored = null;
+    try { stored = localStorage.getItem('ki-agenten-theme'); } catch (e) {}
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var effectiveCurrent = current || (prefersDark ? 'dark' : 'light');
+      var next = effectiveCurrent === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('ki-agenten-theme', next); } catch (e) {}
+    });
+
+    // progress bar
+    var bar = document.getElementById('progress');
+    function updateProgress() {
+      var h = document.documentElement;
+      var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (isFinite(scrolled) ? scrolled : 0) + '%';
+    }
+    document.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // scrollspy
+    var sections = Array.from(document.querySelectorAll('section.chapter, .section-label'));
+    var routeLinks = Array.from(document.querySelectorAll('.route a'));
+    var chipLinks = Array.from(document.querySelectorAll('.chipnav a'));
+
+    function setActive(id) {
+      routeLinks.forEach(function (a) {
+        var isActive = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', isActive);
+        if (isActive) a.style.setProperty('--sektion-farbe', a.dataset.color);
+      });
+      chipLinks.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+</script>
+</body>
+</html>
