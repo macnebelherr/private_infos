@@ -1,0 +1,313 @@
+<title>Claude Code – meine Einstellungen</title>
+<style>
+  :root{
+    --paper:#faf7f1;
+    --paper-raised:#ffffff;
+    --ink:#2a2823;
+    --ink-soft:#6b6459;
+    --line:#e3dbcb;
+    --line-soft:#ece5d6;
+
+    --c-anweisung:#33539e;      --c-anweisung-bg:#e9edf8;
+    --c-tools:#0f7d70;          --c-tools-bg:#e3f3ef;
+    --c-skills:#7a4fb0;         --c-skills-bg:#f0e8f9;
+    --c-berecht:#b3690c;        --c-berecht-bg:#faedd9;
+    --c-grenzen:#5c6672;        --c-grenzen-bg:#eaecee;
+    --c-aktion:#3f7d3a;         --c-aktion-bg:#e6f1e3;
+
+    --radius:14px;
+    --radius-sm:9px;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#1c1a16;
+      --paper-raised:#242119;
+      --ink:#efe8da;
+      --ink-soft:#a89e8c;
+      --line:#3a352b;
+      --line-soft:#2e2a22;
+
+      --c-anweisung:#8fa6ec;      --c-anweisung-bg:#242c42;
+      --c-tools:#5ecdbd;          --c-tools-bg:#173330;
+      --c-skills:#c6a3ef;         --c-skills-bg:#332942;
+      --c-berecht:#e8ac5c;        --c-berecht-bg:#3a2c14;
+      --c-grenzen:#a9b1ba;        --c-grenzen-bg:#2a2c2f;
+      --c-aktion:#8fcf87;         --c-aktion-bg:#22331f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#1c1a16;
+    --paper-raised:#242119;
+    --ink:#efe8da;
+    --ink-soft:#a89e8c;
+    --line:#3a352b;
+    --line-soft:#2e2a22;
+
+    --c-anweisung:#8fa6ec;      --c-anweisung-bg:#242c42;
+    --c-tools:#5ecdbd;          --c-tools-bg:#173330;
+    --c-skills:#c6a3ef;         --c-skills-bg:#332942;
+    --c-berecht:#e8ac5c;        --c-berecht-bg:#3a2c14;
+    --c-grenzen:#a9b1ba;        --c-grenzen-bg:#2a2c2f;
+    --c-aktion:#8fcf87;         --c-aktion-bg:#22331f;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,"SF Pro Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+    font-size:19px;
+    line-height:1.6;
+    margin:0;
+    padding:0;
+  }
+  .page{
+    max-width:800px;
+    margin:0 auto;
+    padding:36px 22px 80px;
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+  }
+  .mono{
+    font-family:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
+    font-size:0.86em;
+  }
+
+  header.head{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding-bottom:18px;
+    border-bottom:2px solid var(--line);
+  }
+  header.head h1{
+    font-size:2.1rem;
+    line-height:1.2;
+    margin:0;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  header.head .sub{
+    color:var(--ink-soft);
+    font-size:1.02rem;
+  }
+  header.head .meta{
+    color:var(--ink-soft);
+    font-size:0.86rem;
+    margin-top:4px;
+  }
+
+  .hinweis{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 22px;
+    color:var(--ink-soft);
+    font-size:0.94rem;
+  }
+  .hinweis strong{color:var(--ink);}
+
+  section.bereich{
+    background:var(--sektion-bg);
+    border-left:5px solid var(--sektion-farbe);
+    border-radius:var(--radius);
+    padding:22px 26px 26px;
+  }
+  section.bereich h2{
+    color:var(--sektion-farbe);
+    font-size:1.32rem;
+    margin:0 0 4px;
+    text-wrap:balance;
+  }
+  section.bereich .ort{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+  section.bereich .ort .mono{
+    background:var(--paper-raised);
+    padding:1px 7px;
+    border-radius:6px;
+  }
+
+  .zeile{
+    display:grid;
+    grid-template-columns: 1fr 34px;
+    gap:14px;
+    align-items:start;
+    padding:11px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .zeile:first-of-type{border-top:none;}
+  .zeile .label{font-weight:600;}
+  .zeile .wert{color:var(--ink-soft); font-size:0.94rem; margin-top:2px;}
+  .zeile .check{
+    width:30px;height:30px;
+    border:2px solid var(--sektion-farbe);
+    border-radius:var(--radius-sm);
+    align-self:center;
+    justify-self:center;
+  }
+  .zeile-kopf{
+    display:grid;
+    grid-template-columns: 1fr 34px;
+    gap:14px;
+    padding-bottom:6px;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+  .zeile-kopf span:last-child{text-align:center;}
+
+  .liste-einfach{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .liste-einfach li{padding-left:0;}
+  .liste-einfach .name{font-weight:600;}
+  .liste-einfach .beschreibung{color:var(--ink-soft); font-size:0.92rem;}
+
+  .fussnote{
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px dashed var(--line);
+    font-size:0.88rem;
+    color:var(--ink-soft);
+  }
+
+  .aktionsliste{
+    counter-reset: schritt;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin:0;
+  }
+  .aktionsliste .schritt{
+    display:flex;
+    gap:14px;
+    align-items:baseline;
+  }
+  .aktionsliste .num{
+    counter-increment: schritt;
+    flex:0 0 auto;
+    font-weight:700;
+    color:var(--sektion-farbe);
+    font-size:1.1rem;
+    min-width:1.6em;
+  }
+  .aktionsliste .num::before{ content: counter(schritt) "."; }
+
+  footer.schluss{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.82rem;
+    padding-top:10px;
+  }
+
+  @media print{
+    body{background:#fff; color:#000;}
+    section.bereich{break-inside:avoid; border:1px solid #ccc; border-left-width:5px;}
+  }
+</style>
+
+<div class="page">
+
+  <header class="head">
+    <h1>Claude Code – meine Einstellungen</h1>
+    <div class="sub">Übersicht zum Abgleich mit deiner Kollegin</div>
+    <div class="meta">Erstellt am 12.08.2026 aus den Dateien auf diesem Rechner · Konto guidowalther@googlemail.com</div>
+  </header>
+
+  <div class="hinweis">
+    <strong>Was hier drinsteht:</strong> alles, was sich aus den Konfigurationsdateien und der aktuell laufenden Sitzung auslesen lässt – eigene Anweisungen, verbundene Werkzeuge, angelegte Skills, Berechtigungen. <strong>Nicht enthalten</strong> sind reine Oberflächen-Einstellungen wie Hell/Dunkel-Modus oder Benachrichtigungstöne, die nirgends als Datei gespeichert sind (siehe Abschnitt „Grenzen“ unten). Kästchen zum Ankreuzen sind für den Abgleich vor Ort gedacht.
+  </div>
+
+  <!-- Eigene Anweisungen -->
+  <section class="bereich" style="--sektion-farbe:var(--c-anweisung); --sektion-bg:var(--c-anweisung-bg);">
+    <h2>Eigene Anweisungen (globale CLAUDE.md)</h2>
+    <div class="ort">Ort: <span class="mono">~/.claude/CLAUDE.md</span> · gilt automatisch in jedem Projekt</div>
+
+    <div class="zeile-kopf"><span>Regel</span><span>Bei ihr?</span></div>
+    <div class="zeile"><div><div class="label">Sprache</div><div class="wert">Antworten grundsätzlich auf Deutsch, auch Zwischenmeldungen</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Hosting-Rahmen</div><div class="wert">IONOS Shared Hosting, reines PHP + JSON-Dateien, kein SSH/Composer/Node/Datenbank</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Upload nie ungefragt</div><div class="wert">Erst Zusage einholen, dann <span class="mono">--dry-run</span>, dann Upload, dann curl-Prüfung</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Upload-Liste-Format</div><div class="wert">Abhakbare Liste nach Zielordner, mit Bytegröße und Status-Symbol (🆕 ✅ 🗑️ ⚠️)</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Deploy per SFTP</div><div class="wert">Zugangsdaten liegen in <span class="mono">~/.config/bbs-deploy/*.env</span>, nie im Chat</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Live-Daten schützen</div><div class="wert">Echte JSON-/Config-Dateien nie in die „Ersetzen“-Liste, im Zweifel nachfragen</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Plan vor Umbauten</div><div class="wert">Bei größeren Umbauten erst Plan zeigen, bei UI-Redesigns mehrere Mockups</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Design-Vorlieben</div><div class="wert">Farbige Bereichskennzeichnung, keine Icons vor Überschriften, große Schrift, einheitliche Rundungen</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Lokales Testen</div><div class="wert"><span class="mono">php -S localhost:8000</span> plus curl mit Cookie-Jar statt Browser-Vorschau</div></div><div class="check"></div></div>
+
+    <div class="fussnote">Das ist eine Zusammenfassung der wichtigsten Punkte, nicht der volle Wortlaut (die Datei hat gut 8.000 Zeichen). Für einen genauen Abgleich am besten die Datei direkt nebeneinander öffnen – einige Regeln (Hosting, Deploy) gelten ohnehin nur für meine Schulprojekte und müssen nicht 1:1 übernommen werden.</div>
+  </section>
+
+  <!-- Verbundene Werkzeuge -->
+  <section class="bereich" style="--sektion-farbe:var(--c-tools); --sektion-bg:var(--c-tools-bg);">
+    <h2>Verbundene Werkzeuge</h2>
+    <div class="ort">In dieser Sitzung aktiv nutzbar – bei ihr unter den Verbindungs-/Connector-Einstellungen vergleichen</div>
+
+    <div class="zeile-kopf"><span>Werkzeug</span><span>Bei ihr?</span></div>
+    <div class="zeile"><div><div class="label">Gmail</div><div class="wert">E-Mails lesen, durchsuchen, Entwürfe anlegen</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Microsoft 365 / Outlook</div><div class="wert">Mail, Kalender, Teams, SharePoint</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Chrome-Erweiterung</div><div class="wert">Browser lesen und steuern (eigenes Chrome-Profil)</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Computer-Steuerung</div><div class="wert">Klicks/Eingaben auf dem Desktop für Programme ohne eigene Anbindung</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Geplante Aufgaben</div><div class="wert">Wiederkehrende Erinnerungen/Routinen einrichten</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">iOS-Simulator</div><div class="wert">Nur relevant, wenn Xcode installiert ist</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Terminal-Lesezugriff</div><div class="wert">Ausgabe laufender Terminal-Sitzungen mitlesen</div></div><div class="check"></div></div>
+
+    <div class="fussnote">Nicht jede Verbindung muss bei ihr auch an sein – das hängt davon ab, was sie tatsächlich braucht. Diese Liste ist zum Abhaken, welche sie kennt bzw. selbst eingerichtet hat.</div>
+  </section>
+
+  <!-- Skills -->
+  <section class="bereich" style="--sektion-farbe:var(--c-skills); --sektion-bg:var(--c-skills-bg);">
+    <h2>Eigene Skills</h2>
+    <div class="ort">Ort: <span class="mono">~/.claude/skills/</span> · selbst angelegt, nicht über einen Schalter, sondern als Ordner</div>
+
+    <ul class="liste-einfach">
+      <li><div class="name">schul-webtool</div><div class="beschreibung">Startgerüst für ein neues Verwaltungs-Tool der BBS (PHP + JSON, Admin-Login, Upload-Struktur)</div></li>
+      <li><div class="name">unterricht-bauen</div><div class="beschreibung">Baut aus Bereich + Thema + Quellen fertige Lerneinheiten für unterricht.bbs-walsrode.de</div></li>
+      <li><div class="name">grilling</div><div class="beschreibung">Stellt eine Idee oder einen Plan kritisch auf die Probe</div></li>
+      <li><div class="name">grill-me</div><div class="beschreibung">Ältere Variante von „grilling“</div></li>
+    </ul>
+
+    <div class="fussnote">Für identisches Verhalten müssten diese vier Ordner auf ihren Rechner kopiert werden – reine Standard-Skills (docx, pdf, xlsx, Termin-Skill usw.) hat jeder Account ohnehin automatisch.</div>
+  </section>
+
+  <!-- Berechtigungen -->
+  <section class="bereich" style="--sektion-farbe:var(--c-berecht); --sektion-bg:var(--c-berecht-bg);">
+    <h2>Berechtigungen &amp; Arbeitsmodus</h2>
+    <div class="ort">Ort: <span class="mono">~/.claude/settings.json</span></div>
+
+    <div class="zeile-kopf"><span>Einstellung</span><span>Bei ihr?</span></div>
+    <div class="zeile"><div><div class="label">Globale Berechtigungsdatei</div><div class="wert">Leer – keine eigenen Sonderregeln, Hooks oder Umgebungsvariablen gesetzt</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Arbeitsmodus</div><div class="wert">Automatik-Modus aktiv: unkritische Schritte laufen ohne Rückfrage, bei riskanten/nicht umkehrbaren Aktionen wird trotzdem nachgefragt</div></div><div class="check"></div></div>
+    <div class="zeile"><div><div class="label">Ausnahme im Projekt „ClaudeDaten“</div><div class="wert">Websuche ist dort automatisch erlaubt – nur lokal für dieses eine Projekt, nicht global</div></div><div class="check"></div></div>
+  </section>
+
+  <!-- Grenzen -->
+  <section class="bereich" style="--sektion-farbe:var(--c-grenzen); --sektion-bg:var(--c-grenzen-bg);">
+    <h2>Was diese Übersicht nicht zeigen kann</h2>
+    <ul class="liste-einfach">
+      <li><div class="name">Hell-/Dunkel-Modus &amp; Darstellung</div><div class="beschreibung">reine Oberflächen-Einstellung, nirgends als Datei gespeichert</div></li>
+      <li><div class="name">Töne &amp; Benachrichtigungen</div><div class="beschreibung">App-interne Einstellung</div></li>
+      <li><div class="name">Tastenkürzel</div><div class="beschreibung">bei mir keine eigene Datei angelegt → Standardbelegung aktiv</div></li>
+      <li><div class="name">Ausgewähltes Modell in der Oberfläche</div><div class="beschreibung">diese Sitzung lief mit Sonnet 5, ist aber jederzeit umschaltbar</div></li>
+      <li><div class="name">Abo/Kontingent</div><div class="beschreibung">an den jeweiligen Account gebunden, nicht 1:1 vergleichbar</div></li>
+    </ul>
+    <div class="fussnote">Diese Punkte am besten direkt gemeinsam am Bildschirm durch die Einstellungen klicken statt aus einer Liste abzuhaken.</div>
+  </section>
+
+  <!-- Aktionen -->
+  <section class="bereich" style="--sektion-farbe:var(--c-aktion); --sektion-bg:var(--c-aktion-bg);">
+    <h2>So gleicht ihr ab</h2>
+    <ol class="aktionsliste">
+      <li class="schritt"><span class="num"></span><span>Bei ihr in den Einstellungen die Liste „Verbundene Werkzeuge“ durchgehen und ankreuzen, was übereinstimmt.</span></li>
+      <li class="schritt"><span class="num"></span><span>Arbeitsmodus (Automatik ja/nein) und Berechtigungen vergleichen.</span></li>
+      <li class="schritt"><span class="num"></span><span>Falls sie eigene Skills übernehmen soll: die passenden Ordner aus <span class="mono">~/.claude/skills/</span> kopieren.</span></li>
+      <li class="schritt"><span class="num"></span><span>Eigene Anweisungen nicht blind kopieren, sondern Abschnitt für Abschnitt entscheiden – manche Regeln gelten nur für meine Schulprojekte.</span></li>
+    </ol>
+  </section>
+
+  <footer class="schluss">Zum Nachschlagen unterwegs – aus den lokalen Konfigurationsdateien erzeugt, keine Zugangsdaten enthalten.</footer>
+
+</div>
