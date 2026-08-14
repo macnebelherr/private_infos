@@ -214,6 +214,16 @@
   .chapter-body ul, .chapter-body ol { margin: 10px 0 14px; padding-left: 22px; }
   .chapter-body li { margin-bottom: 8px; }
 
+  .codeblock {
+    margin: 16px 0 0; padding: 18px 20px; border-radius: var(--radius-sm);
+    background: var(--bg-soft); border: 1px solid var(--card-border); overflow-x: auto;
+  }
+  .codeblock pre { margin: 0; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--ink); white-space: pre; }
+  .codeblock .filename {
+    display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--sektion-farbe); margin-bottom: 10px;
+  }
+
   .tldr {
     margin-top: 16px; padding-top: 14px; border-top: 1px dashed color-mix(in srgb, var(--sektion-farbe) 40%, var(--card-border));
     font-size: 15px; color: var(--ink-dim);
@@ -279,6 +289,7 @@
     <a href="#kontrolle" data-color="#b565f5"><span class="t">4</span><span>Wirklich aktiv?</span></a>
     <a href="#link" data-color="#7c3aed"><span class="t">5</span><span>Link &amp; QR-Code</span></a>
     <a href="#testen" data-color="#d8b4fe"><span class="t">6</span><span>Gefahrlos testen</span></a>
+    <a href="#farbcode" data-color="#a78bfa"><span class="t">7</span><span>Bonus: Aktivitäten einfärben</span></a>
     <a href="#glossar" data-color="#c084fc"><span class="t">＋</span><span>Begriffe</span></a>
   </nav>
 
@@ -290,6 +301,7 @@
       <a href="#kontrolle">Kontrolle</a>
       <a href="#link">Link</a>
       <a href="#testen">Testen</a>
+      <a href="#farbcode">Farbcode</a>
       <a href="#glossar">Begriffe</a>
     </div>
 
@@ -427,13 +439,35 @@
           <code>.../course/view.php?id=XX</code>.
         </p>
         <p>
-          Für Nachzügler eignet sich derselbe Link als <strong>QR-Code</strong>. Moodle
-          selbst hat dafür keine eingebaute Funktion — die moodle-eigenen QR-Codes sind
-          nur fürs Einloggen in die Mobile App gedacht, nicht für Kurs-Links. Stattdessen
-          reicht eine beliebige kostenlose QR-Code-Generator-Webseite: Link einfügen,
-          Bild runterladen. Unbedenklich, da nur die öffentliche Kurs-Adresse drinsteckt.
+          Für Nachzügler eignet sich derselbe Link als <strong>QR-Code</strong> — und
+          hier gibt es tatsächlich einen eingebauten Weg, wenn eure Instanz das Theme
+          <strong>Boost Union</strong> nutzt (bei uns der Fall):
         </p>
-        <div class="tldr"><b>Kurz gesagt</b>Direkter Link statt „selbst suchen", QR-Code über eine externe Webseite — Moodle bringt dafür nichts Eigenes mit.</div>
+        <ol>
+          <li>Im Kurs „Bearbeiten einschalten".</li>
+          <li>Am <strong>rechten Bildschirmrand</strong> nach einem schmalen Pfeil/Tab
+            suchen, der die Blockleiste öffnet (leicht zu übersehen, oft nur eine dünne
+            Lasche am Rand).</li>
+          <li>In der Blockleiste „+ Block hinzufügen" → <strong>„QR-Code"</strong>
+            auswählen.</li>
+          <li>Der Block erzeugt automatisch einen QR-Code zur aktuellen Kursseite —
+            ganz ohne eigene Konfiguration. Format (SVG/PNG) und Größe lassen sich
+            einstellen, über „Herunterladen" auch als Bilddatei für einen Aushang
+            sichern.</li>
+        </ol>
+        <div class="analogie">
+          <div class="sign">!</div>
+          <p><b>Nicht verwechseln:</b> Der QR-Code unter „Einstellungen → Mobile App"
+            ist ein persönlicher Login-Token für die Moodle-App — den nicht an Schüler
+            weitergeben, das wäre wie ein geteiltes Passwort. Der „QR-Code"-Block ist
+            etwas anderes und unbedenklich, weil er nur die öffentliche Kursadresse
+            zeigt.</p>
+        </div>
+        <p style="margin-top: 18px;">
+          Gibt es diesen Block nicht (andere Schule, anderes Theme): Notlösung bleibt
+          eine beliebige kostenlose QR-Code-Generator-Webseite mit dem Kurs-Link.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Boost Union hat einen fertigen „QR-Code"-Block für die Kursseite — sonst tut's auch eine externe Generator-Webseite mit dem direkten Kurs-Link.</div>
       </div>
     </section>
 
@@ -473,6 +507,62 @@
       </div>
     </section>
 
+    <section class="chapter" id="farbcode" style="--sektion-farbe:#a78bfa">
+      <div class="chapter-kicker">Bonus, nicht direkt zur Einschreibung</div>
+      <h2>Aktivitäten auf der Kursseite farblich markieren</h2>
+      <div class="chapter-body">
+        <p>
+          Nebenbei gefunden, beim gleichen Rundgang: Tests und Aufgaben-Abgaben sehen
+          auf der Kursseite nur am kleinen Icon unterschiedlich aus. Wer lieber Farbe
+          statt Symbol als Unterscheidung mag: Auch dafür gibt es keinen Schalter in
+          Moodle selbst, aber einen Weg über <strong>Boost Union → SCSS-Snippets</strong>.
+        </p>
+        <div class="analogie">
+          <div class="sign">!</div>
+          <p><b>Wirkt sitezweit.</b> Anders als der Name „Scope: course" vermuten
+            lässt, gilt die Farbe auf <strong>allen</strong> Kursen der Instanz, nicht
+            nur im eigenen — „course" heißt nur „auf Kursseiten", nicht „nur mein
+            Kurs". Vor dem Einsatz kurz mit den Kolleg/innen absprechen.</p>
+        </div>
+        <p style="margin-top: 18px;"><strong>Einrichtung (einmalig, als Website-Admin):</strong></p>
+        <ol>
+          <li><code>Website-Administration → Darstellung → Boost Union →
+            SCSS-Snippets</code>, Reiter „Einstellungen".</li>
+          <li>„Hochgeladene Snippets aktivieren" auf „Ja", speichern.</li>
+          <li>Eine <code>.scss</code>-Datei mit folgendem Inhalt erstellen und auf dem
+            Reiter „Überblick" per Drag&amp;Drop hochladen:</li>
+        </ol>
+        <div class="codeblock">
+          <span class="filename">aktivitaeten-farbcodierung.scss</span>
+          <pre>// Snippet Title: Aktivitäten farblich markieren: Test vs. Aufgabe
+// Scope: course
+// Goal: eyecandy
+// Description: Test-Aktivitäten (Quiz) roter, Aufgaben-Abgaben (Assign)
+//   grüner linker Rand auf der Kursseite.
+// Creator: Euer Name
+// Tested on: Moodle 5.x, Safari
+
+.modtype_quiz {
+  border-left: 4px solid #c0392b;
+  background-color: rgba(192, 57, 43, 0.07);
+  border-radius: 0 6px 6px 0;
+}
+
+.modtype_assign {
+  border-left: 4px solid #1e8449;
+  background-color: rgba(30, 132, 73, 0.07);
+  border-radius: 0 6px 6px 0;
+}</pre>
+        </div>
+        <p style="margin-top: 18px;">
+          Nach dem Hochladen auf „Überblick" das Snippet über das Augen-Symbol
+          aktivieren — jede Änderung auf dieser Seite leert automatisch den
+          Design-Cache, ein zusätzliches manuelles Leeren ist nicht nötig.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Boost Union → SCSS-Snippets → eigene .scss-Datei mit Kopf-Metadaten hochladen und aktivieren — wirkt dann für alle Kurse der Instanz.</div>
+      </div>
+    </section>
+
     <div class="section-label" id="glossar"><h3>Begriffe zum Nachschlagen</h3></div>
     <div class="data-table" style="margin-bottom:64px">
       <div class="scroll">
@@ -486,6 +576,10 @@
             <tr><td class="term">Plugin-Übersicht</td><td>Website-Administration → Plugins → Plugin-Übersicht — zeigt global, ob ein Plugin wie enrol_self überhaupt aktiviert ist.</td></tr>
             <tr><td class="term">Anmelden als</td><td>Admin-Funktion auf der Profilseite eines Nutzers, um testweise dessen Sicht auf Moodle einzunehmen, ohne sein Passwort zu kennen.</td></tr>
             <tr><td class="term">Kurs-Link</td><td>Direkte Adresse eines Kurses, Muster <code>course/view.php?id=XX</code>, zu finden über den Reiter „Kurs" und die Browser-Adresszeile.</td></tr>
+            <tr><td class="term">Boost Union</td><td>Erweitertes Theme (Kind-Theme von Boost) mit vielen Zusatzfunktionen, u. a. Blockleiste, QR-Code-Block und SCSS-Snippets.</td></tr>
+            <tr><td class="term">Blockleiste</td><td>Rechte Seitenleiste für Blöcke (Kalender, QR-Code, …), standardmäßig eingeklappt — Pfeil/Tab am rechten Bildschirmrand öffnet sie.</td></tr>
+            <tr><td class="term">SCSS-Snippet</td><td>Kleiner, benannter CSS/SCSS-Codeblock, den man in Boost Union hochladen und einzeln aktivieren kann, um das Erscheinungsbild anzupassen.</td></tr>
+            <tr><td class="term">Design-Cache</td><td>Zwischengespeicherte, fertig kompilierte CSS-Version der Seite — wird bei SCSS-Snippet-Änderungen automatisch geleert.</td></tr>
           </tbody>
         </table>
       </div>
