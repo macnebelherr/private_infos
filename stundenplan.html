@@ -97,8 +97,8 @@
 
   .grid {
     display: grid;
-    grid-template-columns: 92px repeat(5, minmax(150px, 1fr));
-    min-width: 820px;
+    grid-template-columns: 62px repeat(5, minmax(92px, 1fr));
+    min-width: 0;
   }
 
   .grid .col-head {
@@ -200,9 +200,6 @@
   .row-label .dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; background: var(--cat); }
   .row-label .name { font-weight: 600; }
   .row-label .kurse { display: block; font-size: 12px; color: var(--ink-faint); font-weight: 400; margin-top: 1px; }
-  .bar-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
-  .bar { width: 70px; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; flex-shrink: 0; }
-  .bar-fill { height: 100%; background: var(--cat); border-radius: 999px; transition: width 0.2s ease; }
 
   @media (max-width: 640px) {
     .stat-tiles { grid-template-columns: 1fr 1fr; }
@@ -365,7 +362,7 @@
 
   <div class="stats">
     <h2>Stunden-Übersicht</h2>
-    <p class="stats-sub">Direkt aus dem Stundenplan oben berechnet — alle Blöcke sind Doppelstunden (90 Min.). Die Summen ändern sich zwischen 1. und 2. Halbjahr nicht: Kunststoff 1. Lj gibt am Donnerstag genau die 2 Std. ab, die HEP montags neu dazubekommt.</p>
+    <p class="stats-sub">Direkt aus dem Stundenplan oben berechnet — alle Blöcke sind Doppelstunden (90 Min.). Die ersten drei Spalten wechseln mit dem Halbjahr-Toggle oben, die letzte Spalte ist der feste Jahresdurchschnitt aus der Tabelle unten (Jahresstunden ÷ 38,8 Schulwochen) und ändert sich beim Umschalten nicht.</p>
 
     <div class="stat-tiles">
       <div class="stat-tile"><div class="k">Ø Std. / Woche</div><div class="v">24</div></div>
@@ -380,7 +377,8 @@
             <th>Klasse / Fachklasse</th>
             <th class="num">Ungerade KW</th>
             <th class="num">Gerade KW</th>
-            <th class="num">Ø Std. / Woche</th>
+            <th class="num">Ø Std./Woche<br><span style="font-weight:400">Halbjahr</span></th>
+            <th class="num">Ø Std./Woche<br><span style="font-weight:400">Schuljahr</span></th>
           </tr>
         </thead>
         <tbody>
@@ -388,49 +386,57 @@
             <td><div class="row-label" style="--cat:var(--k11)"><span class="dot"></span><span><span class="name">Klasse 11</span><span class="kurse">BG-GS2-26 (Ma 11)</span></span></div></td>
             <td class="num">4</td>
             <td class="num">4</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--k11)"><div class="bar-fill" style="width:50%"></div></div>4</div></td>
+            <td class="num">4</td>
+            <td class="num">4,0</td>
           </tr>
           <tr>
             <td><div class="row-label" style="--cat:var(--k12)"><span class="dot"></span><span><span class="name">Klasse 12</span><span class="kurse">Ma-12-1C</span></span></div></td>
             <td class="num">2</td>
             <td class="num">4</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--k12)"><div class="bar-fill" style="width:37.5%"></div></div>3</div></td>
+            <td class="num">3</td>
+            <td class="num">3,1</td>
           </tr>
           <tr>
             <td><div class="row-label" style="--cat:var(--k13)"><span class="dot"></span><span><span class="name">Klasse 13</span><span class="kurse">Ma-13-1A</span></span></div></td>
             <td class="num">4</td>
             <td class="num">6</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--k13)"><div class="bar-fill" style="width:62.5%"></div></div>5</div></td>
+            <td class="num">5</td>
+            <td class="num">4,9</td>
           </tr>
           <tr>
             <td><div class="row-label" style="--cat:var(--metall)"><span class="dot"></span><span><span class="name">Metall</span><span class="kurse">BS-MKT-25 (2.Lj)</span></span></div></td>
             <td class="num">4</td>
             <td class="num">4</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--metall)"><div class="bar-fill" style="width:50%"></div></div>4</div></td>
+            <td class="num">4</td>
+            <td class="num">4,0</td>
           </tr>
           <tr id="rowKunst1">
             <td><div class="row-label" style="--cat:var(--kunst1)"><span class="dot"></span><span><span class="name">Kunststoff 1. Lj</span><span class="kurse">BS-MKK-26 (1.Lj)</span></span></div></td>
             <td class="num" data-hj1="6" data-hj2="4">6</td>
             <td class="num" data-hj1="6" data-hj2="4">6</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--kunst1)"><div class="bar-fill" data-hj1="75%" data-hj2="50%" style="width:75%"></div></div><span data-hj1="6" data-hj2="4">6</span></div></td>
+            <td class="num" data-hj1="6" data-hj2="4">6</td>
+            <td class="num">5,0</td>
           </tr>
           <tr>
             <td><div class="row-label" style="--cat:var(--kunst2)"><span class="dot"></span><span><span class="name">Kunststoff 2. Lj</span><span class="kurse">BS-MKK-25 (2.Lj)</span></span></div></td>
             <td class="num">2</td>
             <td class="num">2</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--kunst2)"><div class="bar-fill" style="width:25%"></div></div>2</div></td>
+            <td class="num">2</td>
+            <td class="num">2,0</td>
           </tr>
           <tr id="rowHep">
             <td><div class="row-label" style="--cat:var(--hep)"><span class="dot"></span><span><span class="name">HEP</span><span class="kurse">FS-HEP-25 · ab 8.2.</span></span></div></td>
             <td class="num" data-hj1="0" data-hj2="2">0</td>
             <td class="num" data-hj1="0" data-hj2="2">0</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--hep)"><div class="bar-fill" data-hj1="0%" data-hj2="25%" style="width:0%"></div></div><span data-hj1="0" data-hj2="2">0</span></div></td>
+            <td class="num" data-hj1="0" data-hj2="2">0</td>
+            <td class="num">1,0</td>
           </tr>
           <tr class="total">
             <td>Gesamt</td>
             <td class="num">22</td>
             <td class="num">26</td>
             <td class="num">24</td>
+            <td class="num">24,0</td>
           </tr>
         </tbody>
       </table>
@@ -547,12 +553,7 @@
 
       document.getElementById('rowHep').classList.toggle('is-inactive', currentHj === '1');
       document.querySelectorAll('[data-hj1]').forEach(function (el) {
-        var val = currentHj === '2' ? el.dataset.hj2 : el.dataset.hj1;
-        if (el.classList.contains('bar-fill')) {
-          el.style.width = val;
-        } else {
-          el.textContent = val;
-        }
+        el.textContent = currentHj === '2' ? el.dataset.hj2 : el.dataset.hj1;
       });
     }
 
