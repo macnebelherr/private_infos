@@ -15,7 +15,9 @@
     --k12: #6a5a95;   --k12-tint: #e9e4f1;
     --k13: #217f7f;   --k13-tint: #dcefee;
     --metall: #a85a28; --metall-tint: #f2e4d5;
-    --kunst: #4c8a52;  --kunst-tint: #e3efe0;
+    --kunst1: #4c8a52; --kunst1-tint: #e3efe0;
+    --kunst2: #2f6e46; --kunst2-tint: #dbe9e0;
+    --hep: #a8456a;    --hep-tint: #f2dfe6;
 
     --radius: 12px;
     --font-display: Charter, "Iowan Old Style", "Georgia", serif;
@@ -38,7 +40,9 @@
       --k12: #b4a5df;   --k12-tint: #2c2740;
       --k13: #6fcfc6;   --k13-tint: #1c3532;
       --metall: #e0a06a; --metall-tint: #3a2c1e;
-      --kunst: #97cf93;  --kunst-tint: #23331f;
+      --kunst1: #97cf93; --kunst1-tint: #23331f;
+      --kunst2: #6fbf88; --kunst2-tint: #1c3327;
+      --hep: #e08fae;    --hep-tint: #3a2430;
     }
   }
   :root[data-theme="dark"] {
@@ -55,7 +59,9 @@
     --k12: #b4a5df;   --k12-tint: #2c2740;
     --k13: #6fcfc6;   --k13-tint: #1c3532;
     --metall: #e0a06a; --metall-tint: #3a2c1e;
-    --kunst: #97cf93;  --kunst-tint: #23331f;
+    --kunst1: #97cf93; --kunst1-tint: #23331f;
+    --kunst2: #6fbf88; --kunst2-tint: #1c3327;
+    --hep: #e08fae;    --hep-tint: #3a2430;
   }
 
   * { box-sizing: border-box; }
@@ -74,7 +80,7 @@
     font-family: var(--font-display); font-weight: 600; font-size: 2.1rem; margin: 0 0 6px;
     text-wrap: balance; letter-spacing: -0.01em;
   }
-  .head .sub { color: var(--ink-dim); font-size: 15px; max-width: 46ch; margin: 0; }
+  .head .sub { color: var(--ink-dim); font-size: 15px; max-width: 50ch; margin: 0; }
   .head .meta {
     font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-faint);
     text-align: right; line-height: 1.7;
@@ -128,6 +134,7 @@
     display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
     gap: 12px; margin: 0 0 18px;
   }
+  .toggle-group { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
   .week-toggle {
     display: inline-flex; border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px;
     background: var(--surface);
@@ -142,14 +149,14 @@
   .today-badge { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-faint); }
   .today-badge b { color: var(--ink-dim); }
 
-  .lesson.biweekly { position: relative; }
+  .lesson.biweekly, .lesson.halbjahr { position: relative; }
   .lesson .parity-tag {
     font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.03em;
     color: var(--ink-faint); margin-top: 1px;
   }
   .cell.is-hidden .lesson { opacity: 0.28; }
   .cell.is-hidden .lesson::after {
-    content: "entfällt diese Woche"; position: absolute; inset: 0; display: flex;
+    content: attr(data-hidden-label); position: absolute; inset: 0; display: flex;
     align-items: center; justify-content: center; text-align: center; padding: 6px;
     font-size: 11px; font-weight: 600; color: var(--ink-dim); background: color-mix(in srgb, var(--surface) 55%, transparent);
     border-radius: 9px;
@@ -187,13 +194,15 @@
   table.stats-table td { padding: 13px 16px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; font-size: 14px; }
   table.stats-table tr:last-child td { border-bottom: none; }
   table.stats-table tr.total td { font-weight: 700; background: var(--surface-2); border-top: 1px solid var(--border); }
+  table.stats-table tr.is-inactive td { color: var(--ink-faint); }
+  table.stats-table tr.is-inactive .row-label .name { color: var(--ink-faint); }
   .row-label { display: flex; align-items: center; gap: 9px; }
   .row-label .dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; background: var(--cat); }
   .row-label .name { font-weight: 600; }
   .row-label .kurse { display: block; font-size: 12px; color: var(--ink-faint); font-weight: 400; margin-top: 1px; }
   .bar-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
   .bar { width: 70px; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; flex-shrink: 0; }
-  .bar-fill { height: 100%; background: var(--cat); border-radius: 999px; }
+  .bar-fill { height: 100%; background: var(--cat); border-radius: 999px; transition: width 0.2s ease; }
 
   @media (max-width: 640px) {
     .stat-tiles { grid-template-columns: 1fr 1fr; }
@@ -204,9 +213,9 @@
   <div class="head">
     <div>
       <h1>Stundenplan</h1>
-      <p class="sub">Klasse 11, 12, 13 sowie die Fachklassen Metall und Kunststoff — direkt aus der macOS-Kalender-App gelesen.</p>
+      <p class="sub">Klasse 11, 12, 13, die Fachklassen Metall und Kunststoff (1./2. Lehrjahr) sowie ab Februar die neue Fachklasse HEP — direkt aus der macOS-Kalender-App gelesen.</p>
     </div>
-    <div class="meta">Quelle: Calendar.app (lokal)<br>Basis: echte Wiederholungsregel je Termin<br>Stand: 15.08.2026</div>
+    <div class="meta">Quelle: Calendar.app (lokal)<br>Basis: echte Wiederholungsregel je Termin<br>Stand: 16.08.2026</div>
   </div>
 
   <div class="toolbar">
@@ -215,15 +224,24 @@
       <span class="chip"><span class="swatch" style="background:var(--k12)"></span>Klasse 12</span>
       <span class="chip"><span class="swatch" style="background:var(--k13)"></span>Klasse 13</span>
       <span class="chip"><span class="swatch" style="background:var(--metall)"></span>Metall</span>
-      <span class="chip"><span class="swatch" style="background:var(--kunst)"></span>Kunststoff</span>
+      <span class="chip"><span class="swatch" style="background:var(--kunst1)"></span>Kunststoff 1. Lj</span>
+      <span class="chip"><span class="swatch" style="background:var(--kunst2)"></span>Kunststoff 2. Lj</span>
+      <span class="chip"><span class="swatch" style="background:var(--hep)"></span>HEP</span>
     </div>
-    <div style="display:flex; align-items:center; gap:14px;">
-      <span class="today-badge" id="todayBadge">Heute: KW –</span>
+  </div>
+
+  <div class="toolbar">
+    <div class="toggle-group">
+      <div class="week-toggle" role="group" aria-label="Halbjahr wählen">
+        <button type="button" id="btnHj1" data-hj="1">1. Halbjahr</button>
+        <button type="button" id="btnHj2" data-hj="2">2. Halbjahr</button>
+      </div>
       <div class="week-toggle" role="group" aria-label="Kalenderwoche wählen">
         <button type="button" id="btnGerade" data-parity="gerade">Gerade KW</button>
         <button type="button" id="btnUngerade" data-parity="ungerade">Ungerade KW</button>
       </div>
     </div>
+    <span class="today-badge" id="todayBadge">Heute: KW –</span>
   </div>
 
   <div class="grid-wrap">
@@ -236,7 +254,13 @@
       <div class="col-head">Freitag</div>
 
       <div class="time-label" style="grid-column:1; grid-row:2;"><b>07:55–09:25</b>Std. 1–2</div>
-      <div class="cell" style="grid-column:2; grid-row:2;"></div>
+      <div class="cell" data-hj="2" style="grid-column:2; grid-row:2;">
+        <div class="lesson halbjahr" style="--cat:var(--hep); --cat-tint:var(--hep-tint)" data-hidden-label="noch nicht gestartet">
+          <div class="code">FS-HEP-25</div>
+          <div class="klasse">HEP</div>
+          <div class="room">Raum H 001</div>
+        </div>
+      </div>
       <div class="cell" style="grid-column:3; grid-row:2;"></div>
       <div class="cell" style="grid-column:4; grid-row:2;">
         <div class="lesson" style="--cat:var(--metall); --cat-tint:var(--metall-tint)">
@@ -245,11 +269,11 @@
           <div class="room">Raum H 004</div>
         </div>
       </div>
-      <div class="cell" style="grid-column:5; grid-row:2 / span 2;">
-        <div class="lesson" style="--cat:var(--kunst); --cat-tint:var(--kunst-tint)">
+      <div class="cell" data-hj="1" style="grid-column:5; grid-row:2;">
+        <div class="lesson halbjahr" style="--cat:var(--kunst1); --cat-tint:var(--kunst1-tint)" data-hidden-label="entfällt ab 4.2.">
           <div class="code">BS-MKK-26 (1.Lj)</div>
-          <div class="klasse">Kunststoff · Doppelblock</div>
-          <div class="room">Raum H 003 · 07:55–11:15</div>
+          <div class="klasse">Kunststoff 1. Lj</div>
+          <div class="room">Raum H 003</div>
         </div>
       </div>
       <div class="cell" style="grid-column:6; grid-row:2;"></div>
@@ -277,15 +301,22 @@
           <div class="room">Raum B 206</div>
         </div>
       </div>
+      <div class="cell" style="grid-column:5; grid-row:3;">
+        <div class="lesson" style="--cat:var(--kunst1); --cat-tint:var(--kunst1-tint)">
+          <div class="code">BS-MKK-26 (1.Lj)</div>
+          <div class="klasse">Kunststoff 1. Lj</div>
+          <div class="room">Raum H 003</div>
+        </div>
+      </div>
       <div class="cell" style="grid-column:6; grid-row:3;"></div>
 
       <div class="time-label" style="grid-column:1; grid-row:4;"><b>11:35–13:05</b>Std. 5–6</div>
       <div class="cell" style="grid-column:2; grid-row:4;"></div>
       <div class="cell" style="grid-column:3; grid-row:4;"></div>
       <div class="cell" style="grid-column:4; grid-row:4;">
-        <div class="lesson" style="--cat:var(--kunst); --cat-tint:var(--kunst-tint)">
+        <div class="lesson" style="--cat:var(--kunst1); --cat-tint:var(--kunst1-tint)">
           <div class="code">BS-MKK-26 (1.Lj)</div>
-          <div class="klasse">Kunststoff</div>
+          <div class="klasse">Kunststoff 1. Lj</div>
           <div class="room">Raum H 003</div>
         </div>
       </div>
@@ -306,9 +337,9 @@
 
       <div class="time-label" style="grid-column:1; grid-row:5;"><b>13:25–14:55</b>Std. 7–8</div>
       <div class="cell" style="grid-column:2; grid-row:5;">
-        <div class="lesson" style="--cat:var(--kunst); --cat-tint:var(--kunst-tint)">
+        <div class="lesson" style="--cat:var(--kunst2); --cat-tint:var(--kunst2-tint)">
           <div class="code">BS-MKK-25 (2.Lj)</div>
-          <div class="klasse">Kunststoff</div>
+          <div class="klasse">Kunststoff 2. Lj</div>
           <div class="room">Raum H 003</div>
         </div>
       </div>
@@ -334,7 +365,7 @@
 
   <div class="stats">
     <h2>Stunden-Übersicht</h2>
-    <p class="stats-sub">Direkt aus dem Stundenplan oben berechnet — alle Blöcke sind Doppelstunden (90 Min.). Zwei Reihen laufen nur in geraden Kalenderwochen, deshalb unterscheiden sich Wochen-Summe und Durchschnitt.</p>
+    <p class="stats-sub">Direkt aus dem Stundenplan oben berechnet — alle Blöcke sind Doppelstunden (90 Min.). Die Summen ändern sich zwischen 1. und 2. Halbjahr nicht: Kunststoff 1. Lj gibt am Donnerstag genau die 2 Std. ab, die HEP montags neu dazubekommt.</p>
 
     <div class="stat-tiles">
       <div class="stat-tile"><div class="k">Ø Std. / Woche</div><div class="v">24</div></div>
@@ -377,11 +408,23 @@
             <td class="num">4</td>
             <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--metall)"><div class="bar-fill" style="width:50%"></div></div>4</div></td>
           </tr>
+          <tr id="rowKunst1">
+            <td><div class="row-label" style="--cat:var(--kunst1)"><span class="dot"></span><span><span class="name">Kunststoff 1. Lj</span><span class="kurse">BS-MKK-26 (1.Lj)</span></span></div></td>
+            <td class="num" data-hj1="6" data-hj2="4">6</td>
+            <td class="num" data-hj1="6" data-hj2="4">6</td>
+            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--kunst1)"><div class="bar-fill" data-hj1="75%" data-hj2="50%" style="width:75%"></div></div><span data-hj1="6" data-hj2="4">6</span></div></td>
+          </tr>
           <tr>
-            <td><div class="row-label" style="--cat:var(--kunst)"><span class="dot"></span><span><span class="name">Kunststoff</span><span class="kurse">BS-MKK-26 (1.Lj) · BS-MKK-25 (2.Lj)</span></span></div></td>
-            <td class="num">8</td>
-            <td class="num">8</td>
-            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--kunst)"><div class="bar-fill" style="width:100%"></div></div>8</div></td>
+            <td><div class="row-label" style="--cat:var(--kunst2)"><span class="dot"></span><span><span class="name">Kunststoff 2. Lj</span><span class="kurse">BS-MKK-25 (2.Lj)</span></span></div></td>
+            <td class="num">2</td>
+            <td class="num">2</td>
+            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--kunst2)"><div class="bar-fill" style="width:25%"></div></div>2</div></td>
+          </tr>
+          <tr id="rowHep">
+            <td><div class="row-label" style="--cat:var(--hep)"><span class="dot"></span><span><span class="name">HEP</span><span class="kurse">FS-HEP-25 · ab 8.2.</span></span></div></td>
+            <td class="num" data-hj1="0" data-hj2="2">0</td>
+            <td class="num" data-hj1="0" data-hj2="2">0</td>
+            <td class="num"><div class="bar-cell"><div class="bar" style="--cat:var(--hep)"><div class="bar-fill" data-hj1="0%" data-hj2="25%" style="width:0%"></div></div><span data-hj1="0" data-hj2="2">0</span></div></td>
           </tr>
           <tr class="total">
             <td>Gesamt</td>
@@ -396,7 +439,7 @@
 
   <div class="stats">
     <h2>Std. je Fach — von Ferien zu Ferien</h2>
-    <p class="stats-sub">Aus dem Stundenplan oben plus den Kalendern <code>Ferien</code> und <code>Feiertage in Deutschland</code> berechnet: fünf Blöcke zwischen den Ferien des Schuljahres 2026/27, jeweils tagesgenau ausgezählt (inkl. Berücksichtigung der biwöchentlichen Stunden und der Brückentage rund um Himmelfahrt/Pfingsten 2027).</p>
+    <p class="stats-sub">Aus dem Stundenplan oben plus den Kalendern <code>Ferien</code> und <code>Feiertage in Deutschland</code> berechnet: fünf Blöcke zwischen den Ferien des Schuljahres 2026/27, jeweils tagesgenau ausgezählt (inkl. Berücksichtigung der biwöchentlichen Stunden, der Brückentage rund um Himmelfahrt/Pfingsten 2027 und des Wegfalls von Kunststoff 1. Lj Donnerstag 1. Block ab 4.2. bzw. Start von HEP ab 8.2.).</p>
 
     <div class="stat-tiles">
       <div class="stat-tile"><div class="k">Std. gesamt Schuljahr</div><div class="v">932</div></div>
@@ -439,13 +482,23 @@
             <td class="num"><strong>156</strong></td>
           </tr>
           <tr>
-            <td><div class="row-label" style="--cat:var(--kunst)"><span class="dot"></span><span><span class="name">Kunststoff</span><span class="kurse">BS-MKK-26 (1.Lj) · BS-MKK-25 (2.Lj)</span></span></div></td>
-            <td class="num">64</td><td class="num">66</td><td class="num">24</td><td class="num">54</td><td class="num">102</td>
-            <td class="num"><strong>310</strong></td>
+            <td><div class="row-label" style="--cat:var(--kunst1)"><span class="dot"></span><span><span class="name">Kunststoff 1. Lj</span><span class="kurse">BS-MKK-26 (1.Lj)</span></span></div></td>
+            <td class="num">48</td><td class="num">48</td><td class="num">18</td><td class="num">28</td><td class="num">52</td>
+            <td class="num"><strong>194</strong></td>
+          </tr>
+          <tr>
+            <td><div class="row-label" style="--cat:var(--kunst2)"><span class="dot"></span><span><span class="name">Kunststoff 2. Lj</span><span class="kurse">BS-MKK-25 (2.Lj)</span></span></div></td>
+            <td class="num">16</td><td class="num">18</td><td class="num">6</td><td class="num">12</td><td class="num">26</td>
+            <td class="num"><strong>78</strong></td>
+          </tr>
+          <tr>
+            <td><div class="row-label" style="--cat:var(--hep)"><span class="dot"></span><span><span class="name">HEP</span><span class="kurse">FS-HEP-25 · ab 8.2.</span></span></div></td>
+            <td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">12</td><td class="num">26</td>
+            <td class="num"><strong>38</strong></td>
           </tr>
           <tr class="total">
             <td>Gesamt</td>
-            <td class="num">192</td><td class="num">200</td><td class="num">74</td><td class="num">160</td><td class="num">306</td>
+            <td class="num">192</td><td class="num">200</td><td class="num">74</td><td class="num">158</td><td class="num">308</td>
             <td class="num">932</td>
           </tr>
         </tbody>
@@ -469,19 +522,44 @@
     var parity = (kw % 2 === 0) ? 'gerade' : 'ungerade';
     document.getElementById('todayBadge').innerHTML = 'Heute: <b>KW ' + kw + '</b> (' + parity + ')';
 
+    var hjCutoff = new Date(2027, 1, 3); // 2. Halbjahr wirkt ab Bis-Osterferien-Block (3.2.2027)
+    var hj = (now >= hjCutoff) ? '2' : '1';
+
     var btnGerade = document.getElementById('btnGerade');
     var btnUngerade = document.getElementById('btnUngerade');
-    var cells = Array.from(document.querySelectorAll('.cell[data-parity]'));
+    var btnHj1 = document.getElementById('btnHj1');
+    var btnHj2 = document.getElementById('btnHj2');
+    var cells = Array.from(document.querySelectorAll('.cell[data-parity], .cell[data-hj]'));
 
-    function applyParity(p) {
+    var currentParity = parity;
+    var currentHj = hj;
+
+    function applyState() {
       cells.forEach(function (c) {
-        c.classList.toggle('is-hidden', c.dataset.parity !== p);
+        var hiddenByParity = c.dataset.parity && c.dataset.parity !== currentParity;
+        var hiddenByHj = c.dataset.hj && c.dataset.hj !== currentHj;
+        c.classList.toggle('is-hidden', hiddenByParity || hiddenByHj);
       });
-      btnGerade.classList.toggle('active', p === 'gerade');
-      btnUngerade.classList.toggle('active', p === 'ungerade');
+      btnGerade.classList.toggle('active', currentParity === 'gerade');
+      btnUngerade.classList.toggle('active', currentParity === 'ungerade');
+      btnHj1.classList.toggle('active', currentHj === '1');
+      btnHj2.classList.toggle('active', currentHj === '2');
+
+      document.getElementById('rowHep').classList.toggle('is-inactive', currentHj === '1');
+      document.querySelectorAll('[data-hj1]').forEach(function (el) {
+        var val = currentHj === '2' ? el.dataset.hj2 : el.dataset.hj1;
+        if (el.classList.contains('bar-fill')) {
+          el.style.width = val;
+        } else {
+          el.textContent = val;
+        }
+      });
     }
-    btnGerade.addEventListener('click', function () { applyParity('gerade'); });
-    btnUngerade.addEventListener('click', function () { applyParity('ungerade'); });
-    applyParity(parity);
+
+    btnGerade.addEventListener('click', function () { currentParity = 'gerade'; applyState(); });
+    btnUngerade.addEventListener('click', function () { currentParity = 'ungerade'; applyState(); });
+    btnHj1.addEventListener('click', function () { currentHj = '1'; applyState(); });
+    btnHj2.addEventListener('click', function () { currentHj = '2'; applyState(); });
+    applyState();
   })();
 </script>
