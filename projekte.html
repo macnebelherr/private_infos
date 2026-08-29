@@ -7,6 +7,164 @@
 <title>Projekte – Privat</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* --- Projektkarten: Klick öffnet Detail-Fenster --- */
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .project-card:hover,
+  .project-card:focus-visible {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    outline: none;
+  }
+  .project-card p { flex: 1; }
+
+  .project-thumb--blank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(135deg, rgba(255, 122, 26, 0.16), rgba(255, 122, 26, 0) 60%),
+      var(--bg);
+  }
+  .project-thumb--blank span {
+    font-size: 15px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .project-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .project-link { margin-top: 0; }
+  .project-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .project-card:hover .project-more { color: var(--accent); }
+
+  .status-beta { color: #6ea8ff; background: rgba(110, 168, 255, 0.14); }
+  .status-idee { color: var(--text-muted); background: rgba(128, 128, 128, 0.15); }
+  .status-offline { color: #9fd18a; background: rgba(159, 209, 138, 0.15); }
+
+  /* --- Detail-Fenster (Pop-up) --- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    animation: modal-fade .18s ease-out;
+  }
+  .modal-overlay[hidden] { display: none; }
+  body.modal-open { overflow: hidden; }
+
+  .modal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: var(--bg-tile);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 34px 30px;
+    animation: modal-rise .2s ease-out;
+  }
+  @keyframes modal-fade { from { opacity: 0; } }
+  @keyframes modal-rise { from { opacity: 0; transform: translateY(12px); } }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 17px;
+  }
+  .modal-close:hover { border-color: var(--accent); }
+
+  .modal-status {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: .04em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+  .modal-body h2 {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  .modal-body h3 {
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 22px 0 8px;
+  }
+  .modal-body p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+  .modal-body ul {
+    margin: 0 0 12px;
+    padding-left: 20px;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .modal-body li { margin-bottom: 4px; }
+
+  .modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .modal-link[hidden] { display: none; }
+  .modal-link:hover { opacity: .9; }
+
+  @media (max-width: 640px) {
+    .modal-overlay { padding: 12px; }
+    .modal-panel { padding: 28px 22px 24px; }
+  }
+</style>
 </head>
 <body>
 
@@ -23,18 +181,18 @@
     <img class="projekte-avatar" src="me-dunkel.jpg" alt="Guido Walther" />
     <div>
       <h1>Projekte</h1>
-      <p class="lead">Alles, was hier entsteht, baue ich Schritt für Schritt gemeinsam mit Claude – ich beschreibe den Bedarf, Claude baut, ich teste und schärfe nach.</p>
+      <p class="lead">Alles, was hier entsteht, baue ich Schritt für Schritt gemeinsam mit Claude – ich beschreibe den Bedarf, Claude baut, ich teste und schärfe nach. Karte anklicken für mehr Details.</p>
     </div>
   </div>
 
   <div class="stats-row">
     <div class="stat">
-      <div class="stat-num">6</div>
+      <div class="stat-num">13</div>
       <div class="stat-label">Projekte</div>
     </div>
     <div class="stat">
-      <div class="stat-num">7</div>
-      <div class="stat-label">Wochen dabei</div>
+      <div class="stat-num">9</div>
+      <div class="stat-label">im Einsatz</div>
     </div>
     <div class="stat">
       <div class="stat-num">Juni 2026</div>
@@ -44,45 +202,302 @@
 
   <div class="projects-grid">
 
-    <div class="project-card">
-      <div class="project-thumb"><img src="shot-schulportal.jpg" alt="Startbildschirm Schulportal" loading="lazy" /></div>
+    <!-- 1 Abteilungsportal -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-schulportal.jpg" alt="Startbildschirm Abteilungsportal" loading="lazy" /></div>
       <span class="project-status status-live">Live</span>
-      <h3>Schulportal</h3>
-      <p>P5-Verwaltung, Aufsichtsplanung, Sportkurswahl und Nachprüfungsrechner – mit viel Logik im Hintergrund, die sonst manuelle Abstimmung und Rechnerei ersetzt und im Kollegium spürbar Zeit spart. Dazu Hilfeseiten und PDF-Druck für den Alltag.</p>
-      <a class="project-link" href="https://abteilung-a.bbs-walsrode.de/" target="_blank" rel="noopener">Ansehen <i class="ti ti-external-link" aria-hidden="true"></i></a>
-    </div>
+      <h3>Abteilungsportal</h3>
+      <p>Prüfungsverwaltung (P1–P5), Aufsichtsplanung, Sportkurswahl und Nachprüfungsrechner der Abteilung A – an einem Ort, auf jedem Gerät. Viel Logik im Hintergrund ersetzt manuelle Abstimmung und Rechnerei.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://abteilung-a.bbs-walsrode.de/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Abteilungsportal</h2>
+        <p>Die tägliche Organisation der Abteilung A an einem Ort statt in vielen Listen und Absprachen. Der öffentliche Teil ist frei, der interne Teil ist per Passwort geschützt.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Prüfungs- und Terminplanung für die Abiturprüfungen P1–P5</li>
+          <li>Automatische Aufsichtsverteilung statt Zuteilung von Hand</li>
+          <li>Sportkurswahl mit Kapazitäten und automatischer Zuteilung</li>
+          <li>Nachprüfungs- und Abiturrechner nach den niedersächsischen Vorgaben</li>
+          <li>Hilfeseiten und PDF-Druck für den Schulalltag</li>
+        </ul>
+        <h3>Nutzen</h3>
+        <p>Nimmt wiederkehrende Absprachen und Berechnungen ab, die sonst per Liste und Zuruf liefen. Der Stand ist für alle gleich und immer aktuell.</p>
+      </template>
+    </article>
 
-    <div class="project-card">
+    <!-- 2 Sekretariat -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
       <div class="project-thumb"><img src="shot-sekretariat.jpg" alt="Startbildschirm Sekretariat" loading="lazy" /></div>
       <span class="project-status status-live">Live</span>
       <h3>Sekretariat</h3>
-      <p>Unterstützung für wiederkehrende Sekretariats-Prozesse wie Papierbestellung, Schulzeitbescheinigungen und Ersteinschulung.</p>
-      <a class="project-link" href="https://sekretariat.bbs-walsrode.de/" target="_blank" rel="noopener">Ansehen <i class="ti ti-external-link" aria-hidden="true"></i></a>
-    </div>
+      <p>Online-Dienste des Sekretariats: Schulzeitbescheinigungen, Papierbestellung, Ersteinschulung, Berufsschultage / Blockklassen und internes Telefonverzeichnis.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://sekretariat.bbs-walsrode.de/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Sekretariat</h2>
+        <p>Wiederkehrende Sekretariats-Vorgänge als schlanke Online-Dienste. Aufgebaut in drei Ebenen: öffentlicher Bereich, Lehrer-Bereich und Admin-Bereich. Die Daten liegen als Dateien auf dem Schulserver, ohne externe Datenbank.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Antrag Schulzeitbescheinigung mit Bearbeitungs-Workflow und fertigem Word-Serienbrief</li>
+          <li>Papierbestellung für die Kollegien mit druckbarem Abholbeleg</li>
+          <li>Ersteinschulung 2026</li>
+          <li>Berufsschultage und Blockpläne, aufbereitet aus den Originalen der Berufsschule</li>
+          <li>Infoboxen für die Startseite, internes Telefonverzeichnis (Lehrer / Admin)</li>
+        </ul>
+      </template>
+    </article>
 
-    <div class="project-card">
-      <div class="project-thumb"><img src="shot-portfolio.jpg" alt="Startbildschirm Fotografie-Portfolio" loading="lazy" /></div>
+    <!-- Willkommensseite (zum Sekretariat) -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-willkommen.jpg" alt="Startbildschirm Willkommensseite" loading="lazy" /></div>
       <span class="project-status status-live">Live</span>
-      <h3>Fotografie-Portfolio</h3>
-      <p>Mein persönliches Foto-Portfolio – Menschen, Sport und Landschaft.</p>
-      <a class="project-link" href="https://macnebelherr.github.io/" target="_blank" rel="noopener">Ansehen <i class="ti ti-external-link" aria-hidden="true"></i></a>
-    </div>
+      <h3>Willkommensseite</h3>
+      <p>Begrüßungsseite für neue Kolleginnen und Kollegen zum digitalen Start – iPad, Software, Fobizz, KI auf einen Blick. Ersetzt das persönliche Anschreiben von Hand.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://sekretariat.bbs-walsrode.de/willkommen/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Willkommensseite</h2>
+        <p>Gehört zum Sekretariats-Webspace und richtet sich an neue Kolleginnen und Kollegen. Rein statisch, kein Login, keine Datenspeicherung. Der Zugang läuft über den Link in der Begrüßungsmail – öffentlich erreichbar, aber nicht verlinkt und nicht in Suchmaschinen.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Allgemeiner Begrüßungstext ohne Anrede und ohne Datum</li>
+          <li>Pflichthinweis zum KI-Selbstlernkurs</li>
+          <li>Vier nummerierte Farbblöcke: iPad und Tools, Lernen mit KI, KI im Unterricht einführen, App Classroom</li>
+          <li>Ansprechpartner und eine kopierfertige Mailvorlage auf einer eigenen Unterseite</li>
+        </ul>
+        <p>Inhaltlich verweist die Seite auf die Pinnwände des Medienzentrums Heidekreis, statt sie doppelt zu pflegen.</p>
+      </template>
+    </article>
 
-    <div class="project-card">
+    <!-- 3 Unterrichts-Portal -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-unterricht.jpg" alt="Startbildschirm Unterrichts-Portal" loading="lazy" /></div>
+      <span class="project-status status-live">Live</span>
+      <h3>Unterrichts-Portal</h3>
+      <p>Gemeinsames Portal für meinen Unterricht: Metalltechnik / CAD, Kunststoff- und Kautschuktechnik, Mathematik am Beruflichen Gymnasium. Jedes Thema gleich aufgebaut – Einstieg, Erarbeiten, Üben, Selbsttest, Abgabe.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://unterricht.bbs-walsrode.de/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Unterrichts-Portal</h2>
+        <p>Seit August 2026 live unter unterricht.bbs-walsrode.de. Ziel ist ein einheitlicher Aufbau für alle Themen, damit sich Schülerinnen und Schüler überall sofort zurechtfinden – und am Ende ein wiederverwendbarer Ablauf: aus „Bereich + Thema + Quellen“ entsteht eine fertige Lerneinheit.</p>
+        <h3>Inhalte</h3>
+        <ul>
+          <li>Metalltechnik → CAD mit FreeCAD: Lernauftragsreihe, Folien, Druck-PDF</li>
+          <li>Kunststoff / Kautschuk → Prüftechnik (Lernfeld 2) und Fertigungsvoraussetzungen (Lernfeld 5, für einen Kollegen aufgebaut)</li>
+          <li>Mathematik 11–13 → Analysis, Stochastik, lineare Algebra</li>
+          <li>Fächerübergreifendes Recyclingprojekt</li>
+        </ul>
+        <h3>Dazu</h3>
+        <ul>
+          <li>Bewertete Moodle-Tests (Import per GIFT)</li>
+          <li>Passwortgeschützter Lösungsbereich für Lehrkräfte, getrennt von der Schüler-Selbstkontrolle</li>
+        </ul>
+      </template>
+    </article>
+
+    <!-- 4 Praktikumskarte -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-praktikumskarte.jpg" alt="Praktikumskarte Heidekreis" loading="lazy" /></div>
+      <span class="project-status status-live">Live · intern</span>
+      <h3>Praktikumskarte Heidekreis</h3>
+      <p>Interaktive Karte aller Praxis- und Kooperationseinrichtungen im Heidekreis für die sozialpädagogischen Ausbildungsgänge – mit Ansprechperson, Kontakt und aktuellem Praktikumsstatus.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://sekretariat.bbs-walsrode.de/praktikumskarte/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Praktikumskarte Heidekreis</h2>
+        <p>Entstanden auf Wunsch einer Kollegin, als Pendant zu einer bestehenden Karte aus der Pflege. Gedacht für Sozialpädagogische Assistenz, Erzieher:innen-Ausbildung und Heilerziehungspflege.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Öffentliche Karte mit Kategorie-Filter und Statusanzeige (sucht Praktikant:innen / kein Bedarf / ungeklärt)</li>
+          <li>Admin-Bereich zum Pflegen der Einrichtungen, inklusive Adresssuche auf der Karte</li>
+          <li>Einrichtungen können ihren Status über einen eigenen Link selbst setzen</li>
+          <li>Derzeit 127 Einrichtungen erfasst</li>
+        </ul>
+        <p>Noch ohne Verlinkung von der Sekretariatsseite, bis der endgültige Ort feststeht.</p>
+      </template>
+    </article>
+
+    <!-- 5 Fehlzeiten-Auswertung -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-fehlzeiten.jpg" alt="Fehlzeiten-Auswertung" loading="lazy" /></div>
+      <span class="project-status status-live">Live · intern</span>
+      <h3>Fehlzeiten-Auswertung</h3>
+      <p>Wertet die Fehlzeiten-CSV der Schulverwaltung im Browser aus – Grundlage für Formblatt F der N-Bank beim Aufstiegs-BAföG. Filterbar nach Schüler:in, Lehrgang und Zeitraum.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://sekretariat.bbs-walsrode.de/Fehlzeiten/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Fehlzeiten-Auswertung</h2>
+        <p>Ein reines Anzeige-Werkzeug: Die CSV wird nur im Browser gelesen, nichts wird gespeichert oder hochgeladen. Passwortgeschützt.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Filter nach Schüler:in, Lehrgang und Zeitraum</li>
+          <li>Verspätungen werden mit einstellbarem Faktor angerechnet</li>
+          <li>Prüfung gegen die AFBG-Grenze</li>
+        </ul>
+        <p>Ersetzt das Zusammensuchen und Nachrechnen von Hand. Die verbindliche Aussage über die Förderung trifft weiterhin die N-Bank.</p>
+      </template>
+    </article>
+
+    <!-- 6 Stundenplan-App -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-stundenplan.jpg" alt="Stundenplan-App für Lehrkräfte" loading="lazy" /></div>
+      <span class="project-status status-beta">In Arbeit · Beta</span>
+      <h3>Stundenplan-App für Lehrkräfte</h3>
+      <p>Aufgeräumte, nur lesende Stundenplan- und Vertretungsansicht fürs Handy. Liest den persönlichen iCal-Feed aus dem virtuellen Klassenbuch und hebt Änderungen hervor.</p>
+      <div class="project-actions">
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Stundenplan-App für Lehrkräfte</h2>
+        <p>Eine schnelle, ruhige Ansicht des eigenen Plans – als Ablösung für die umständliche Portal-Ansicht. Liest nur; es wird nichts in den Stundenplan zurückgeschrieben.</p>
+        <h3>Was drin steckt</h3>
+        <ul>
+          <li>Hoch- und Querformat, Wischgesten zwischen den Tagen</li>
+          <li>Änderungs-Diff: was ist seit dem letzten Blick anders (Ausfall, Raum, Vertretung)</li>
+          <li>„Zum Startbildschirm“ wie eine App (PWA), funktioniert auch offline</li>
+        </ul>
+        <p>Einrichtungsanleitung ist fertig, die App ist im Test.</p>
+      </template>
+    </article>
+
+    <!-- 7 Foto-Social-Media-Seite -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
       <div class="project-thumb"><img src="shot-fotosocial.jpg" alt="Startbildschirm Foto-Social-Media-Seite" loading="lazy" /></div>
       <span class="project-status status-live">Live</span>
       <h3>Foto-Social-Media-Seite</h3>
-      <p>Schnelles, unkompliziertes Hochladen von Fotos bei Schulprojekten für unseren Social-Media-Auftritt, mit eingebauter Logik für den Redaktionsprozess – die Redaktion sichtet und entscheidet über die Veröffentlichung, ganz ohne E-Mail-Sammelsurium.</p>
-      <a class="project-link" href="https://sekretariat.bbs-walsrode.de/fotos-social-media/" target="_blank" rel="noopener">Ansehen <i class="ti ti-external-link" aria-hidden="true"></i></a>
-    </div>
+      <p>Schnelles Hochladen von Fotos bei Schulveranstaltungen für den Social-Media-Auftritt – mit Redaktions-Workflow: die Redaktion sichtet und gibt frei, ohne E-Mail-Sammelei.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://sekretariat.bbs-walsrode.de/fotos-social-media/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Foto-Social-Media-Seite</h2>
+        <p>Ein klarer Weg von der Kamera in die Redaktion, ohne Sammelpostfach.</p>
+        <h3>Ablauf</h3>
+        <ul>
+          <li>Wer fotografiert, bekommt einen 6-stelligen Veranstaltungs-Code</li>
+          <li>Darüber Fotos hochladen und die Galerie ansehen</li>
+          <li>Die Redaktion entscheidet pro Bild über die Veröffentlichung</li>
+        </ul>
+        <p>Läuft im Sekretariats-Webspace, mit eigener Hilfe- und Redaktionsseite.</p>
+      </template>
+    </article>
 
-    <div class="project-card">
-      <div class="project-thumb"><img src="shot-unterricht.jpg" alt="Startbildschirm CAD-Unterricht" loading="lazy" /></div>
-      <span class="project-status status-planned">In Planung</span>
-      <h3>Unterricht</h3>
-      <p>CAD-Unterricht (Folien, Druckvorlagen, Lernaufträge) ist fertig. Als Nächstes: ein Recycling-Projekt mit Metallbau- und Kunststoff-/Kautschuktechnik-Azubis, um 3D-Druck-Abfall zu schreddern und daraus neues Filament herzustellen.</p>
-      <a class="project-link" href="https://abteilung-a.bbs-walsrode.de/CAD/" target="_blank" rel="noopener">CAD-Unterricht ansehen <i class="ti ti-external-link" aria-hidden="true"></i></a>
-    </div>
+    <!-- 8 Namenslerner -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb project-thumb--blank"><span>Namenslerner</span></div>
+      <span class="project-status status-offline">Im Einsatz · offline</span>
+      <h3>Namenslerner</h3>
+      <p>Karteikarten- und Quiz-Tool, um die Namen neuer Schüler:innen anhand von Fotos zu lernen. Läuft bewusst komplett offline als eine einzige Datei – kein Server.</p>
+      <div class="project-actions">
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Namenslerner</h2>
+        <p>Fotos und Namen Minderjähriger sind sensible Daten. Deshalb bewusst kein Hosting auf einem Webspace – die Datei liegt nur lokal auf meinem Gerät und lässt sich als Lesezeichen auf dem Handy speichern.</p>
+        <h3>Wie es funktioniert</h3>
+        <ul>
+          <li>Multiple-Choice: vier Namen zur Auswahl</li>
+          <li>Gewichtete Wiederholung: wer öfter falsch beantwortet wird, kommt häufiger dran</li>
+          <li>Fortschrittsanzeige pro Klasse (noch nicht geübt / wackelig / sitzt)</li>
+        </ul>
+        <p>Neue Klasse: Screenshots aus der Schulverwaltung zuschneiden, Namensliste pflegen, Datei neu bauen.</p>
+      </template>
+    </article>
+
+    <!-- 9 Erasmus+ / Internationalisierung -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-internationalisierung.jpg" alt="Konzept Erasmus-Verwaltung" loading="lazy" /></div>
+      <span class="project-status status-planned">In Vorbereitung</span>
+      <h3>Erasmus+ / Internationalisierung</h3>
+      <p>Schuleigenes, verschlüsseltes Werkzeug für die Erasmus+-Mobilitäten – von der Anmeldung über die Genehmigungen bis zur Förderberechnung. Löst eine SharePoint-Liste mit Klartext-Bankdaten ab.</p>
+      <div class="project-actions">
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Erasmus+ / Internationalisierung</h2>
+        <h3>Problem heute</h3>
+        <p>149 Datensätze in einer Liste, in der Adressen, Geburtsdaten und vollständige IBAN im Klartext für alle mit Zugriff sichtbar sind – auch die von Schülerinnen und Schülern. Dazu viel Förderrechnerei von Hand.</p>
+        <h3>Lösung</h3>
+        <ul>
+          <li>Anmeldung über ein Formular, alle personenbezogenen Daten verschlüsselt gespeichert („Briefkasten“-Prinzip: einwerfen kann jeder, herausholen niemand ohne Schlüssel)</li>
+          <li>Bankdaten mit zweitem, getrenntem Schlüssel – nur für die Rolle Koordination</li>
+          <li>Rechnet Aufenthaltstage × Fördersatz und Reisekosten automatisch</li>
+          <li>Übernimmt die bestehenden 149 Datensätze vollständig</li>
+        </ul>
+        <p>Konzept steht und ist abgestimmt, das Grundgerüst ist gebaut. Start im Schuljahr 2026/27.</p>
+      </template>
+    </article>
+
+    <!-- 10 Abiturgutachten-Generator -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb project-thumb--blank"><span>Abiturgutachten</span></div>
+      <span class="project-status status-idee">Werkzeug · jährlich</span>
+      <h3>Abiturgutachten-Generator</h3>
+      <p>Erzeugt aus einer Datentabelle die formatierten Abiturgutachten-Texte für einen ganzen Jahrgang – einheitlich, korrekt, ohne Copy-&amp;-Paste-Fehler.</p>
+      <div class="project-actions">
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Abiturgutachten-Generator</h2>
+        <p>Aus den erfassten Noten- und Verlaufsdaten entstehen fertige Gutachten-Dokumente pro Prüfling.</p>
+        <h3>Nutzen</h3>
+        <ul>
+          <li>Spart das wiederholte manuelle Formulieren und Zusammensetzen</li>
+          <li>Hält Form und Fristbezug über den ganzen Jahrgang einheitlich</li>
+          <li>Läuft lokal, kein Server; einmal pro Abiturjahrgang</li>
+        </ul>
+      </template>
+    </article>
+
+    <!-- 12 Dienstjubiläumsrechner -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb project-thumb--blank"><span>Dienstjubiläum</span></div>
+      <span class="project-status status-idee">Entwurf · wird Webseite</span>
+      <h3>Dienstjubiläumsrechner</h3>
+      <p>Ermittelt aus dem Diensteintritt die Daten der Dienstjubiläen. Bisher als Entwurf gebaut – wird als eigenständige Webseite umgesetzt.</p>
+      <div class="project-actions">
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Dienstjubiläumsrechner</h2>
+        <p>Eine kleine Hilfe fürs Sekretariat: Diensteintritt eingeben, heraus kommen die Jubiläumsdaten – ohne Nachschlagen von Hand.</p>
+        <h3>Status</h3>
+        <ul>
+          <li>Als Entwurf vorhanden (im Chat gebaut)</li>
+          <li>Wird zu einer eigenständigen Webseite umgebaut</li>
+        </ul>
+      </template>
+    </article>
+
+    <!-- 12 Fotografie-Portfolio -->
+    <article class="project-card" role="button" tabindex="0" aria-haspopup="dialog">
+      <div class="project-thumb"><img src="shot-portfolio.jpg" alt="Startbildschirm Fotografie-Portfolio" loading="lazy" /></div>
+      <span class="project-status status-live">Live · privat</span>
+      <h3>Fotografie-Portfolio</h3>
+      <p>Mein persönliches Foto-Portfolio – Menschen, Sport und Landschaft. Privates Projekt, hier nur der Vollständigkeit halber.</p>
+      <div class="project-actions">
+        <a class="project-link" href="https://macnebelherr.github.io/" target="_blank" rel="noopener">Öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+        <span class="project-more">Mehr erfahren <i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+      </div>
+      <template class="project-detail">
+        <h2>Fotografie-Portfolio</h2>
+        <p>Eine dunkle, ruhige Portfolio-Seite mit weichen Übergängen, gebaut als statische Seite. Vollständig getrennt von allem Schulischen.</p>
+      </template>
+    </article>
 
   </div>
 
@@ -90,6 +505,87 @@
 
 </main>
 
+<div class="modal-overlay" id="projectModal" hidden>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <button class="modal-close" id="modalClose" aria-label="Schließen"><i class="ti ti-x" aria-hidden="true"></i></button>
+    <span class="modal-status" id="modalStatus"></span>
+    <div class="modal-body" id="modalBody"></div>
+    <a class="modal-link" id="modalLink" target="_blank" rel="noopener" hidden>Projekt öffnen <i class="ti ti-external-link" aria-hidden="true"></i></a>
+  </div>
+</div>
+
 <script src="theme.js"></script>
+<script>
+(function () {
+  var overlay = document.getElementById('projectModal');
+  var panel = overlay.querySelector('.modal-panel');
+  var body = document.getElementById('modalBody');
+  var statusEl = document.getElementById('modalStatus');
+  var linkEl = document.getElementById('modalLink');
+  var closeBtn = document.getElementById('modalClose');
+  var lastOpener = null;
+
+  function openFromCard(card) {
+    var tpl = card.querySelector('.project-detail');
+    if (!tpl) return;
+    lastOpener = card;
+
+    body.innerHTML = '';
+    body.appendChild(tpl.content.cloneNode(true));
+
+    var heading = body.querySelector('h2');
+    if (heading) heading.id = 'modalTitle';
+
+    var badge = card.querySelector('.project-status');
+    if (badge) {
+      statusEl.textContent = badge.textContent;
+      statusEl.className = 'modal-status ' + badge.className.replace('project-status', '').trim();
+      statusEl.hidden = false;
+    } else {
+      statusEl.hidden = true;
+    }
+
+    var srcLink = card.querySelector('.project-link');
+    if (srcLink) {
+      linkEl.href = srcLink.href;
+      linkEl.hidden = false;
+    } else {
+      linkEl.hidden = true;
+    }
+
+    overlay.hidden = false;
+    document.body.classList.add('modal-open');
+    panel.focus();
+  }
+
+  function close() {
+    overlay.hidden = true;
+    document.body.classList.remove('modal-open');
+    if (lastOpener) { lastOpener.focus(); lastOpener = null; }
+  }
+
+  document.querySelectorAll('.project-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return; // echter Link: normal folgen
+      openFromCard(card);
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (e.target.closest('a')) return;
+        e.preventDefault();
+        openFromCard(card);
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !overlay.hidden) close();
+  });
+})();
+</script>
 </body>
 </html>
