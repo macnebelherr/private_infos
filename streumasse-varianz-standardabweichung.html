@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Streumaße – Varianz und Standardabweichung (Klasse 11)</title>
+<style>
+  :root{
+    --grund:#0b1120;
+    --flaeche:#111c33;
+    --flaeche2:#16233f;
+    --text:#f1f5f9;
+    --gedaempft:#9fb0c8;
+    --linie:#2b3a55;
+    --mathe:#f97316;
+
+    /* Farben der fünf Rechenschritte – dieselbe Farbe trägt der Formelteil und die Tabellenspalte */
+    --s-mittel:#38bdf8;   /* Schritt 1: arithmetisches Mittel   */
+    --s-abw:#f8b45c;      /* Schritt 2: Abweichung vom Mittel   */
+    --s-quad:#c4a3ff;     /* Schritt 3: Abweichung quadrieren   */
+    --s-var:#4ade80;      /* Schritt 4: gewichten, summieren    */
+    --s-wurz:#fb7185;     /* Schritt 5: Wurzel ziehen           */
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{height:100%}
+  body{
+    background:var(--grund);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    line-height:1.55;
+    overflow:hidden;
+  }
+
+  /* ---------- Folien-Rahmen ---------- */
+  .deck{height:100%;display:flex;align-items:center;justify-content:center}
+
+  .folie{
+    display:none;
+    width:min(94vw, calc(90vh * 16 / 9));
+    height:min(90vh, calc(94vw * 9 / 16));
+    background:var(--flaeche);
+    border:1px solid var(--linie);
+    border-radius:18px;
+    padding:min(3.4vh,34px) min(4.4vw,58px) min(2vh,18px);
+    flex-direction:column;
+    position:relative;
+    overflow:auto;
+  }
+  .folie.aktiv{display:flex}
+
+  /* Schrift skaliert mit der Folienbreite */
+  .folie{font-size:clamp(13px, 1.78vw, 23px)}
+
+  h1{font-size:1.95em;line-height:1.15;letter-spacing:.2px}
+  h2{font-size:1.42em;line-height:1.2;margin-bottom:.35em}
+  h2 .nr{
+    display:inline-block;min-width:1.7em;margin-right:.35em;
+    text-align:center;border-radius:9px;padding:.02em .25em;
+    background:var(--flaeche2);
+  }
+  p{margin:.32em 0}
+  .gross{font-size:1.12em}
+  .klein{font-size:.82em;color:var(--gedaempft)}
+  .mitte{margin-top:auto;margin-bottom:auto}
+  strong{color:#fff}
+  em{color:var(--mathe);font-style:normal;font-weight:600}
+
+  ul{margin:.3em 0 .3em 1.1em}
+  li{margin:.24em 0}
+
+  .kopfmarke{
+    text-transform:uppercase;letter-spacing:.16em;font-size:.62em;
+    color:var(--mathe);font-weight:700;margin-bottom:.55em;flex-shrink:0;
+  }
+
+  .fuss{
+    margin-top:auto;flex-shrink:0;
+    display:flex;justify-content:space-between;gap:1em;
+    font-size:.6em;color:var(--gedaempft);border-top:1px solid var(--linie);
+    padding-top:.55em;margin-bottom:0;
+  }
+
+  /* ---------- farbige Bereichs-Kennzeichnung ---------- */
+  .box{
+    --sektion:var(--mathe);
+    background:color-mix(in srgb, var(--sektion) 12%, transparent);
+    border-left:5px solid var(--sektion);
+    border-radius:0 12px 12px 0;
+    padding:.55em .9em;margin:.42em 0;
+  }
+  .box h3{color:var(--sektion);font-size:.95em;margin-bottom:.15em;letter-spacing:.02em}
+  .box.mittel{--sektion:var(--s-mittel)}
+  .box.abw{--sektion:var(--s-abw)}
+  .box.quad{--sektion:var(--s-quad)}
+  .box.var{--sektion:var(--s-var)}
+  .box.wurz{--sektion:var(--s-wurz)}
+
+  .frage{
+    --sektion:#fcd34d;
+    background:color-mix(in srgb, #fcd34d 13%, transparent);
+    border-left:5px solid #fcd34d;border-radius:0 12px 12px 0;
+    padding:.7em 1em;margin:.7em 0;font-weight:600;
+  }
+  .antwort{
+    background:var(--flaeche2);border:1px dashed var(--linie);
+    border-radius:10px;padding:.6em 1em;margin:.5em 0;color:var(--gedaempft);
+  }
+
+  /* ---------- Schrittkarten (Überblick) ---------- */
+  .schritte{display:grid;grid-template-columns:repeat(5,1fr);gap:.7em;margin:.6em 0}
+  .schritt{
+    background:var(--flaeche2);border-top:4px solid var(--sk);
+    border-radius:10px;padding:.7em .7em .8em;font-size:.82em;
+  }
+  .schritt .n{font-weight:800;color:var(--sk);font-size:1.15em}
+  .schritt:nth-child(1){--sk:var(--s-mittel)}
+  .schritt:nth-child(2){--sk:var(--s-abw)}
+  .schritt:nth-child(3){--sk:var(--s-quad)}
+  .schritt:nth-child(4){--sk:var(--s-var)}
+  .schritt:nth-child(5){--sk:var(--s-wurz)}
+
+  /* ---------- Formeln ---------- */
+  .formel{
+    font-size:1.12em;background:var(--flaeche2);border:1px solid var(--linie);
+    border-radius:12px;padding:.5em .9em;margin:.4em 0;text-align:center;
+  }
+  .formel.gross{font-size:1.34em}
+  .q{border-top:2px solid currentColor;padding-top:1px;display:inline-block;line-height:1}
+  sub,sup{font-size:.72em}
+  .wz{white-space:nowrap}
+  .wz .rad{border-top:2px solid currentColor;padding:0 .15em}
+  .brk{display:inline-flex;flex-direction:column;vertical-align:middle;
+       text-align:center;margin:0 .18em;font-size:.85em}
+  .brk .zae{border-bottom:1.5px solid currentColor;padding:0 .3em}
+  .brk .nen{padding:0 .3em}
+  .sig{font-size:1.35em;vertical-align:-.15em;margin:0 .1em}
+
+  /* ---------- Tabellen ---------- */
+  .tab-huelle{overflow-x:auto;overflow-y:visible;flex-shrink:0;margin:.35em 0}
+  table{border-collapse:collapse;width:100%;font-size:.78em}
+  th,td{border:1px solid var(--linie);padding:.22em .45em;text-align:center;white-space:nowrap}
+  thead th{background:var(--flaeche2);font-weight:700}
+  tbody td:first-child,tbody th:first-child{color:var(--gedaempft)}
+  .sum-zeile td{background:var(--flaeche2);font-weight:700}
+  /* Spaltenfarben je Rechenschritt */
+  .c-mittel{color:var(--s-mittel)}
+  .c-abw{color:var(--s-abw)}
+  .c-quad{color:var(--s-quad)}
+  .c-var{color:var(--s-var)}
+  th.c-mittel,th.c-abw,th.c-quad,th.c-var{
+    background:color-mix(in srgb, currentColor 16%, var(--flaeche2));
+  }
+  .markiert{background:color-mix(in srgb, var(--mathe) 16%, transparent)}
+
+  .zwei{display:grid;grid-template-columns:1fr 1fr;gap:1.1em}
+  .karte{background:var(--flaeche2);border:1px solid var(--linie);border-radius:12px;padding:.8em 1em}
+  .karte h3{font-size:.95em;margin-bottom:.3em;color:var(--mathe)}
+
+  /* ---------- Balkendiagramm (CSS) ---------- */
+  .bars{display:flex;align-items:flex-end;gap:.5em;height:6em;padding:.3em .2em 0;
+        border-bottom:2px solid var(--linie)}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar .stab{width:100%;background:var(--mathe);border-radius:5px 5px 0 0;min-height:2px}
+  .bar .wert{font-size:.7em;color:var(--gedaempft);margin-bottom:.2em}
+  .bar .lab{font-size:.72em;color:var(--gedaempft);margin-top:.25em}
+  .bars-titel{font-size:.8em;color:var(--gedaempft);margin-bottom:.2em}
+
+  /* ---------- Navigation ---------- */
+  .nav{
+    position:fixed;right:14px;bottom:12px;display:flex;gap:8px;align-items:center;
+    font-size:13px;color:var(--gedaempft);z-index:20;
+  }
+  .nav button{
+    background:var(--flaeche2);color:var(--text);border:1px solid var(--linie);
+    border-radius:8px;width:34px;height:30px;font-size:15px;cursor:pointer;
+  }
+  .nav button:hover{border-color:var(--mathe)}
+  .zone{position:fixed;top:0;bottom:0;width:22%;z-index:10;cursor:pointer}
+  .zone.l{left:0}.zone.r{right:0}
+  .hint{
+    position:fixed;left:14px;bottom:14px;font-size:12px;color:var(--gedaempft);
+    background:var(--flaeche);border:1px solid var(--linie);border-radius:8px;
+    padding:5px 9px;z-index:20;
+  }
+
+  /* ---------- Druck / PDF ---------- */
+  @media print{
+    @page{size:A4 landscape;margin:11mm}
+    html,body{height:auto;overflow:visible;background:#fff;color:#12203a}
+    .deck{display:block;height:auto}
+    .nav,.zone,.hint{display:none}
+    .folie{
+      display:flex !important;width:100%;height:auto;min-height:172mm;
+      background:#fff;border:1px solid #cbd5e1;border-radius:10px;
+      margin:0 0 8mm;padding:14mm 16mm;page-break-after:always;
+      font-size:14px;
+    }
+    h1{color:#0f172a}
+    strong{color:#000}
+    .box{background:#f4f7fb}
+    .schritt,.formel,.karte,.antwort,thead th,.sum-zeile td,.frage{
+      background:#f4f7fb;-webkit-print-color-adjust:exact;print-color-adjust:exact
+    }
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .fuss{color:#64748b;border-color:#cbd5e1}
+    .klein{color:#475569}
+    th,td{border-color:#cbd5e1}
+    tbody td:first-child,tbody th:first-child{color:#1e293b}
+    .c-mittel{color:#0369a1}
+    .c-abw{color:#b45309}
+    .c-quad{color:#6d28d9}
+    .c-var{color:#15803d}
+    th.c-mittel,th.c-abw,th.c-quad,th.c-var{background:#e8eef6;color:#0f172a}
+    .schritt{border-top-width:4px}
+    .antwort{color:#475569}
+    .frage{border-left-color:#d97706}
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- 1 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Beschreibende Statistik · Klasse 11</div>
+    <div class="mitte">
+      <h1>Streumaße:<br>Varianz und Standardabweichung</h1>
+      <p class="gross" style="margin-top:.8em;color:var(--gedaempft)">
+        Wie weit liegen die Daten um ihren Mittelwert herum?
+      </p>
+      <div class="box" style="margin-top:1.2em">
+        <p>Der Mittelwert allein sagt noch nichts darüber, ob die Werte
+        <strong>dicht beieinander</strong> oder <strong>weit gestreut</strong> liegen.
+        Genau das misst die Standardabweichung.</p>
+      </div>
+    </div>
+    <div class="fuss"><span>Streumaße – Varianz &amp; Standardabweichung</span><span>Buch: Beschreibende Statistik, Kap.&nbsp;1.2.3, S.&nbsp;39–42</span></div>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Ausgangssituation</div>
+    <h2>Gleicher Schnitt – trotzdem verschieden</h2>
+    <p>Beide Klassen haben denselben Mathe-Test geschrieben, je 20 Arbeiten,
+       beide mit <em>Durchschnittsnote 3,2</em> – die Notenbilder sehen aber ganz anders aus.</p>
+    <div class="zwei" style="margin-top:.5em">
+      <div class="karte">
+        <h3>Noten 11A</h3>
+        <div class="bars-titel">Anzahl der Schülerinnen und Schüler</div>
+        <div class="bars" data-bars="2,4,6,5,2,1"></div>
+      </div>
+      <div class="karte">
+        <h3>Noten 11B</h3>
+        <div class="bars-titel">Anzahl der Schülerinnen und Schüler</div>
+        <div class="bars" data-bars="0,7,5,5,3,0"></div>
+      </div>
+    </div>
+    <div class="frage">Allein an der 3,2 – könntet ihr die Klassen unterscheiden? Was fehlt dem Mittelwert?</div>
+    <div class="fuss"><span>Streumaße</span><span>Situation 7, Buch S. 39</span></div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Das einfachste Streumaß</div>
+    <h2>Spannweite R</h2>
+    <div class="formel gross"><em>R</em> = x<sub>max</sub> &minus; x<sub>min</sub></div>
+    <div class="zwei">
+      <div class="karte"><h3>Klasse 11A</h3><p class="gross">R = 6 &minus; 1 = <strong>5</strong></p></div>
+      <div class="karte"><h3>Klasse 11B</h3><p class="gross">R = 5 &minus; 2 = <strong>3</strong></p></div>
+    </div>
+    <div class="box abw" style="margin-top:.6em">
+      <h3>Nachteil</h3>
+      <p>Die Spannweite benutzt <strong>nur die zwei Randwerte</strong>. Ein einziger Ausreißer verändert sie stark,
+      und alles, was dazwischen passiert, zählt gar nicht mit.</p>
+    </div>
+    <p style="margin-top:.5em">Wir suchen ein Maß, das <em>jeden</em> Wert einbezieht: die <strong>Standardabweichung</strong>.</p>
+    <div class="fuss"><span>Streumaße</span><span>Buch S. 40</span></div>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Die Idee dahinter</div>
+    <h2>„Wie weit weicht ein Wert im Schnitt vom Mittel ab?“</h2>
+    <p>Diese eine Frage wird in fünf Schritten beantwortet – jeder Schritt ist eine <strong>Spalte</strong> in der Rechentabelle:</p>
+    <div class="schritte">
+      <div class="schritt"><div class="n">1</div>Mittelwert <span class="q">x</span> bestimmen</div>
+      <div class="schritt"><div class="n">2</div>Abweichung jedes Werts: x<sub>i</sub> &minus; <span class="q">x</span></div>
+      <div class="schritt"><div class="n">3</div>Abweichung quadrieren: (x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup></div>
+      <div class="schritt"><div class="n">4</div>mit Häufigkeit gewichten und alles summieren → <strong>s<sup>2</sup></strong></div>
+      <div class="schritt"><div class="n">5</div>Wurzel ziehen → <strong>s</strong></div>
+    </div>
+    <div class="box"><p>Die Farben ziehen sich durch alle folgenden Folien: jede Formel und jede Tabellenspalte hat die Farbe „ihres“ Schritts.</p></div>
+    <div class="fuss"><span>Streumaße</span><span>Überblick</span></div>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Schritt 1</div>
+    <h2><span class="nr" style="color:var(--s-mittel)">1</span>Arithmetisches Mittel <span class="q">x</span></h2>
+    <p>Jeder Wert wird mit seiner relativen Häufigkeit h(x<sub>i</sub>) = <span class="brk"><span class="zae">n<sub>i</sub></span><span class="nen">n</span></span> gewichtet und aufsummiert:</p>
+    <div class="formel">
+      <span class="q">x</span> = x<sub>1</sub>&middot;h(x<sub>1</sub>) + … + x<sub>k</sub>&middot;h(x<sub>k</sub>)
+      = <span class="sig">&Sigma;</span> x<sub>i</sub>&middot;h(x<sub>i</sub>)
+    </div>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>Note x<sub>i</sub></th><th>n<sub>i</sub></th>
+          <th>h(x<sub>i</sub>) = n<sub>i</sub>/20</th>
+          <th class="c-mittel">x<sub>i</sub> &middot; h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td>2</td><td>0,10</td><td class="c-mittel">0,10</td></tr>
+          <tr><td>2</td><td>4</td><td>0,20</td><td class="c-mittel">0,40</td></tr>
+          <tr><td>3</td><td>6</td><td>0,30</td><td class="c-mittel">0,90</td></tr>
+          <tr><td>4</td><td>5</td><td>0,25</td><td class="c-mittel">1,00</td></tr>
+          <tr><td>5</td><td>2</td><td>0,10</td><td class="c-mittel">0,50</td></tr>
+          <tr><td>6</td><td>1</td><td>0,05</td><td class="c-mittel">0,30</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>20</td><td>1,00</td><td class="c-mittel">3,20</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Die Summe der rechten Spalte <em>ist</em> der Mittelwert &nbsp;→&nbsp; Klasse&nbsp;11A: <span class="q">x</span> = <strong style="color:var(--s-mittel)">3,2</strong></p>
+    <div class="fuss"><span>Streumaße · Schritt 1</span><span>Formel: Buch S. 36</span></div>
+  </section>
+
+  <!-- 6 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Schritt 2</div>
+    <h2><span class="nr" style="color:var(--s-abw)">2</span>Abweichung vom Mittel: x<sub>i</sub> &minus; <span class="q">x</span></h2>
+    <p>Für jede Note: <strong>Wie weit ist sie von 3,2 entfernt?</strong> Unter dem Mittel negativ, darüber positiv.</p>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>Note x<sub>i</sub></th><th>h(x<sub>i</sub>)</th>
+          <th class="c-abw">x<sub>i</sub> &minus; <span class="q">x</span></th>
+          <th class="c-abw">(x<sub>i</sub> &minus; <span class="q">x</span>) &middot; h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td>0,10</td><td class="c-abw">&minus;2,2</td><td class="c-abw">&minus;0,22</td></tr>
+          <tr><td>2</td><td>0,20</td><td class="c-abw">&minus;1,2</td><td class="c-abw">&minus;0,24</td></tr>
+          <tr><td>3</td><td>0,30</td><td class="c-abw">&minus;0,2</td><td class="c-abw">&minus;0,06</td></tr>
+          <tr><td>4</td><td>0,25</td><td class="c-abw">0,8</td><td class="c-abw">0,20</td></tr>
+          <tr><td>5</td><td>0,10</td><td class="c-abw">1,8</td><td class="c-abw">0,18</td></tr>
+          <tr><td>6</td><td>0,05</td><td class="c-abw">2,8</td><td class="c-abw">0,14</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>1,00</td><td class="c-abw">–</td><td class="c-abw">0,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="frage">Rechnet die letzte Spalte zusammen – was kommt heraus?</div>
+    <div class="antwort">Die gewichtete Summe der Abweichungen ist <strong>immer 0</strong> (negative und positive heben sich auf). Deshalb wird im nächsten Schritt quadriert.</div>
+    <div class="fuss"><span>Streumaße · Schritt 2</span><span>Buch S. 41</span></div>
+  </section>
+
+  <!-- 7 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Schritt 3</div>
+    <h2><span class="nr" style="color:var(--s-quad)">3</span>Abweichung quadrieren: (x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup></h2>
+    <p>Das Quadrat macht jede Abweichung <strong>positiv</strong> – jetzt hebt sich nichts mehr auf.
+       Außerdem fallen <strong>große</strong> Abweichungen stärker ins Gewicht als kleine.</p>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>Note x<sub>i</sub></th>
+          <th class="c-abw">x<sub>i</sub> &minus; <span class="q">x</span></th>
+          <th class="c-quad">(x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup></th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="c-abw">&minus;2,2</td><td class="c-quad">4,84</td></tr>
+          <tr><td>2</td><td class="c-abw">&minus;1,2</td><td class="c-quad">1,44</td></tr>
+          <tr><td>3</td><td class="c-abw">&minus;0,2</td><td class="c-quad">0,04</td></tr>
+          <tr><td>4</td><td class="c-abw">0,8</td><td class="c-quad">0,64</td></tr>
+          <tr><td>5</td><td class="c-abw">1,8</td><td class="c-quad">3,24</td></tr>
+          <tr><td>6</td><td class="c-abw">2,8</td><td class="c-quad">7,84</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box quad"><p>Achtung Einheit: Die Werte sind jetzt in <strong>„Noten zum Quadrat“</strong> – das räumen wir in Schritt 5 wieder auf.</p></div>
+    <div class="fuss"><span>Streumaße · Schritt 3</span><span>Buch S. 41</span></div>
+  </section>
+
+  <!-- 8 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Schritt 4</div>
+    <h2><span class="nr" style="color:var(--s-var)">4</span>Gewichten und summieren → Varianz s<sup>2</sup></h2>
+    <p>Jedes Abweichungsquadrat mal seine relative Häufigkeit, dann alles addieren:</p>
+    <div class="formel">
+      s<sup>2</sup> = (x<sub>1</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>1</sub>) + … + (x<sub>k</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>k</sub>)
+      = <span class="sig">&Sigma;</span> (x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>i</sub>)
+    </div>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>Note x<sub>i</sub></th><th>h(x<sub>i</sub>)</th>
+          <th class="c-quad">(x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup></th>
+          <th class="c-var">(x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup> &middot; h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td>0,10</td><td class="c-quad">4,84</td><td class="c-var">0,484</td></tr>
+          <tr><td>2</td><td>0,20</td><td class="c-quad">1,44</td><td class="c-var">0,288</td></tr>
+          <tr><td>3</td><td>0,30</td><td class="c-quad">0,04</td><td class="c-var">0,012</td></tr>
+          <tr><td>4</td><td>0,25</td><td class="c-quad">0,64</td><td class="c-var">0,160</td></tr>
+          <tr><td>5</td><td>0,10</td><td class="c-quad">3,24</td><td class="c-var">0,324</td></tr>
+          <tr><td>6</td><td>0,05</td><td class="c-quad">7,84</td><td class="c-var">0,392</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>1,00</td><td class="c-quad">–</td><td class="c-var">1,660</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="gross">Klasse 11A: s<sup>2</sup> = <strong style="color:var(--s-var)">1,66</strong>
+      <span class="klein">– „mittlere quadratische Abweichung“ bzw. empirische Varianz</span></p>
+    <div class="fuss"><span>Streumaße · Schritt 4</span><span>Buch S. 40</span></div>
+  </section>
+
+  <!-- 9 ------------------------------------------------------------------ -->
+  <section class="folie">
+    <div class="kopfmarke">Schritt 5</div>
+    <h2><span class="nr" style="color:var(--s-wurz)">5</span>Wurzel ziehen → Standardabweichung s</h2>
+    <div class="formel gross">
+      s = <span class="wz">&radic;<span class="rad">&nbsp;s<sup>2</sup>&nbsp;</span></span>
+      = <span class="wz">&radic;<span class="rad">&nbsp;1,66&nbsp;</span></span>
+      &asymp; <strong style="color:var(--s-wurz)">1,29</strong>
+    </div>
+    <div class="box wurz">
+      <h3>Warum die Wurzel?</h3>
+      <p>In Schritt 3 haben wir quadriert – s<sup>2</sup> steht in „Noten<sup>2</sup>“.
+      Die Wurzel bringt das Ergebnis zurück in die <strong>ursprüngliche Einheit</strong> (Noten)
+      und macht es vergleichbar mit dem Mittelwert.</p>
+    </div>
+    <p>s &asymp; 1,29 heißt grob: Eine typische Arbeit in 11A liegt rund <strong>1,3 Notenpunkte</strong> vom Schnitt 3,2 entfernt.</p>
+    <div class="fuss"><span>Streumaße · Schritt 5</span><span>Buch S. 41</span></div>
+  </section>
+
+  <!-- 10 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Alles zusammen</div>
+    <h2>Das Rechenschema für Klasse 11A</h2>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>x<sub>i</sub></th><th>n<sub>i</sub></th>
+          <th>h(x<sub>i</sub>)</th>
+          <th class="c-mittel">x<sub>i</sub>&middot;h(x<sub>i</sub>)</th>
+          <th class="c-abw">x<sub>i</sub>&minus;<span class="q">x</span></th>
+          <th class="c-quad">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup></th>
+          <th class="c-var">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td>2</td><td>0,10</td><td class="c-mittel">0,10</td><td class="c-abw">&minus;2,2</td><td class="c-quad">4,84</td><td class="c-var">0,484</td></tr>
+          <tr><td>2</td><td>4</td><td>0,20</td><td class="c-mittel">0,40</td><td class="c-abw">&minus;1,2</td><td class="c-quad">1,44</td><td class="c-var">0,288</td></tr>
+          <tr><td>3</td><td>6</td><td>0,30</td><td class="c-mittel">0,90</td><td class="c-abw">&minus;0,2</td><td class="c-quad">0,04</td><td class="c-var">0,012</td></tr>
+          <tr><td>4</td><td>5</td><td>0,25</td><td class="c-mittel">1,00</td><td class="c-abw">0,8</td><td class="c-quad">0,64</td><td class="c-var">0,160</td></tr>
+          <tr><td>5</td><td>2</td><td>0,10</td><td class="c-mittel">0,50</td><td class="c-abw">1,8</td><td class="c-quad">3,24</td><td class="c-var">0,324</td></tr>
+          <tr><td>6</td><td>1</td><td>0,05</td><td class="c-mittel">0,30</td><td class="c-abw">2,8</td><td class="c-quad">7,84</td><td class="c-var">0,392</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>20</td><td>1,00</td><td class="c-mittel">3,20</td><td class="c-abw">0,00</td><td class="c-quad">–</td><td class="c-var">1,660</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="zwei" style="margin-top:.3em">
+      <div class="karte"><h3 style="color:var(--s-mittel)">Mittelwert</h3><p class="gross"><span class="q">x</span> = 3,2</p></div>
+      <div class="karte"><h3 style="color:var(--s-wurz)">Streuung</h3><p class="gross">s<sup>2</sup> = 1,66&nbsp;&nbsp;→&nbsp;&nbsp;s &asymp; 1,29</p></div>
+    </div>
+    <div class="fuss"><span>Streumaße · Rechenschema</span><span>Klasse 11A</span></div>
+  </section>
+
+  <!-- 11 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Jetzt ihr</div>
+    <h2>Klasse 11B – dieselbe Tabelle</h2>
+    <p>Mittelwert ist auch hier <span class="q">x</span> = 3,2. Füllt die farbigen Spalten aus.</p>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>x<sub>i</sub></th><th>n<sub>i</sub></th><th>h(x<sub>i</sub>)</th>
+          <th class="c-abw">x<sub>i</sub>&minus;<span class="q">x</span></th>
+          <th class="c-quad">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup></th>
+          <th class="c-var">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>2</td><td>7</td><td>0,35</td><td class="c-abw">&nbsp;</td><td class="c-quad">&nbsp;</td><td class="c-var">&nbsp;</td></tr>
+          <tr><td>3</td><td>5</td><td>0,25</td><td class="c-abw">&nbsp;</td><td class="c-quad">&nbsp;</td><td class="c-var">&nbsp;</td></tr>
+          <tr><td>4</td><td>5</td><td>0,25</td><td class="c-abw">&nbsp;</td><td class="c-quad">&nbsp;</td><td class="c-var">&nbsp;</td></tr>
+          <tr><td>5</td><td>3</td><td>0,15</td><td class="c-abw">&nbsp;</td><td class="c-quad">&nbsp;</td><td class="c-var">&nbsp;</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>20</td><td>1,00</td><td class="c-abw">0,00</td><td class="c-quad">–</td><td class="c-var">?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="klein">Die 5 rechten Spalten sind bewusst leer – auf der nächsten Folie steht die Lösung.</p>
+    <div class="fuss"><span>Streumaße · Übung</span><span>Klasse 11B</span></div>
+  </section>
+
+  <!-- 12 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Lösung 11B</div>
+    <h2>Klasse 11B – ausgefüllt</h2>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr>
+          <th>x<sub>i</sub></th><th>n<sub>i</sub></th><th>h(x<sub>i</sub>)</th>
+          <th class="c-abw">x<sub>i</sub>&minus;<span class="q">x</span></th>
+          <th class="c-quad">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup></th>
+          <th class="c-var">(x<sub>i</sub>&minus;<span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>i</sub>)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>2</td><td>7</td><td>0,35</td><td class="c-abw">&minus;1,2</td><td class="c-quad">1,44</td><td class="c-var">0,504</td></tr>
+          <tr><td>3</td><td>5</td><td>0,25</td><td class="c-abw">&minus;0,2</td><td class="c-quad">0,04</td><td class="c-var">0,010</td></tr>
+          <tr><td>4</td><td>5</td><td>0,25</td><td class="c-abw">0,8</td><td class="c-quad">0,64</td><td class="c-var">0,160</td></tr>
+          <tr><td>5</td><td>3</td><td>0,15</td><td class="c-abw">1,8</td><td class="c-quad">3,24</td><td class="c-var">0,486</td></tr>
+          <tr class="sum-zeile"><td>&Sigma;</td><td>20</td><td>1,00</td><td class="c-abw">0,00</td><td class="c-quad">–</td><td class="c-var">1,160</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="formel">
+      s<sup>2</sup> = <strong style="color:var(--s-var)">1,16</strong>
+      &nbsp;&nbsp;→&nbsp;&nbsp;
+      s = <span class="wz">&radic;<span class="rad">&nbsp;1,16&nbsp;</span></span> &asymp; <strong style="color:var(--s-wurz)">1,08</strong>
+    </div>
+    <div class="fuss"><span>Streumaße · Lösung</span><span>Klasse 11B</span></div>
+  </section>
+
+  <!-- 13 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Vergleich</div>
+    <h2>Was sagen die Zahlen?</h2>
+    <div class="tab-huelle">
+      <table>
+        <thead><tr><th></th><th>Klasse 11A</th><th>Klasse 11B</th></tr></thead>
+        <tbody>
+          <tr><td>Mittelwert <span class="q">x</span></td><td>3,2</td><td>3,2</td></tr>
+          <tr><td>Spannweite R</td><td>5</td><td>3</td></tr>
+          <tr><td>Varianz s<sup>2</sup></td><td>1,66</td><td>1,16</td></tr>
+          <tr><td>Standardabweichung s</td><td class="markiert"><strong>1,29</strong></td><td class="markiert"><strong>1,08</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box var">
+      <p>Gleicher Mittelwert, aber <strong>s<sub>A</sub> &gt; s<sub>B</sub></strong>: In <strong>11A streuen die Noten stärker</strong>,
+      sie liegen weiter vom Schnitt entfernt. In 11B liegen die Noten enger zusammen – dort ist der Mittelwert
+      <strong>aussagekräftiger</strong>. Damit ist der optische Eindruck von Folie 2 rechnerisch bestätigt.</p>
+    </div>
+    <div class="fuss"><span>Streumaße · Interpretation</span><span>Buch S. 41</span></div>
+  </section>
+
+  <!-- 14 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Einordnung</div>
+    <h2>Was „normal“ ist: das Streuungsintervall</h2>
+    <p>Werte, die höchstens eine Standardabweichung vom Mittel entfernt sind, gelten als <em>üblich</em>:</p>
+    <div class="formel gross">[ <span class="q">x</span> &minus; s ; &nbsp; <span class="q">x</span> + s ]</div>
+    <div class="zwei">
+      <div class="karte"><h3>Klasse 11A</h3><p>[3,2 &minus; 1,29 ; 3,2 + 1,29] = <strong>[1,9 ; 4,5]</strong><br>
+        <span class="klein">Noten 2, 3, 4 – das sind 15 der 20 Arbeiten</span></p></div>
+      <div class="karte"><h3>Klasse 11B</h3><p>[3,2 &minus; 1,08 ; 3,2 + 1,08] = <strong>[2,1 ; 4,3]</strong><br>
+        <span class="klein">Noten 3, 4 – das sind 10 der 20 Arbeiten</span></p></div>
+    </div>
+    <div class="box"><p><strong>Kleines s</strong> → Werte dicht am Mittel, Mittel aussagekräftig.
+      <strong>Großes s</strong> → Werte schwanken stark um das Mittel.</p></div>
+    <div class="fuss"><span>Streumaße · Streuungsintervall</span><span>Buch S. 39, Fußnote</span></div>
+  </section>
+
+  <!-- 15 ----------------------------------------------------------------- -->
+  <section class="folie">
+    <div class="kopfmarke">Zum Mitnehmen</div>
+    <h2>Formeln auf einen Blick</h2>
+    <div class="formel">
+      Mittelwert:&nbsp; <span class="q">x</span> = <span class="sig">&Sigma;</span> x<sub>i</sub>&middot;h(x<sub>i</sub>)
+    </div>
+    <div class="formel">
+      Varianz:&nbsp; s<sup>2</sup> = <span class="sig">&Sigma;</span> (x<sub>i</sub> &minus; <span class="q">x</span>)<sup>2</sup>&middot;h(x<sub>i</sub>)
+      <span class="klein">&nbsp;(mittlere quadratische Abweichung)</span>
+    </div>
+    <div class="formel">
+      Standardabweichung:&nbsp; s = <span class="wz">&radic;<span class="rad">&nbsp;s<sup>2</sup>&nbsp;</span></span>
+    </div>
+    <ul>
+      <li><strong>h(x<sub>i</sub>) = n<sub>i</sub> / n</strong> – relative Häufigkeit; mit absoluten Häufigkeiten stattdessen mit <span class="brk"><span class="zae">1</span><span class="nen">n</span></span> vor die Summe und &middot;&nbsp;n<sub>i</sub> in der Summe.</li>
+      <li>s hat <strong>dieselbe Einheit</strong> wie die Daten – deshalb ist s und nicht s<sup>2</sup> das gebräuchliche Streumaß.</li>
+      <li>Im Taschenrechner (Statistik-Modul) heißt die empirische Standardabweichung <strong>σx</strong>.</li>
+    </ul>
+    <div class="fuss"><span>Streumaße – Varianz &amp; Standardabweichung</span><span>Buch: Beschreibende Statistik, S. 36–42</span></div>
+  </section>
+
+</div>
+
+<div class="zone l" data-dir="-1"></div>
+<div class="zone r" data-dir="1"></div>
+
+<div class="hint">Pfeiltasten ◀ ▶ blättern · <b>P</b> / Strg+P: als PDF drucken</div>
+<div class="nav">
+  <button data-dir="-1" aria-label="zurück">◀</button>
+  <span id="zaehler">1 / 15</span>
+  <button data-dir="1" aria-label="weiter">▶</button>
+</div>
+
+<script>
+(function(){
+  var folien = Array.prototype.slice.call(document.querySelectorAll('.folie'));
+  var zaehler = document.getElementById('zaehler');
+  var i = 0;
+
+  function zeige(n){
+    i = Math.max(0, Math.min(folien.length - 1, n));
+    for (var k = 0; k < folien.length; k++){
+      folien[k].classList.toggle('aktiv', k === i);
+    }
+    zaehler.textContent = (i + 1) + ' / ' + folien.length;
+    try { history.replaceState(null, '', '#' + (i + 1)); } catch(e){}
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){
+      zeige(i + 1); e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp'){
+      zeige(i - 1); e.preventDefault();
+    } else if (e.key === 'Home'){ zeige(0); e.preventDefault(); }
+    else if (e.key === 'End'){ zeige(folien.length - 1); e.preventDefault(); }
+    else if (e.key === 'p' || e.key === 'P'){ window.print(); }
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-dir]')).forEach(function(el){
+    el.addEventListener('click', function(){ zeige(i + parseInt(el.getAttribute('data-dir'), 10)); });
+  });
+
+  // Balkendiagramme aus data-bars="..." aufbauen
+  Array.prototype.slice.call(document.querySelectorAll('.bars')).forEach(function(box){
+    var werte = box.getAttribute('data-bars').split(',').map(function(s){ return parseFloat(s); });
+    var max = Math.max.apply(null, werte) || 1;
+    werte.forEach(function(v, idx){
+      var bar = document.createElement('div'); bar.className = 'bar';
+      var w = document.createElement('div'); w.className = 'wert'; w.textContent = v;
+      var stab = document.createElement('div'); stab.className = 'stab';
+      stab.style.height = Math.round(v / max * 100) + '%';
+      if (v === 0) stab.style.background = 'transparent';
+      var lab = document.createElement('div'); lab.className = 'lab'; lab.textContent = 'Note ' + (idx + 1);
+      bar.appendChild(w); bar.appendChild(stab); bar.appendChild(lab);
+      box.appendChild(bar);
+    });
+  });
+
+  var start = parseInt((location.hash || '').replace('#', ''), 10);
+  zeige(isNaN(start) ? 0 : start - 1);
+})();
+</script>
+</body>
+</html>
