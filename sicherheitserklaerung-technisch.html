@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Technische Sicherheitsübersicht – Schul-Tools BBS Walsrode</title>
+<style>
+  :root {
+    --farbe-transport: #1d4ed8;
+    --farbe-transport-bg: #e9eefc;
+    --farbe-speicher: #0d7d74;
+    --farbe-speicher-bg: #e6f5f3;
+    --farbe-zugriff: #c2650a;
+    --farbe-zugriff-bg: #fdf1e2;
+    --farbe-ki: #6d28d9;
+    --farbe-ki-bg: #f1ebfb;
+    --farbe-deploy: #15803d;
+    --farbe-deploy-bg: #e9f6ec;
+    --text: #232323;
+    --text-mute: #55524d;
+    --papier: #fbf8f3;
+    --code-bg: #1e1e1e;
+    --code-text: #d4d4d4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--papier);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .seite {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  header.kopf { text-align: center; margin-bottom: 28px; }
+  header.kopf h1 { font-size: 1.9rem; margin: 0 0 8px; line-height: 1.25; }
+  header.kopf p.untertitel { color: var(--text-mute); font-size: 1.05rem; margin: 0; }
+
+  .bild-rahmen {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.18);
+    margin: 32px 0 6px;
+    background: #0a0a0a;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bild-rahmen img { display: block; width: 100%; height: auto; }
+  .bild-platzhalter { color: #8a8a8a; font-size: 0.95rem; padding: 60px 20px; text-align: center; }
+
+  .bild-unterschrift {
+    text-align: center; color: var(--text-mute); font-size: 0.92rem;
+    margin: 10px 0 40px; font-style: italic;
+  }
+
+  section.baustein {
+    --sektion-farbe: var(--farbe-transport);
+    --sektion-bg: var(--farbe-transport-bg);
+    background: var(--sektion-bg);
+    border-left: 6px solid var(--sektion-farbe);
+    border-radius: 4px 14px 14px 4px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+  }
+  section.baustein.speicher { --sektion-farbe: var(--farbe-speicher); --sektion-bg: var(--farbe-speicher-bg); }
+  section.baustein.zugriff  { --sektion-farbe: var(--farbe-zugriff);  --sektion-bg: var(--farbe-zugriff-bg); }
+  section.baustein.ki       { --sektion-farbe: var(--farbe-ki);       --sektion-bg: var(--farbe-ki-bg); }
+  section.baustein.deploy   { --sektion-farbe: var(--farbe-deploy);   --sektion-bg: var(--farbe-deploy-bg); }
+
+  section.baustein h2 { color: var(--sektion-farbe); margin: 0 0 12px; font-size: 1.3rem; }
+  section.baustein p { margin: 0 0 10px; }
+  section.baustein p:last-child { margin-bottom: 0; }
+  section.baustein ul { margin: 10px 0 0; padding-left: 22px; }
+  section.baustein li { margin-bottom: 7px; }
+
+  code, .inline-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(0,0,0,0.06);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 0.92em;
+  }
+
+  .stack-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+  .stack-tabelle th, .stack-tabelle td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .stack-tabelle th { color: var(--text-mute); font-weight: 600; }
+
+  .hinweis {
+    background: #fff;
+    border: 1px dashed #c9c2b3;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    color: var(--text-mute);
+    margin-top: 12px;
+  }
+
+  footer.abschluss {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid #e2dccf;
+    color: var(--text-mute);
+    font-size: 0.88rem;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    header.kopf h1 { font-size: 1.5rem; }
+    section.baustein { padding: 18px 18px; }
+    .stack-tabelle { font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+<div class="seite">
+
+  <header class="kopf">
+    <h1>Technische Sicherheitsübersicht</h1>
+    <p class="untertitel">Schul-Tools der BBS Walsrode – für IT-Kolleg:innen, Administratoren und alle, die es genauer wissen wollen</p>
+  </header>
+
+  <div class="bild-rahmen">
+    <img src="sicherheit-eyecatcher-technisch.jpg" alt="Abstrakte technische Illustration: ein leuchtender Lichttunnel verbindet ein Browser-Symbol mit einem Server-Rack, darin fließende Datenpakete mit Schloss-Symbolen als Zeichen für verschlüsselten Datenverkehr.">
+  </div>
+  <p class="bild-unterschrift">Verschlüsselter Transport, gesicherte Ablage, kein Fremdzugriff, keine Indexierung.</p>
+
+  <section class="baustein">
+    <h2>Technologie-Stack</h2>
+    <p>Bewusst minimal gehalten – jede zusätzliche Komponente wäre eine zusätzliche Angriffsfläche:</p>
+    <table class="stack-tabelle">
+      <tr><th>Ebene</th><th>Einsatz</th></tr>
+      <tr><td>Hosting</td><td>IONOS Shared Hosting, reines PHP + Dateisystem</td></tr>
+      <tr><td>Datenhaltung</td><td>JSON-Dateien mit File-Locking (<code>flock</code>), keine Datenbank</td></tr>
+      <tr><td>Server-Software</td><td>Kein Node.js, kein Composer, keine zusätzlichen Runtime-Abhängigkeiten</td></tr>
+      <tr><td>Transport</td><td>HTTPS/TLS für alle Seitenaufrufe, SFTP (Port 22) für Deployments</td></tr>
+    </table>
+  </section>
+
+  <section class="baustein speicher">
+    <h2>Datenhaltung &amp; Zugriffsschutz</h2>
+    <ul>
+      <li>Nutzdaten liegen als JSON-Dateien in einem Verzeichnis außerhalb des öffentlich erreichbaren Bereichs bzw. per Server-Konfiguration gesperrt (kein Direktzugriff über URL).</li>
+      <li>Schreibzugriffe laufen über <code>flock</code>-basiertes File-Locking, um Race Conditions bei gleichzeitigem Zugriff zu vermeiden.</li>
+      <li>Admin-Passwörter werden ausschließlich als Hash gespeichert (<code>password_hash()</code>/bcrypt), nie im Klartext.</li>
+      <li>Keine Datenbank bedeutet: keine SQL-Injection-Angriffsfläche, kein exponierter DB-Port, kein zusätzlicher Dienst, der gepflegt/gepatcht werden müsste.</li>
+    </ul>
+  </section>
+
+  <section class="baustein">
+    <h2>Transportverschlüsselung</h2>
+    <ul>
+      <li>Alle Seitenaufrufe laufen über HTTPS/TLS – keine Klartextübertragung von Formulardaten oder Session-Cookies.</li>
+      <li>Sessions werden serverseitig per PHP-Session gehalten, keine sensiblen Daten im Cookie selbst.</li>
+      <li>Deployments erfolgen über SFTP (SSH-basiert, Port 22) statt unverschlüsseltem FTP – Zugangsdaten werden dabei nie im Klartext über das Netz übertragen.</li>
+    </ul>
+  </section>
+
+  <section class="baustein zugriff">
+    <h2>Sichtbarkeit nach außen</h2>
+    <ul>
+      <li>Alle nicht-öffentlichen Seiten tragen <code>&lt;meta name="robots" content="noindex, nofollow"&gt;</code> bzw. entsprechende <code>robots.txt</code>-Regeln – keine Indexierung durch Suchmaschinen.</li>
+      <li>Keine externen Ressourcen (Google Fonts, CDN-Tracker, Analytics-Skripte) – jeder Seitenaufruf bleibt zwischen Nutzer:in und dem Schulserver, ohne Datenabfluss an Dritte über eingebettete Drittanbieter-Ressourcen.</li>
+      <li>Verzeichnislisting ist serverseitig deaktiviert; sensible Ordner (<code>private/</code>, <code>config.php</code>) liegen außerhalb des Document Roots oder sind per Server-Regel gesperrt.</li>
+    </ul>
+  </section>
+
+  <section class="baustein ki">
+    <h2>Rolle der KI (Claude Code) im Entwicklungsprozess</h2>
+    <ul>
+      <li>Die KI wird ausschließlich lokal während der Entwicklung eingesetzt – kein Zugriff auf den Produktivserver, keine gespeicherten Zugangsdaten.</li>
+      <li>Zugangsdaten für SFTP liegen in einer lokalen <code>.env</code>-Datei außerhalb des Repositories; die KI liest diese nicht.</li>
+      <li>Für dateiverändernde oder übertragende Aktionen (Uploads, Löschen) fordert das verwendete Agenten-Framework bei jeder einzelnen Aktion eine explizite Bestätigung an – kein autonomes Ausführen risikobehafteter Schritte.</li>
+      <li>Deployments laufen grundsätzlich über einen Trockenlauf (<code>--dry-run</code>) vor der eigentlichen Übertragung.</li>
+      <li>Modelltraining mit eigenen Chat-/Code-Inhalten ist im genutzten Konto deaktiviert (Claude Pro, Einstellung „Hilf uns, unsere KI-Modelle zu verbessern&#8220; auf Aus).</li>
+    </ul>
+  </section>
+
+  <section class="baustein deploy">
+    <h2>Deployment-Workflow</h2>
+    <ul>
+      <li>Zugangsdaten pro Projekt in <code>~/.config/bbs-deploy/&lt;projekt&gt;.env</code> (chmod 600), niemals im Projekt-Repository selbst.</li>
+      <li>Harte Ausschlussliste im Deploy-Skript für <code>private/data/</code> und <code>config.php</code> – Live-Daten werden nie versehentlich überschrieben.</li>
+      <li>Jeder Deploy-Schritt wird nach dem Trockenlauf per <code>curl</code>-Prüfung der Live-URL verifiziert.</li>
+    </ul>
+    <div class="hinweis">Diese Seite beschreibt den aktuellen Stand der eingesetzten Tools (Stand: September 2026) und wird bei technischen Änderungen am Stack aktualisiert.</div>
+  </section>
+
+  <footer class="abschluss">
+    Stand: September 2026 · Guido Walther, BBS Walsrode
+  </footer>
+
+</div>
+</body>
+</html>
