@@ -8,17 +8,81 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <link rel="stylesheet" href="style.css">
 <style>
-  .btn.lila { background: #d9b8f5; color: #2b1146; }
-  .btn-list {
-    display: grid;
-    grid-template-columns: minmax(0, max-content);
-    gap: 12px;
-    margin-top: 24px;
+  /* Bereichsfarben – neue Bereiche: Farbe hier + Klasse unten + Filter-Button ergänzen */
+  :root {
+    --farbe-lernen: #ff6a4d;
+    --farbe-vortraege: #dd8cf7;
+    --farbe-unterricht: #74db5c;
   }
-  .btn-list .btn {
-    margin-top: 0;
-    width: 100%;
-    justify-content: flex-start;
+  html[data-theme="light"] {
+    --farbe-lernen: #c63a1f;
+    --farbe-vortraege: #9433bd;
+    --farbe-unterricht: #2e8424;
+  }
+  .bereich-lernen { --sektion-farbe: var(--farbe-lernen); }
+  .bereich-vortraege { --sektion-farbe: var(--farbe-vortraege); }
+  .bereich-unterricht { --sektion-farbe: var(--farbe-unterricht); }
+
+  main.page.notizen-page { max-width: 1000px; }
+
+  .filterleiste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .filter {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--sektion-farbe, var(--text-muted));
+    background: transparent;
+    color: var(--sektion-farbe, var(--text));
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .filter:hover { background: color-mix(in srgb, var(--sektion-farbe, var(--text)) 15%, transparent); }
+  .filter[aria-pressed="true"] {
+    background: var(--sektion-farbe, var(--text));
+    border-color: var(--sektion-farbe, var(--text));
+    color: var(--bg);
+  }
+
+  .karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 24px;
+    text-align: left;
+  }
+  .karte {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    border-left: 5px solid var(--sektion-farbe);
+    border-radius: 4px 12px 12px 4px;
+    background: color-mix(in srgb, var(--sektion-farbe) 14%, var(--bg-tile));
+    color: var(--text);
+    text-decoration: none;
+    transition: transform .15s, background .15s;
+  }
+  .karte:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--sektion-farbe) 24%, var(--bg-tile));
+  }
+  .karte[hidden] { display: none; }
+  .karte-titel {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .karte-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
   }
 </style>
 </head>
@@ -31,23 +95,79 @@
   </button>
 </header>
 
-<main class="page">
+<main class="page notizen-page">
   <h1>Notizen</h1>
-  <div class="btn-list">
-    <a class="btn" href="claude-code-einstellungen.html">Claude Code – meine Einstellungen</a>
-    <a class="btn" href="github-pages-hosting.html">GitHub Pages für die Lehrer-Infoseite — Hosting-Empfehlung</a>
-    <a class="btn lila" href="ki-agenten-basics.html">KI-Agenten sicher nutzen — die Basics</a>
-    <a class="btn lila" href="wie-wir-arbeiten.html">Struktur, die mitwächst — Wie wir arbeiten</a>
-    <a class="btn lila" href="vortrag-kollegium.html">Mit Claude Code Unterricht bauen — Vortrag Kollegium</a>
-    <a class="btn lila" href="grenze-fragen.html">Bis an die Grenze fragen — Notiz zu einem Short</a>
-    <a class="btn lila" href="operatoren-mathematik-abitur-niedersachsen.html">Operatoren im Mathematik-Abitur — was an BBS in Niedersachsen gilt</a>
-    <a class="btn lila" href="streumasse-varianz-standardabweichung.html">Varianz &amp; Standardabweichung — Erklärfolien für Mathe Klasse 11</a>
-    <a class="btn lila" href="moodle-kurs-neu-anlegen.html">Moodle-Kurs für ein neues Fach anlegen</a>
-    <a class="btn lila" href="moodle-selbsteinschreibung-einrichten.html">Moodle-Selbsteinschreibung für Schüler einrichten</a>
-    <a class="btn" href="jahresplanung-mit-claude-code.html">Jahresplanung mit Claude Code aufbauen</a>
+  <p class="lead">Mein privater Ausgangspunkt für eigene Notizen, Vorträge und Unterrichtsplanung. Nicht öffentlich beworben, aber technisch frei erreichbar – für wirklich sensible Dinge nutze ich andere Wege.</p>
+
+  <div class="filterleiste" role="group" aria-label="Notizen filtern">
+    <button class="filter" type="button" data-filter="alle" aria-pressed="true">Alle</button>
+    <button class="filter bereich-lernen" type="button" data-filter="lernen" aria-pressed="false">Für mich gelernt</button>
+    <button class="filter bereich-vortraege" type="button" data-filter="vortraege" aria-pressed="false">Vorträge und Infos</button>
+    <button class="filter bereich-unterricht" type="button" data-filter="unterricht" aria-pressed="false">Unterricht planen</button>
+  </div>
+
+  <div class="karten">
+    <!-- Für mich gelernt (aus Videos, Shorts, Artikeln) -->
+    <a class="karte bereich-lernen" data-bereich="lernen" href="ki-agenten-basics.html">
+      <span class="karte-titel">KI-Agenten sicher nutzen</span>
+      <span class="karte-text">Die Basics aus dem Talk von Christoph Magnussen – zum Nachlesen</span>
+    </a>
+    <a class="karte bereich-lernen" data-bereich="lernen" href="grenze-fragen.html">
+      <span class="karte-titel">Bis an die Grenze fragen</span>
+      <span class="karte-text">Notiz zu einem Short: der wichtigste KI-Skill ist Nachfragen</span>
+    </a>
+
+    <!-- Vorträge und Infos für andere (Kollegium, Schüler, Eltern) -->
+    <a class="karte bereich-vortraege" data-bereich="vortraege" href="wie-wir-arbeiten.html">
+      <span class="karte-titel">Struktur, die mitwächst</span>
+      <span class="karte-text">Wie wir mit Claude arbeiten – vier Ebenen von „gilt überall“ bis „gilt nur hier“</span>
+    </a>
+    <a class="karte bereich-vortraege" data-bereich="vortraege" href="vortrag-kollegium.html">
+      <span class="karte-titel">Mit Claude Code Unterricht bauen</span>
+      <span class="karte-text">Vortrag fürs Kollegium: von der Regel-Datei zum Kochbuch, das mitwächst</span>
+    </a>
+    <a class="karte bereich-vortraege" data-bereich="vortraege" href="streumasse-varianz-standardabweichung.html">
+      <span class="karte-titel">Varianz &amp; Standardabweichung</span>
+      <span class="karte-text">Erklärfolien für Mathe Klasse 11</span>
+    </a>
+    <a class="karte bereich-vortraege" data-bereich="vortraege" href="sicherheitserklaerung.html">
+      <span class="karte-titel">Sicherheitserklärung</span>
+      <span class="karte-text">Wie sicher sind unsere Schul-Tools? Für alle, die keine IT-Fachleute sind</span>
+    </a>
+    <a class="karte bereich-vortraege" data-bereich="vortraege" href="sicherheitserklaerung-technisch.html">
+      <span class="karte-titel">Sicherheitserklärung (technisch)</span>
+      <span class="karte-text">Die Schul-Tools im Detail – für IT-Kolleg:innen und Administratoren</span>
+    </a>
+
+    <!-- Unterricht planen (Vorgaben, Abläufe, worauf achten) -->
+    <a class="karte bereich-unterricht" data-bereich="unterricht" href="operatoren-mathematik-abitur-niedersachsen.html">
+      <span class="karte-titel">Operatoren im Mathematik-Abitur</span>
+      <span class="karte-text">Was an BBS in Niedersachsen gilt und was die Operatoren genau bedeuten</span>
+    </a>
+    <a class="karte bereich-unterricht" data-bereich="unterricht" href="moodle-kurs-neu-anlegen.html">
+      <span class="karte-titel">Moodle-Kurs für ein neues Fach anlegen</span>
+      <span class="karte-text">Vom leeren Kursbereich bis zum ersten bewerteten Test mit Datei-Abgabe</span>
+    </a>
+    <a class="karte bereich-unterricht" data-bereich="unterricht" href="moodle-selbsteinschreibung-einrichten.html">
+      <span class="karte-titel">Moodle-Selbsteinschreibung einrichten</span>
+      <span class="karte-text">Schüler tragen sich selbst in den Kurs ein – per Schlüssel oder QR-Code</span>
+    </a>
+    <a class="karte bereich-unterricht" data-bereich="unterricht" href="jahresplanung-mit-claude-code.html">
+      <span class="karte-titel">Jahresplanung mit Claude Code aufbauen</span>
+      <span class="karte-text">Schuljahreskalender und Fach-Jahrespläne Schritt für Schritt – aus einem Praxis-Video</span>
+    </a>
   </div>
 </main>
 
 <script src="theme.js"></script>
+<script>
+  const filterButtons = document.querySelectorAll('.filter');
+  const karten = document.querySelectorAll('.karte');
+  filterButtons.forEach(btn => btn.addEventListener('click', () => {
+    const wahl = btn.dataset.filter;
+    filterButtons.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    karten.forEach(k => { k.hidden = wahl !== 'alle' && k.dataset.bereich !== wahl; });
+  }));
+</script>
 </body>
 </html>
