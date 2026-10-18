@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>KI – wir haben noch gar nichts gesehen</title>
+<style>
+  /*
+    Bereich „Für mich gelernt“ → Farbfamilie Rot/Korall. --k1…--k7 sind die
+    Kapitelfarben (dunkel/hell), die Kapitel wechseln sie reihum durch.
+  */
+  :root {
+    --bg: #130b0a;
+    --bg-soft: #1a0f0d;
+    --card: #1f1311;
+    --card-border: #3a2420;
+    --ink: #f3e8e5;
+    --ink-dim: #bfa9a4;
+    --ink-faint: #8f7a75;
+    --accent: #ff6a4d;
+    --accent-2: #ff9a85;
+    --accent-ink: #2a0d07;
+    --danger: #ff4d4d;
+    --safe: #57c98a;
+    --k1: #ff6a4d;
+    --k2: #ff8a6b;
+    --k3: #f2785a;
+    --k4: #e8654a;
+    --k5: #ff7f5f;
+    --k6: #dc5a43;
+    --k7: #ff9275;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: "Avenir Next", "Century Gothic", "Segoe UI Semibold", ui-sans-serif, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    --max: 740px;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #fbf4f2;
+    --bg-soft: #f4e7e3;
+    --card: #ffffff;
+    --card-border: #ecd5cf;
+    --ink: #2a1815;
+    --ink-dim: #5c403b;
+    --ink-faint: #8f7a75;
+    --accent: #c63a1f;
+    --accent-2: #a82f18;
+    --accent-ink: #ffffff;
+    --danger: #c42a2a;
+    --safe: #1f8a54;
+    --k1: #c63a1f;
+    --k2: #b8431f;
+    --k3: #bd3a2c;
+    --k4: #a93524;
+    --k5: #c2481f;
+    --k6: #9e2f22;
+    --k7: #b5502f;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #fbf4f2;
+      --bg-soft: #f4e7e3;
+      --card: #ffffff;
+      --card-border: #ecd5cf;
+      --ink: #2a1815;
+      --ink-dim: #5c403b;
+      --ink-faint: #8f7a75;
+      --accent: #c63a1f;
+      --accent-2: #a82f18;
+      --accent-ink: #ffffff;
+      --danger: #c42a2a;
+      --safe: #1f8a54;
+      --k1: #c63a1f;
+      --k2: #b8431f;
+      --k3: #bd3a2c;
+      --k4: #a93524;
+      --k5: #c2481f;
+      --k6: #9e2f22;
+      --k7: #b5502f;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent-2); text-decoration-color: color-mix(in srgb, var(--accent-2) 40%, transparent); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent-2); }
+
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; letter-spacing: -0.01em; }
+
+  /* ---------- top progress bar ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    z-index: 60;
+    transition: width 80ms linear;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 60;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--ink-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { color: var(--accent-2); border-color: var(--accent); }
+  .theme-toggle svg { width: 18px; height: 18px; }
+
+  /* ---------- layout shell ---------- */
+  .shell {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px;
+    display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- route strip (desktop side nav) ---------- */
+  .route {
+    position: sticky; top: 28px; align-self: start;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 18px 0 18px 4px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  @media (max-width: 900px) { .route { display: none; } }
+
+  .route-title {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 0 0 10px 18px;
+  }
+  .route a {
+    position: relative; display: flex; align-items: baseline; gap: 10px;
+    padding: 6px 10px 6px 18px; border-radius: 8px;
+    color: var(--ink-dim); text-decoration: none; font-size: 14px; line-height: 1.35;
+    border-left: 2px solid var(--card-border);
+    transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+  }
+  .route a .t { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--ink-faint); flex-shrink: 0; min-width: 46px; }
+  .route a:hover { color: var(--ink); background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 8%, transparent); }
+  .route a.active {
+    color: var(--ink); font-weight: 600;
+    border-left-color: var(--sektion-farbe, var(--accent));
+    background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 12%, transparent);
+  }
+  .route a.active .t { color: var(--sektion-farbe, var(--accent)); }
+
+  /* ---------- mobile chip nav ---------- */
+  .chipnav {
+    display: none;
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 16px; margin: 0 -16px 8px;
+    overflow-x: auto; white-space: nowrap;
+    gap: 8px;
+  }
+  @media (max-width: 900px) { .chipnav { display: flex; } }
+  .chipnav a {
+    display: inline-block; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--card-border); color: var(--ink-dim);
+    text-decoration: none; font-size: 13px; flex-shrink: 0;
+  }
+  .chipnav a.active { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+  main { min-width: 0; padding-bottom: 100px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 40px; max-width: var(--max); }
+  @media (max-width: 900px) { .hero { padding-top: 20px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-2); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--card-border));
+    padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--safe); box-shadow: 0 0 8px var(--safe); }
+
+  .hero h1 {
+    font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1.05; margin: 20px 0 18px; font-weight: 800;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 62%, color-mix(in srgb, var(--accent) 35%, transparent) 62%);
+  }
+  .hero .lede { font-size: 1.15rem; color: var(--ink-dim); max-width: 58ch; }
+
+  .hero-meta {
+    margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 15px;
+    text-decoration: none; border: 1px solid transparent; cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: var(--accent-ink); box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: transparent; color: var(--ink-dim); border-color: var(--card-border); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--accent); }
+
+  .source-line { color: var(--ink-faint); font-size: 14px; margin-top: 14px; }
+  .source-line a { color: var(--ink-dim); }
+
+  /* ---------- kennzahlen-leiste ---------- */
+  .gauge-wrap { max-width: var(--max); margin: 8px 0 56px; }
+  .gauge {
+    display: flex; align-items: stretch; gap: 0; border: 1px solid var(--card-border);
+    border-radius: var(--radius); overflow: hidden; background: var(--card);
+  }
+  .gauge > div {
+    flex: 1; padding: 16px 18px; position: relative;
+  }
+  .gauge > div + div { border-left: 1px dashed var(--card-border); }
+  .gauge .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); }
+  .gauge .v { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; margin-top: 4px; }
+  @media (max-width: 620px) { .gauge { flex-wrap: wrap; } .gauge > div { flex: 1 1 100%; } .gauge > div + div { border-left: none; border-top: 1px dashed var(--card-border); } }
+
+  /* ---------- sections ---------- */
+  section.chapter {
+    max-width: var(--max);
+    margin: 0 0 64px;
+    scroll-margin-top: 24px;
+  }
+
+  .chapter-kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sektion-farbe); margin: 0 0 8px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .chapter-kicker a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+  .chapter-kicker a:hover { opacity: 0.75; }
+
+  .chapter h2 { font-size: 1.7rem; margin: 0 0 18px; font-weight: 800; }
+
+  .chapter-body {
+    background: color-mix(in srgb, var(--sektion-farbe) 6%, var(--card));
+    border-left: 3px solid var(--sektion-farbe);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 26px 28px;
+    border-top: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+  }
+  @media (max-width: 560px) { .chapter-body { padding: 20px 18px; } }
+  .chapter-body p { margin: 0 0 14px; color: var(--ink); }
+  .chapter-body p:last-child { margin-bottom: 0; }
+  .chapter-body strong { color: var(--ink); }
+  .chapter-body code {
+    font-family: var(--font-mono); font-size: 0.9em; background: color-mix(in srgb, var(--sektion-farbe) 16%, transparent);
+    padding: 2px 6px; border-radius: 5px; color: var(--ink);
+  }
+  .chapter-body ul { margin: 10px 0 14px; padding-left: 22px; }
+  .chapter-body li { margin-bottom: 8px; }
+
+  .tldr {
+    margin-top: 16px; padding-top: 14px; border-top: 1px dashed color-mix(in srgb, var(--sektion-farbe) 40%, var(--card-border));
+    font-size: 15px; color: var(--ink-dim);
+  }
+  .tldr b { color: var(--sektion-farbe); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; }
+
+  /* ---------- analogie-kasten ---------- */
+  .analogie {
+    margin: 18px 0 0; padding: 16px 18px;
+    border: 1.5px dashed color-mix(in srgb, var(--sektion-farbe) 55%, var(--card-border));
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--sektion-farbe) 5%, transparent);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .analogie .sign {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px;
+    border: 2px solid var(--sektion-farbe); color: var(--sektion-farbe);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  }
+  .analogie p { margin: 0; font-size: 15px; color: var(--ink-dim); }
+  .analogie b { color: var(--ink); }
+
+  /* ---------- vergleichs-karten ---------- */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; margin: 20px 0 0; }
+  @media (max-width: 560px) { .versus { grid-template-columns: 1fr; } .versus .vs { display: none; } }
+  .versus .card {
+    border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 16px 18px; background: var(--bg-soft);
+  }
+  .versus .card h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.05rem; }
+  .versus .card p { margin: 0; font-size: 14.5px; color: var(--ink-dim); }
+  .versus .vs { align-self: center; font-family: var(--font-mono); color: var(--ink-faint); font-size: 13px; }
+  .versus .card.highlight { border-color: color-mix(in srgb, var(--sektion-farbe) 45%, var(--card-border)); }
+  .versus .card.highlight h4 { color: var(--sektion-farbe); }
+
+  /* ---------- stufen-leiste ---------- */
+  .levels { margin: 20px 0 0; }
+  .levels-track { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--card-border); }
+  .levels-track div { flex: 1; }
+  .levels-track .l1 { background: var(--safe); }
+  .levels-track .l2 { background: #e8a93a; }
+  .levels-track .l3 { background: var(--danger); }
+  .levels-labels { display: flex; margin-top: 10px; gap: 10px; }
+  @media (max-width: 560px) { .levels-labels { flex-direction: column; } }
+  .levels-labels > div { flex: 1; font-size: 14px; }
+  .levels-labels .name { font-weight: 700; color: var(--ink); display: block; margin-bottom: 2px; }
+  .levels-labels .desc { color: var(--ink-faint); font-size: 13px; }
+
+  /* ---------- glossar ---------- */
+  .glossary-table { max-width: var(--max); margin: 0 0 64px; }
+  .glossary-table .scroll { overflow-x: auto; border: 1px solid var(--card-border); border-radius: var(--radius); }
+  table.gloss { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.gloss th {
+    text-align: left; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-faint); padding: 12px 16px; border-bottom: 1px solid var(--card-border); background: var(--bg-soft);
+  }
+  table.gloss td { padding: 14px 16px; border-bottom: 1px solid var(--card-border); vertical-align: top; font-size: 14.5px; }
+  table.gloss tr:last-child td { border-bottom: none; }
+  table.gloss td.term { font-weight: 700; white-space: nowrap; }
+  table.gloss td.ebene { color: var(--ink-faint); font-family: var(--font-mono); font-size: 12.5px; white-space: nowrap; }
+  table.gloss tr:hover td { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+  /* ---------- footer ---------- */
+  footer {
+    max-width: var(--max); padding-top: 32px; border-top: 1px solid var(--card-border);
+    color: var(--ink-faint); font-size: 13.5px; line-height: 1.7;
+  }
+  footer a { color: var(--ink-dim); }
+  footer .credit { margin-top: 18px; }
+
+  .section-label { max-width: var(--max); margin: 0 0 20px; }
+  .section-label h3 {
+    font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-faint); margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<button class="theme-toggle" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+
+<div class="shell">
+  <nav class="route" aria-label="Kapitel">
+    <div class="route-title">Route</div>
+    <a href="#wendepunkt" data-color="var(--k1)"><span class="t">01:00</span><span>Der Wendepunkt</span></a>
+    <a href="#beweise" data-color="var(--k2)"><span class="t">10:11</span><span>Drei Beweise</span></a>
+    <a href="#arbeitszeit" data-color="var(--k3)"><span class="t">26:25</span><span>Wie lange KI allein arbeitet</span></a>
+    <a href="#hybride-ki" data-color="var(--k4)"><span class="t">38:40</span><span>Hybride KI &amp; Energie</span></a>
+    <a href="#europa" data-color="var(--k5)"><span class="t">46:48</span><span>Europas Chance</span></a>
+    <a href="#mittelstand" data-color="var(--k6)"><span class="t">50:51</span><span>Tipps für den Mittelstand</span></a>
+    <a href="#hype" data-color="var(--k7)"><span class="t">58:58</span><span>Hype oder echt?</span></a>
+    <a href="#robotik" data-color="var(--k1)"><span class="t">1:06:03</span><span>Roboter</span></a>
+    <a href="#weltmodelle" data-color="var(--k2)"><span class="t">1:10:05</span><span>Weltmodelle</span></a>
+    <a href="#firmen" data-color="var(--k3)"><span class="t">1:20:12</span><span>Rat an Firmen</span></a>
+    <a href="#pruefungen" data-color="var(--k4)"><span class="t">1:22:14</span><span>Studium &amp; Prüfungen</span></a>
+    <a href="#koennen" data-color="var(--k5)"><span class="t">1:30:21</span><span>Was man noch können muss</span></a>
+    <a href="#schluss" data-color="var(--k6)"><span class="t">1:40:30</span><span>Zum Schluss</span></a>
+    <a href="#fazit" data-color="var(--k7)"><span class="t">∑</span><span>Das nehme ich mit</span></a>
+    <a href="#glossar" data-color="var(--k1)"><span class="t">＋</span><span>Glossar</span></a>
+  </nav>
+
+  <main>
+    <div class="chipnav" id="chipnav">
+      <a href="#wendepunkt">Wendepunkt</a>
+      <a href="#beweise">Beweise</a>
+      <a href="#arbeitszeit">Arbeitszeit</a>
+      <a href="#hybride-ki">Hybride KI</a>
+      <a href="#europa">Europa</a>
+      <a href="#mittelstand">Mittelstand</a>
+      <a href="#hype">Hype?</a>
+      <a href="#robotik">Roboter</a>
+      <a href="#weltmodelle">Weltmodelle</a>
+      <a href="#firmen">Firmen</a>
+      <a href="#pruefungen">Prüfungen</a>
+      <a href="#koennen">Können</a>
+      <a href="#schluss">Schluss</a>
+      <a href="#fazit">Fazit</a>
+      <a href="#glossar">Glossar</a>
+    </div>
+
+    <div class="hero">
+      <span class="eyebrow"><span class="dot"></span> Lernseite · Companion zum Video</span>
+      <h1>KI – wir haben <em>noch gar nichts</em> gesehen</h1>
+      <p class="lede">
+        Fast zwei Stunden Gespräch mit Prof. Christian Bauckhage (Fraunhofer IAIS, Co-Direktor des
+        Lamarr-Instituts) über die Frage, warum das Wachstum der KI exponentiell ist – und was das für
+        Wirtschaft, Mittelstand, Robotik, Studium und Prüfungen bedeutet. Diese Seite gliedert das
+        Gespräch in 14 Kapitel, damit du gezielt nachlesen kannst.
+      </p>
+      <div class="hero-meta">
+        <a class="btn btn-primary" href="https://www.youtube.com/watch?v=pb5cMmdQVJo" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Original-Video ansehen (1 h 55 min)
+        </a>
+        <a class="btn btn-ghost" href="#fazit">Direkt zum Fazit</a>
+      </div>
+      <p class="source-line">
+        Quelle: „Prof. Dr. Christian Bauckhage (Fraunhofer IAIS): KI – Wir haben noch gar nichts gesehen!“ ·
+        <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo" target="_blank" rel="noopener">Mathe by Daniel Jung</a> · 2026
+      </p>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <div><div class="k">Modellgröße</div><div class="v">verdoppelt sich jährlich</div></div>
+        <div><div class="k">Proteinstrukturen</div><div class="v">200 Tsd. → 200 Mio.</div></div>
+        <div><div class="k">Aufgabenlänge der KI</div><div class="v">2,5 h → 78 h</div></div>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <section class="chapter" id="wendepunkt" style="--sektion-farbe:var(--k1)">
+      <div class="chapter-kicker">Einstieg · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=60s" target="_blank" rel="noopener">▶ 01:00 im Video</a></div>
+      <h2>Der Wendepunkt: Von AlphaGo zur Verdopplung</h2>
+      <div class="chapter-body">
+        <p>
+          Bauckhage forscht seit Jahrzehnten an KI und hat sich lange mit Spiele-KI beschäftigt. Noch 2014
+          hat er seinen Studierenden beigebracht, wie Schachcomputer funktionieren – und dass dieselbe
+          Methode bei <strong>Go</strong> nicht funktioniert. Er war sicher, dass er nie erleben würde, wie
+          eine Maschine den Weltmeister schlägt. Zwei Jahre später, 2016, war es so weit: <strong>AlphaGo</strong>
+          gewann gegen Lee Sedol, mit einem ganz anderen Ansatz (neuronale Netze, Reinforcement Learning,
+          Monte-Carlo-Suche), den vorher niemand auf dem Schirm hatte.
+        </p>
+        <p>
+          Seine Lehre daraus: <strong>Wenn selbst das Unmögliche geht, muss man sich auf Dinge einstellen,
+          die bisher als unmöglich galten.</strong> Deshalb schaute er sich 2016 das größte neuronale Netz
+          an, verdoppelte dessen Größe in Gedanken jedes Jahr und kam darauf, dass die künstlichen Netze
+          um <strong>2030</strong> die Komplexität des menschlichen Gehirns erreichen würden. Zehn Jahre
+          später ist die Verdopplungs-Prognose bei der Modellgröße laut ihm voll eingetreten: Die aktuellen
+          Modelle liegen bei etwa einer Billion Parameter – noch eine Größenordnung unter dem Gehirn, aber
+          mit erstaunlichen Fähigkeiten.
+        </p>
+        <div class="analogie">
+          <div class="sign">2ⁿ</div>
+          <p><b>30 Schritte:</b> Wer 30-mal einen Meter geht, steht auf dem Parkplatz vor der Halle. Wer
+          jeden Schritt <i>verdoppelt</i> (1 m, 2 m, 4 m, 8 m …), legt nach 30 Schritten über eine Million
+          Kilometer zurück – mehr als einmal zum Mond und zurück. Genau das ist der Unterschied zwischen
+          linearem und exponentiellem Denken.</p>
+        </div>
+        <p>
+          Was ihn „nachts nicht schlafen lässt“: Wir haben jetzt <strong>kognitive Maschinen</strong>, die
+          sehen, hören, sprechen, schreiben, Bilder erzeugen und Code schreiben – und sie werden von Quartal
+          zu Quartal besser. Die große Frage ist, was das mit uns als Menschen, Gesellschaft und Wirtschaft
+          macht.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>AlphaGo war der Weckruf; seitdem verdoppeln sich die Netze jährlich – und
+        exponentielles Wachstum fühlt sich am Anfang immer harmlos an.</div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="chapter" id="beweise" style="--sektion-farbe:var(--k2)">
+      <div class="chapter-kicker">Belege · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=611s" target="_blank" rel="noopener">▶ 10:11 im Video</a></div>
+      <h2>Drei Beweise: AlphaFold, Mathe-Olympiade, Erdős</h2>
+      <div class="chapter-body">
+        <p>
+          <strong>1. AlphaFold (Proteinfaltung).</strong> Die Abfolge der Bausteine eines Moleküls (die „Buchstaben“
+          A, C, G, T) konnte man schon länger bestimmen – aber nicht, wie das Molekül dreidimensional aussieht,
+          und genau das braucht man für neue Medikamente. Von 1957 bis 2018 hat die Menschheit etwa
+          <strong>200.000</strong> Strukturen aufgeklärt. Danach kam DeepMind mit AlphaFold, und bis zum Nobelpreis
+          2024 kamen rund <strong>200 Millionen</strong> dazu. Wer heute in Biologie, Genetik oder Pharmazie auf
+          Weltniveau forscht, kommt laut Bauckhage ohne KI nicht mehr aus.
+        </p>
+        <p>
+          Spannend ist die Begründung: Viele hielten das Problem für lösbar nur mit Quantencomputern. Es stellte
+          sich heraus, dass ein sehr großes neuronales Netz die Struktur in einem extrem hochdimensionalen Raum
+          erfassen kann, ohne Quantenrechner. Ähnlich ist es bei Sprache: Wir können sprechen, aber nicht erklären,
+          <i>wie</i> – die Netze lernen diese Struktur trotzdem.
+        </p>
+        <p>
+          <strong>2. Mathematik-Olympiade.</strong> Anfang 2024 löste ein Google-System Geometrie-Beweise, ein Mathematiker
+          meinte noch, Geometrie sei ja einfach. Ein halbes Jahr später: <strong>Silbermedaillen-Niveau</strong>.
+          Sommer 2025: <strong>Gold-Niveau</strong> bei DeepMind und OpenAI. Der Einwand „KI kann nicht mal
+          Zahlen multiplizieren“ ist erledigt, weil Agenten einfach einen Taschenrechner aufrufen.
+        </p>
+        <p>
+          <strong>3. Erdős-Vermutung.</strong> Zwei Wochen vor der Aufnahme widerlegte ein OpenAI-System eine
+          Vermutung über Punktabstände in der Ebene, an der die Mathematik seit rund 80 Jahren scheiterte. Dass
+          dafür vermutlich viele Versuche nötig waren, ist laut Bauckhage unerheblich – die Menschheit hat es in
+          80 Jahren nicht geschafft.
+        </p>
+        <div class="analogie">
+          <div class="sign">!</div>
+          <p><b>Warnung aus Bauckhages eigener Erfahrung:</b> Für eine Vorlesung wollte er einen allgemeinen Beweis
+          über stochastische Matrizen. Etwa 97,5 % der Webseiten dazu beweisen nur einen Spezialfall, und Gemini
+          wiederholte diesen Spezialfall mehrfach – bis er hartnäckig nachbohrte. Dann kam der richtige Beweis. Im
+          Internet steckt auch viel Unsinn, und der steckt dann im Modell. Passt zur Notiz
+          <a href="grenze-fragen.html">„Bis an die Grenze fragen“</a>.</p>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>Dinge, die als unlösbar galten, fallen reihenweise – aber nur, wenn man Ergebnisse
+        prüft und notfalls hartnäckig nachfragt.</div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="chapter" id="arbeitszeit" style="--sektion-farbe:var(--k3)">
+      <div class="chapter-kicker">Entwicklung · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=1585s" target="_blank" rel="noopener">▶ 26:25 im Video</a></div>
+      <h2>Wie lange kann KI allein arbeiten?</h2>
+      <div class="chapter-body">
+        <p>
+          Die vielleicht eindrücklichste Kurve stammt vom Forschungsinstitut <strong>METR</strong> (Kalifornien, laut Bauckhage
+          ohne Firma oder Uni dahinter). Gemessen wird: Ein menschlicher Top-Experte braucht für eine Aufgabe
+          sagen wir 2 Stunden, 2 Tage oder 2 Monate. Die KI bekommt dieselbe Aufgabe zehnmal; löst sie sie
+          fünfmal richtig, zählt das als Erfolg. So ergibt sich, <strong>wie „lang“ eine Aufgabe sein darf</strong>, die
+          eine KI selbstständig bewältigt.
+        </p>
+        <ul>
+          <li>Anfangs (2020–2022): Aufgaben, für die ein Mensch Sekunden braucht – dafür braucht man keine KI.</li>
+          <li>Ende letzten Jahres: etwa 2 bis 2,5 Stunden Menschenarbeit.</li>
+          <li>Mit Claude Opus 4.6: <strong>78 Stunden</strong> Menschenarbeit – die KI braucht dafür nur wenige Minuten.</li>
+        </ul>
+        <p>
+          In den Diagrammen ist das eine gerade Linie, weil die y-Achse logarithmisch ist; in Wahrheit steigt die
+          Kurve fast senkrecht. Wenn das so weitergeht, schafft eine KI irgendwann mit einem Prompt, wofür ein
+          Mensch <strong>zehn Jahre</strong> bräuchte. Beispiel Startup: Zehn Mitarbeitende leisten zusammen zehn
+          Personenjahre pro Jahr – eine KI könnte das in 20 Minuten.
+        </p>
+        <p>
+          <strong>Folgen:</strong> Daniel Jung verweist auf das Buch „The Last Economy“ (Emad Mostaque, Gründer von
+          Stability AI): Wer verdient Geld, wenn eine Arbeitskraft 100.000 € kostet und ein Roboter 5.000 €? Und
+          wer gibt das Geld dann aus? Bauckhage empfiehlt als beste Orientierung <strong>Science-Fiction</strong>, etwa
+          „Accelerando“ von Charles Stross: Agenten tauschen sich in eigenen, hocheffizienten Protokollen aus,
+          entwickeln eigene Finanzprodukte, und ein wachsender Teil der Welt spielt sich in der digitalen Welt der
+          Modelle ab.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Die Aufgabenlänge, die KI selbstständig schafft, wächst exponentiell – von
+        Sekunden auf Tage Menschenarbeit in wenigen Jahren.</div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="chapter" id="hybride-ki" style="--sektion-farbe:var(--k4)">
+      <div class="chapter-kicker">Bauckhages Forschung · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=2320s" target="_blank" rel="noopener">▶ 38:40 im Video</a></div>
+      <h2>Hybride KI und der Energiehunger</h2>
+      <div class="chapter-body">
+        <p>
+          Das Problem: Die aktuellen Foundation Models (Transformer, Diffusionsmodelle) sind extrem
+          rechenintensiv. Für das Training eines neuen Anthropic-Modells („Mythos“) nannte er rund
+          <strong>100 Millionen Dollar</strong>, im Wesentlichen Strom und Kühlung. Ein großes Rechenzentrum zieht
+          etwa 10 Megawatt, ein menschliches Gehirn dagegen nur rund 24 Watt – mehrere Größenordnungen
+          Unterschied. Das geht auch günstiger, ist Bauckhages Überzeugung als Wissenschaftler.
+        </p>
+        <div class="versus">
+          <div class="card">
+            <h4>Ein Alleskönner</h4>
+            <p>Ein riesiges Modell, das alles weiß (Weinbau, Quantencomputing, Kunstgeschichte …). Kostet ein ganzes
+            Rechenzentrum. Aktueller Trend: Scaling, Scaling, Scaling.</p>
+          </div>
+          <div class="vs">vs.</div>
+          <div class="card highlight">
+            <h4>Viele Spezialisten</h4>
+            <p>Kleine, günstige Modelle für je ein Fachgebiet. Eine Buchhaltungs-KI muss nicht wissen, wie der
+            Chardonnay in Kalifornien gedeiht. Bauckhages Ansatz.</p>
+          </div>
+        </div>
+        <p style="margin-top:18px">
+          Gegenposition: Kleine Modelle hätten kein echtes Verständnis. Bauckhage glaubt das nicht – seine
+          Erfahrung mit selbst entwickelten Buchführungs-Modellen ist gut. Sein Rezept: ein Basismodell, das
+          bereits Sprache kann, mit Fachdaten <strong>feintunen</strong> und im <strong>Post-Training</strong> mit gut aufbereiteten
+          Denkspuren (Reasoning Traces) und strukturiertem <strong>Expertenwissen</strong> zum Spezialisten machen. Das ist der
+          „hybride“ Teil: Lernen aus Daten <i>plus</i> Vorwissen.
+        </p>
+        <div class="analogie">
+          <div class="sign">🥖</div>
+          <p><b>Arbeitsteilung:</b> Jeder von uns ist Spezialist für etwas. Man kann Brot selbst backen, aber man
+          kauft es beim Bäcker. Warum sollte jede KI alles können müssen?</p>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>Statt eines energiefressenden Alleskönners: kleine Fach-Modelle, die mit
+        Expertenwissen und guten Daten trainiert wurden.</div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="chapter" id="europa" style="--sektion-farbe:var(--k5)">
+      <div class="chapter-kicker">Politik &amp; Wirtschaft · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=2808s" target="_blank" rel="noopener">▶ 46:48 im Video</a></div>
+      <h2>Europas Chance: die „Verticals“</h2>
+      <div class="chapter-body">
+        <p>
+          Daniel Jung bringt eine Gleichung ins Spiel: <i>Hybride KI + Quantum Machine Learning + Souveränität =
+          europäische Blaupause für KI-Führerschaft 2030</i>. Bauckhage ordnet ein:
+        </p>
+        <ul>
+          <li><strong>Ein Anthropic-Mythos-Modell in Europa zu trainieren</strong> ist aktuell nicht möglich – nicht
+          wegen der Rechner (die stehen herum), sondern weil es keiner bezahlen will.</li>
+          <li><strong>Daten:</strong> USA und China nehmen laut ihm alles ins Training, auch urheberrechtlich geschütztes
+          Material. In Europa ist das rechtlich so nicht möglich – „eigentlich auch gut so“, aber ein Standortnachteil.</li>
+          <li><strong>Stärke Europas:</strong> Industrie-Know-how, das nicht im Internet steht, sondern in Firmendatenbanken
+          (Fertigung, Materialflüsse, Prozesse). Daraus lassen sich spezialisierte „vertikale“ Modelle bauen.</li>
+          <li><strong>Quantum Machine Learning:</strong> bis 2030 sieht er hier keinen Durchbruch – das sei ein Hype-Thema.
+          Der Vorteil: Das Rennen ist noch offen. Eine gute europäische Idee könnte etwas liefern, was die
+          US-Firmen nicht haben.</li>
+        </ul>
+        <div class="tldr"><b>Kurz gesagt</b>Europa gewinnt nicht beim Größenwettlauf, sondern mit Fachdaten aus der Industrie
+        und spezialisierten Modellen.</div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="chapter" id="mittelstand" style="--sektion-farbe:var(--k6)">
+      <div class="chapter-kicker">Praxis · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=3051s" target="_blank" rel="noopener">▶ 50:51 im Video</a></div>
+      <h2>Was ein Mittelständler konkret tun sollte</h2>
+      <div class="chapter-body">
+        <p>
+          <strong>Schritt 1: nicht mit KI anfangen, sondern mit dem Problem.</strong> „KI nur wegen KI“ ist sinnlos. Wo ist
+          der Painpoint – Materialkosten, Abläufe, Effizienz? Wenn der klar ist, sollte man 2026 über KI
+          nachdenken, denn es gibt laut Bauckhage kaum etwas, wobei sie nicht ein bisschen hilft. Anlaufstellen
+          sind etwa Plattformen wie KI.NRW oder Forschungseinrichtungen wie Fraunhofer.
+        </p>
+        <p>
+          <strong>Schritt 2: ein eigenes Modell.</strong> Man nimmt ein gut funktionierendes Modell mittlerer Größe,
+          feintunt es mit den eigenen Daten und trainiert es mit passenden Reasoning-Verfahren nach. Das Ergebnis
+          läuft auf dem eigenen Rechner – ein Serverschrank oder sogar ein guter Gaming-PC reicht – und kann
+          Mitarbeitende zu Produktdesign, Buchhaltung usw. beraten.
+        </p>
+        <div class="levels">
+          <div class="levels-track"><div class="l1"></div><div class="l2"></div><div class="l3"></div></div>
+          <div class="levels-labels">
+            <div><span class="name">Small</span><span class="desc">unter 10 Mrd. Parameter</span></div>
+            <div><span class="name">Medium</span><span class="desc">10 bis 100 Mrd. Parameter – laut Bauckhage der Sweet Spot für Firmen-Modelle</span></div>
+            <div><span class="name">Frontier</span><span class="desc">hunderte Mrd. bis ca. 1 Billion; braucht ein ganzes Rechenzentrum</span></div>
+          </div>
+        </div>
+        <p style="margin-top:18px">
+          <strong>Datenschutz:</strong> Bei Cloud-Modellen lernen die Anbieter aus den Gesprächen. Das kann am Ende
+          bedeuten, dass die Konkurrenz ein Modell nutzt, in dem Wissen aus dem eigenen Unternehmen steckt. Auch
+          „europäische Rechenzentren“ der US-Anbieter geben laut ihm keine Garantie, dass Daten nicht doch bei
+          US-amerikanischen oder chinesischen Servern landen.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Erst das Problem benennen, dann ein mittelgroßes Modell mit eigenen Daten
+        feintunen und lokal betreiben – so bleibt das Wissen im Haus.</div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="chapter" id="hype" style="--sektion-farbe:var(--k7)">
+      <div class="chapter-kicker">Einordnung · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=3538s" target="_blank" rel="noopener">▶ 58:58 im Video</a></div>
+      <h2>Hype oder echt? „Get your boat ready“</h2>
+      <div class="chapter-body">
+        <p>
+          Bauckhage trennt zwei Dinge: Die <strong>Medienberichte sind überhitzt</strong>, aber die <strong>Fortschritte sind
+          real</strong> und gehen nicht mehr weg. Die klassischen Einwände („halluziniert“, „kann nicht multiplizieren“)
+          hätten sich in den letzten Jahren meist nach drei Monaten erledigt. Und weil das Wesen von exponentiell
+          ist, dass der nächste Schritt größer ist als alle vorherigen zusammen, gilt: <i>Wo wir jetzt sind, ist
+          immer noch der Anfang.</i>
+        </p>
+        <p>
+          Als Warnung führt er die Autoindustrie an: Sie galt als unangreifbar – heute kommen die technisch und
+          ökonomisch besten E-Autos aus China. Er erwähnt eine Zeitungsgrafik, in der die deutschen Exporte seit
+          2018 sinken und die chinesischen genau um diesen Betrag steigen. 2016 hätte man darüber gelacht.
+        </p>
+        <ul>
+          <li>Startups suchen mit KI neue Materialien, vor allem für <strong>Batterien</strong> – ein Gebiet, in dem die
+          Menschheit auf einem Plateau steckt.</li>
+          <li>Laut einem Zeitungsbericht will Argentinien rein KI-geführte Firmen (z. B. Steuerberatung) erlauben –
+          in Europa rechtlich bisher nicht möglich.</li>
+          <li>Auch die Wertschöpfung von Chipfirmen liegt in den Bauplänen, also in kognitiver Arbeit – und die
+          lässt sich verlagern.</li>
+        </ul>
+        <p>
+          Sein Fazit: Man müsse sich auf alles vorbereiten, wovon man bisher glaubte, es betreffe einen nicht.
+          <i>„Get your boat ready, the storm is coming.“</i>
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Nicht in Panik verfallen, aber auch nicht abwarten: Wer sich sicher fühlt,
+        wird schneller überholt, als er denkt.</div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="chapter" id="robotik" style="--sektion-farbe:var(--k1)">
+      <div class="chapter-kicker">Physical AI · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=3963s" target="_blank" rel="noopener">▶ 1:06:03 im Video</a></div>
+      <h2>Roboter: Es geht schneller als gedacht</h2>
+      <div class="chapter-body">
+        <p>
+          Beim chinesischen Neujahrsfest im Februar 2026 traten dutzende Humanoide gemeinsam auf der Bühne auf.
+          Bauckhage räumt ein: Das war vorprogrammierte Choreografie. Beeindruckend ist trotzdem, dass 20 Roboter
+          nebeneinander Saltos und Flickflacks zeigen, ohne umzufallen – nach seinem Wissensstand hätte das 2026
+          noch gar nicht möglich sein dürfen.
+        </p>
+        <p>
+          Er rechnet damit, dass es mit Haushalts- und Fabrikrobotern schnell geht: Sobald Technik als
+          Konsumprodukt auf den Markt kommt, beschleunigt sich die Entwicklung. Es gibt schon kaufbare
+          Haushaltsroboter (noch „absolut albern“), und mit Alibabas „Qwen Robot Suite“ kommen KI-Gehirne für
+          Roboter hinzu.
+        </p>
+        <div class="analogie">
+          <div class="sign">↻</div>
+          <p><b>Selbstverstärkende Schleife:</b> KI hilft Ingenieurinnen beim Entwurf, z. B. eines Gelenkmotors →
+          der wird effizienter und billiger → der Roboter wird billiger → mehr Firmen bauen Roboter → mehr
+          Konkurrenz. Der Fortschritt, der früher 20 Jahre brauchte, passiert in etwa 5.</p>
+        </div>
+        <div class="tldr"><b>Kurz gesagt</b>Humanoide Roboter sind nicht mehr Science-Fiction; wenn KI bei ihrem Bau
+        mithilft, beschleunigt sich alles weiter.</div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="chapter" id="weltmodelle" style="--sektion-farbe:var(--k2)">
+      <div class="chapter-kicker">Technik · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=4205s" target="_blank" rel="noopener">▶ 1:10:05 im Video</a></div>
+      <h2>Weltmodelle, Transformer und LeCuns Kritik</h2>
+      <div class="chapter-body">
+        <p>
+          Yann LeCun kritisiert, dass reine Sprachmodelle nicht weiterführen; man brauche <strong>Weltmodelle</strong>, die die
+          Welt nicht nur über Text lernen, sondern auch über Fühlen, Balancieren, Einschätzen. Bauckhage sieht
+          das als nahe an seiner <strong>hybriden KI</strong>: Daten <i>und</i> Vorwissen zusammenbringen, damit Modelle
+          effizienter und kleiner werden. Texte, Bilder und Videos bilden nicht den ganzen menschlichen
+          Erfahrungshorizont ab.
+        </p>
+        <p>
+          Seine Haltung zu Transformern ist zwiespältig: Theoretisch findet er sie „katastrophal“ – im Kern seien
+          es riesige Nachschlagetabellen (<i>welches Wort kommt als Nächstes?</i>), im Prinzip könnte man dasselbe
+          vielleicht mit einer gigantischen SQL-Datenbank erreichen. Trotzdem überrascht ihn immer wieder, was
+          damit möglich ist. Er hält Transformer für ein <strong>lokales Optimum</strong>, von dem aus man wieder
+          „runter“ muss, damit es woanders höher hinaufgeht.
+        </p>
+        <p>
+          Zwei Gedanken zur Roboter-Frage: Erstens fängt das Gehirn nicht bei null an – Evolution über Millionen
+          Jahre hat Strukturen angelegt, auf denen ein Kind Sprache und Laufen lernt. Künstliche Netze starten
+          dagegen bei null. Zweitens fehlen Trainingsdaten für Roboter nicht: Nvidia lässt über Nacht
+          <strong>10 Millionen virtuelle Roboter</strong> in simulierten Welten laufen (Isaac Gym), mit physikalisch
+          plausiblen Daten, die dann echte Roboter trainieren – etwa auf rutschigen Treppen.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Nicht nur Text, sondern Vorwissen und Simulation sollen die nächste
+        Stufe bringen – Transformer sind vielleicht nur eine Zwischenstation.</div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="chapter" id="firmen" style="--sektion-farbe:var(--k3)">
+      <div class="chapter-kicker">Rat an Unternehmen · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=4812s" target="_blank" rel="noopener">▶ 1:20:12 im Video</a></div>
+      <h2>Was Geschäftsführung und Mitarbeitende tun können</h2>
+      <div class="chapter-body">
+        <p>
+          Jeden Tag kommen neue Tools – wie fängt man pragmatisch an? Bauckhages Antwort ist bewusst nüchtern:
+        </p>
+        <ul>
+          <li><strong>Zugang zu Expertise schaffen.</strong> Die Fachleute müssen nicht im Haus sein, aber schnell erreichbar,
+          wenn es brennt („Ich habe das auf der Messe gesehen – was mache ich jetzt?“). Nach etwa 10 Minuten
+          spricht man dieselbe Sprache.</li>
+          <li><strong>Budget einplanen</strong> – egal ob für eigene Leute, Token oder externe Partner. Umsonst ist das nicht.</li>
+        </ul>
+        <div class="tldr"><b>Kurz gesagt</b>Nicht jede Firma braucht eine KI-Abteilung, aber jede braucht schnellen
+        Zugriff auf Expertise und ein Budget.</div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="chapter" id="pruefungen" style="--sektion-farbe:var(--k4)">
+      <div class="chapter-kicker">Hochschule · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=4934s" target="_blank" rel="noopener">▶ 1:22:14 im Video</a></div>
+      <h2>Studium und Prüfungen: Die Übungszettel sind erledigt</h2>
+      <div class="chapter-body">
+        <p>
+          Bauckhage hält Verbote für falsch (das Harvard-Law-School-Beispiel nennt er „Schwachsinn“): Das sei wie die
+          Taschenrechner-Debatte der 80er. 1916 konnten 80 % der Deutschen eine Kuh melken – heute fast keiner, und
+          wir leben trotzdem. Aber KI sei eine neue Dimension:
+        </p>
+        <ul>
+          <li>Ein Doktorand löste ein komplettes Übungsblatt aus seiner Vorlesung („Principles of Machine Learning“)
+          mit GPT-5.2 und dem Codex-Plugin per einfachem Prompt – <strong>in 17 Minuten</strong>, fehlerfrei, inklusive
+          Code, Beweisen und fertigem PDF. Die Aufgaben sind eigentlich so gebaut, dass Teams von vier bis
+          fünf Studierenden ein bis zwei Tage daran arbeiten.</li>
+          <li>Im letzten Semester haben <strong>alle</strong> Studierenden alle Aufgaben mit KI gelöst, alle Lösungen waren
+          perfekt. Die jahrzehntealte Regel „50 % der Übungspunkte = Klausurzulassung“ funktioniert nicht mehr.</li>
+          <li>Tutoren waren frustriert, weil sie KI-Lösungen korrigieren mussten – und die <strong>Klausuren fielen bei
+          allen Kolleginnen und Kollegen schlechter aus als je zuvor</strong>.</li>
+          <li>Eine Studie aus China mit rund 20.000 Schülern: Mit KI waren Hausaufgaben etwa 20 % richtiger und
+          schneller – in der Prüfung am Semesterende waren sie aber etwa 20 % schlechter.</li>
+        </ul>
+        <p>
+          Das Dilemma: Alle sind mit KI produktiver, verlassen sich aber darauf und lernen weniger. Prüfungen
+          bleiben aus rechtlichen Gründen nötig (ein Abschluss muss nachweisbar sein), auch wenn man außerhalb der
+          Uni kaum noch Klausuren schreibt. Wie man Prüfungen neu gestaltet, ist offen.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Aufgaben, an denen früher Teams tagelang arbeiteten, löst KI in Minuten –
+        Hausaufgaben und Zulassungen taugen so nicht mehr als Nachweis.</div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="chapter" id="koennen" style="--sektion-farbe:var(--k5)">
+      <div class="chapter-kicker">Lernen &amp; Beruf · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=5421s" target="_blank" rel="noopener">▶ 1:30:21 im Video</a></div>
+      <h2>Was Menschen noch können müssen</h2>
+      <div class="chapter-body">
+        <p>
+          Programmieren im Detail muss man vielleicht nicht mehr lernen. Was bleibt, ist die Fähigkeit zu
+          beurteilen: <strong>Ist das, was die KI zurückgegeben hat, wirklich das, was ich brauche? Kann ich mich
+          darauf verlassen? Geht es besser?</strong> Es braucht weiter Menschen, die nachvollziehen, was „unter der
+          Haube“ passiert – aber weniger davon als bisher.
+        </p>
+        <ul>
+          <li><strong>Breite statt tiefster Tiefe.</strong> Tiefenexpertise werde die nächste KI-Generation übertreffen. Gefragt
+          sind Leute mit Überblick (früher: Systemarchitektinnen), die „rechts und links“ des eigenen Fachs
+          Bescheid wissen.</li>
+          <li><strong>Merken, wenn etwas nicht stimmt.</strong> Weil im Netz viel Unsinn steht (Data Poisoning), muss man
+          erkennen: „Das sieht super aus, ist aber nicht ganz richtig.“ Dafür braucht man Analogien,
+          Assoziationen, Kreativität.</li>
+          <li><strong>Taschenrechner-Prinzip:</strong> Man muss verstehen, was Multiplikation ist, aber nicht 20-stellige Zahlen
+          im Kopf multiplizieren können.</li>
+        </ul>
+        <p>
+          <strong>Informatik studieren?</strong> Die sichere gute Bezahlung durch den Abschluss allein sei vorbei. Wer es nur
+          wegen des Geldes tut, hat keine Perspektive. Gebraucht werden Leute, die <strong>intrinsisch brennen</strong> – wie
+          der junge Mann, der nach dem Abitur „all in“ ging, jeden Tag KI-Tools testete und nach rund 120 Tagen
+          die ersten zahlenden Beratungskunden hatte. Dass wir in einer Utopie landen, hält Bauckhage übrigens für
+          unwahrscheinlich: „Die Menschheit verbockt immer alles.“
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Urteilsvermögen, Überblick und echte Neugier zählen mehr als reines
+        Detailwissen.</div>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="chapter" id="schluss" style="--sektion-farbe:var(--k6)">
+      <div class="chapter-kicker">Ausklang · <a href="https://www.youtube.com/watch?v=pb5cMmdQVJo&t=6030s" target="_blank" rel="noopener">▶ 1:40:30 im Video</a></div>
+      <h2>Zum Schluss: Frauen in der KI, Lamarr-Institut, Hopfield-Netze</h2>
+      <div class="chapter-body">
+        <p>
+          <strong>Frauen in der KI.</strong> Er schätzt den Anteil forschender Frauen auf mindestens ein Viertel (die Hälfte wäre
+          besser). Die Ursache sieht er nicht in der Biologie, sondern in der frühen Kindheit, vor dem Kindergarten:
+          Jungen bekommen eher technisches Spielzeug, Mädchen eher soziales. Später sei kaum noch etwas
+          auszugleichen. Das AlphaFold-Team habe mindestens ein Drittel Frauen.
+        </p>
+        <p>
+          <strong>Lamarr-Institut.</strong> Es ist eines von sechs KI-Kompetenzzentren in Deutschland (Ursprung: Förderprogramm
+          von 2018; Finanzierung je zur Hälfte vom Bund und vom Sitzland – bei Lamarr Berlin und Nordrhein-Westfalen). Es
+          ist am Projekt <strong>SOOFI</strong> beteiligt, in dem ein deutsches großes Sprachmodell trainiert wird: die mittlere
+          Größe ist fertig, ein Modell mit 120 Milliarden Parametern in Arbeit. Ziel ist, Expertenwissen in das
+          Training zu bringen, um Modelle ohne den heutigen Riesenenergieverbrauch zu bauen.
+        </p>
+        <p>
+          <strong>Hopfield-Netze.</strong> Das sind <i>rekurrente</i> neuronale Netze: Neuronen können ihre Ausgabe wieder als Eingabe
+          nutzen, Information fließt frei hin und her (beim Transformer läuft sie Schicht für Schicht nach oben).
+          John Hopfield erhielt dafür 2024 den Physik-Nobelpreis, weil sich diese Netze wie physikalische Systeme
+          verhalten (Energie, Ising-Modelle) – und das verbindet sie mit Quantencomputing. Darüber hat Bauckhage mit
+          einem Co-Autor ein Buch für Leute geschrieben, die sich mit Machine Learning auskennen, aber nicht mit Physik.
+        </p>
+        <div class="tldr"><b>Kurz gesagt</b>Technikinteresse entsteht früh; Deutschland forscht stark in der Theorie und
+        baut mit SOOFI ein eigenes Modell.</div>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="chapter" id="fazit" style="--sektion-farbe:var(--k7)">
+      <div class="chapter-kicker">Zusammenfassung</div>
+      <h2>Das nehme ich mit</h2>
+      <div class="chapter-body">
+        <ul>
+          <li><strong>Exponentiell denken:</strong> Modellgröße und Aufgabenlänge der KI verdoppeln sich regelmäßig; der nächste Schritt ist immer größer als alle vorherigen.</li>
+          <li><strong>Das „Unmögliche“ fällt:</strong> Go, Proteinfaltung, Olympiade-Mathe, Erdős – jedes Mal hieß es vorher „geht nicht“.</li>
+          <li><strong>Klein und spezialisiert:</strong> Hybride KI mit Fachdaten und Expertenwissen kann günstiger, lokal und datenschutzfreundlich sein.</li>
+          <li><strong>Mittelstand:</strong> Erst den Painpoint finden, dann Expertise holen, ein Budget einplanen, ein mittelgroßes Modell lokal betreiben.</li>
+          <li><strong>Kein Hype, aber überhitzt:</strong> Die Fortschritte sind real; wer sich sicher fühlt, wird überholt.</li>
+          <li><strong>Bildung:</strong> Übungszettel und Hausaufgaben beweisen nichts mehr; Urteilsvermögen, Breite und echtes Interesse werden wichtiger.</li>
+          <li><strong>Hartnäckig prüfen:</strong> Das Netz enthält auch Unsinn – nachfragen, gegenprüfen, nicht den ersten Treffer glauben.</li>
+        </ul>
+        <div class="tldr"><b>Zum Mitnehmen</b>Bauckhages Schlusswort: Das „Ja, aber“ ist vorbei – besser fragen, wo man jetzt
+        gestalten kann.</div>
+      </div>
+    </section>
+
+    <div class="section-label" id="glossar"><h3>Zum Nachschlagen</h3></div>
+    <div class="glossary-table">
+      <div class="scroll">
+        <table class="gloss">
+          <thead>
+            <tr><th>Begriff</th><th>Bereich</th><th>Kurz erklärt</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="term">Exponentielles Wachstum</td><td class="ebene">Grundlagen</td><td>Verdopplung in festen Abständen (1, 2, 4, 8 …). Wirkt anfangs langsam, dann explosiv.</td></tr>
+            <tr><td class="term">Parameter</td><td class="ebene">Modelle</td><td>Die „künstlichen Synapsen“ eines neuronalen Netzes. Ihre Anzahl gibt die Modellgröße an.</td></tr>
+            <tr><td class="term">Foundation Model</td><td class="ebene">Modelle</td><td>Sehr großes, breit trainiertes Basismodell (z. B. GPT, Claude, Gemini), das für viele Aufgaben angepasst wird.</td></tr>
+            <tr><td class="term">Frontier-Modell</td><td class="ebene">Modelle</td><td>Die jeweils leistungsfähigsten Modelle an der Grenze des technisch Machbaren (derzeit bis etwa eine Billion Parameter).</td></tr>
+            <tr><td class="term">Fine-Tuning</td><td class="ebene">Training</td><td>Ein fertiges Modell mit eigenen Fachdaten nachtrainieren, damit es Spezialist wird.</td></tr>
+            <tr><td class="term">Post-Training / Reasoning Traces</td><td class="ebene">Training</td><td>Nachtraining mit Denkspuren („erst das, dann das, dann die Antwort“), damit das Modell schrittweise nachdenkt.</td></tr>
+            <tr><td class="term">Agentische KI</td><td class="ebene">Anwendung</td><td>KI, die selbstständig Werkzeuge aufruft (z. B. Taschenrechner, Code ausführen) und längere Aufgaben abarbeitet.</td></tr>
+            <tr><td class="term">METR-Horizont</td><td class="ebene">Messung</td><td>Länge einer Aufgabe (in Menschenstunden), die eine KI in 50 % der Fälle selbstständig löst.</td></tr>
+            <tr><td class="term">Hybride KI</td><td class="ebene">Forschung</td><td>Lernen aus Daten plus Vorwissen/Expertenregeln – für kleinere, effizientere Modelle.</td></tr>
+            <tr><td class="term">Vertikales Modell</td><td class="ebene">Wirtschaft</td><td>Spezialisiertes Modell für eine Branche oder Aufgabe, trainiert mit nicht-öffentlichen Fachdaten.</td></tr>
+            <tr><td class="term">Weltmodell</td><td class="ebene">Forschung</td><td>Modell, das die Welt auch über Wahrnehmung, Physik und Erfahrung lernt – nicht nur über Text.</td></tr>
+            <tr><td class="term">Rekurrentes Netz / Hopfield-Netz</td><td class="ebene">Forschung</td><td>Neuronales Netz mit Rückkopplung; physikalisch als Energiesystem beschreibbar (Nobelpreis 2024).</td></tr>
+            <tr><td class="term">Data Poisoning</td><td class="ebene">Risiko</td><td>Falsche oder verzerrte Daten im Training führen zu falschen Antworten – hier auch im Sinn von „viel Unsinn im Internet“.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Diese Seite ist eine eigenständige Zusammenfassung auf Basis von „Prof. Dr. Christian Bauckhage (Fraunhofer IAIS):
+        KI – Wir haben noch gar nichts gesehen!“ von Mathe by Daniel Jung (2026) — keine Abschrift. Grundlage war das
+        automatisch erzeugte YouTube-Transkript; Zahlen, Namen und Aussagen sind die des Gesprächs und wurden nicht
+        unabhängig geprüft. Gesprächs-Aussagen wie „laut Bauckhage“ sind seine Einschätzungen, keine gesicherten Fakten.
+      </p>
+      <p class="credit">Zusammengestellt von Guido Walther mit Claude.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    // theme toggle
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var stored = null;
+    try { stored = localStorage.getItem('notiz-theme'); } catch (e) {}
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var effectiveCurrent = current || (prefersDark ? 'dark' : 'light');
+      var next = effectiveCurrent === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('notiz-theme', next); } catch (e) {}
+    });
+
+    // progress bar
+    var bar = document.getElementById('progress');
+    function updateProgress() {
+      var h = document.documentElement;
+      var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (isFinite(scrolled) ? scrolled : 0) + '%';
+    }
+    document.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // scrollspy
+    var sections = Array.from(document.querySelectorAll('section.chapter, .section-label'));
+    var routeLinks = Array.from(document.querySelectorAll('.route a'));
+    var chipLinks = Array.from(document.querySelectorAll('.chipnav a'));
+
+    function setActive(id) {
+      routeLinks.forEach(function (a) {
+        var isActive = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', isActive);
+        if (isActive && a.dataset.color) a.style.setProperty('--sektion-farbe', a.dataset.color);
+      });
+      chipLinks.forEach(function (a) {
+        var isActive = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', isActive);
+        if (isActive) a.scrollIntoView({ block: 'nearest', inline: 'center' });
+      });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+</script>
+</body>
+</html>
