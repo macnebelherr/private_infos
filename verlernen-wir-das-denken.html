@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Verlernen wir das Denken?</title>
+<style>
+  /*
+    Bereich „Für mich gelernt“ → Farbfamilie Rot/Korall. --k1…--k7 sind die
+    Kapitelfarben (dunkel/hell), die Kapitel wechseln sie reihum durch.
+  */
+  :root {
+    --bg: #130b0a;
+    --bg-soft: #1a0f0d;
+    --card: #1f1311;
+    --card-border: #3a2420;
+    --ink: #f3e8e5;
+    --ink-dim: #bfa9a4;
+    --ink-faint: #8f7a75;
+    --accent: #ff6a4d;
+    --accent-2: #ff9a85;
+    --accent-ink: #2a0d07;
+    --danger: #ff4d4d;
+    --safe: #57c98a;
+    --k1: #ff6a4d;
+    --k2: #ff8a6b;
+    --k3: #f2785a;
+    --k4: #e8654a;
+    --k5: #ff7f5f;
+    --k6: #dc5a43;
+    --k7: #ff9275;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: "Avenir Next", "Century Gothic", "Segoe UI Semibold", ui-sans-serif, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    --max: 740px;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #fbf4f2;
+    --bg-soft: #f4e7e3;
+    --card: #ffffff;
+    --card-border: #ecd5cf;
+    --ink: #2a1815;
+    --ink-dim: #5c403b;
+    --ink-faint: #8f7a75;
+    --accent: #c63a1f;
+    --accent-2: #a82f18;
+    --accent-ink: #ffffff;
+    --danger: #c42a2a;
+    --safe: #1f8a54;
+    --k1: #c63a1f;
+    --k2: #b8431f;
+    --k3: #bd3a2c;
+    --k4: #a93524;
+    --k5: #c2481f;
+    --k6: #9e2f22;
+    --k7: #b5502f;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #fbf4f2;
+      --bg-soft: #f4e7e3;
+      --card: #ffffff;
+      --card-border: #ecd5cf;
+      --ink: #2a1815;
+      --ink-dim: #5c403b;
+      --ink-faint: #8f7a75;
+      --accent: #c63a1f;
+      --accent-2: #a82f18;
+      --accent-ink: #ffffff;
+      --danger: #c42a2a;
+      --safe: #1f8a54;
+      --k1: #c63a1f;
+      --k2: #b8431f;
+      --k3: #bd3a2c;
+      --k4: #a93524;
+      --k5: #c2481f;
+      --k6: #9e2f22;
+      --k7: #b5502f;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent-2); text-decoration-color: color-mix(in srgb, var(--accent-2) 40%, transparent); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent-2); }
+
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; letter-spacing: -0.01em; }
+
+  /* ---------- top progress bar ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    z-index: 60;
+    transition: width 80ms linear;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+
+  /* ---------- theme toggle ---------- */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 60;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--ink-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-toggle:hover { color: var(--accent-2); border-color: var(--accent); }
+  .theme-toggle svg { width: 18px; height: 18px; }
+
+  /* ---------- layout shell ---------- */
+  .shell {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px;
+    display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- route strip (desktop side nav) ---------- */
+  .route {
+    position: sticky; top: 28px; align-self: start;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 18px 0 18px 4px;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  @media (max-width: 900px) { .route { display: none; } }
+
+  .route-title {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-faint); margin: 0 0 10px 18px;
+  }
+  .route a {
+    position: relative; display: flex; align-items: baseline; gap: 10px;
+    padding: 6px 10px 6px 18px; border-radius: 8px;
+    color: var(--ink-dim); text-decoration: none; font-size: 14px; line-height: 1.35;
+    border-left: 2px solid var(--card-border);
+    transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+  }
+  .route a .t { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--ink-faint); flex-shrink: 0; min-width: 46px; }
+  .route a:hover { color: var(--ink); background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 8%, transparent); }
+  .route a.active {
+    color: var(--ink); font-weight: 600;
+    border-left-color: var(--sektion-farbe, var(--accent));
+    background: color-mix(in srgb, var(--sektion-farbe, var(--accent)) 12%, transparent);
+  }
+  .route a.active .t { color: var(--sektion-farbe, var(--accent)); }
+
+  /* ---------- mobile chip nav ---------- */
+  .chipnav {
+    display: none;
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 16px; margin: 0 -16px 8px;
+    overflow-x: auto; white-space: nowrap;
+    gap: 8px;
+  }
+  @media (max-width: 900px) { .chipnav { display: flex; } }
+  .chipnav a {
+    display: inline-block; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--card-border); color: var(--ink-dim);
+    text-decoration: none; font-size: 13px; flex-shrink: 0;
+  }
+  .chipnav a.active { border-color: var(--accent); color: var(--ink); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+  main { min-width: 0; padding-bottom: 100px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 40px; max-width: var(--max); }
+  @media (max-width: 900px) { .hero { padding-top: 20px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-2); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--card-border));
+    padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--safe); box-shadow: 0 0 8px var(--safe); }
+
+  .hero h1 {
+    font-size: clamp(2.3rem, 5vw, 3.4rem); line-height: 1.05; margin: 20px 0 18px; font-weight: 800;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--accent);
+    background: linear-gradient(180deg, transparent 62%, color-mix(in srgb, var(--accent) 35%, transparent) 62%);
+  }
+  .hero .lede { font-size: 1.15rem; color: var(--ink-dim); max-width: 58ch; }
+
+  .hero-meta {
+    margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: 999px; font-weight: 700; font-size: 15px;
+    text-decoration: none; border: 1px solid transparent; cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: var(--accent-ink); box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: transparent; color: var(--ink-dim); border-color: var(--card-border); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--accent); }
+
+  .source-line { color: var(--ink-faint); font-size: 14px; margin-top: 14px; }
+  .source-line a { color: var(--ink-dim); }
+
+  /* ---------- kennzahlen-leiste ---------- */
+  .gauge-wrap { max-width: var(--max); margin: 8px 0 56px; }
+  .gauge {
+    display: flex; align-items: stretch; gap: 0; border: 1px solid var(--card-border);
+    border-radius: var(--radius); overflow: hidden; background: var(--card);
+  }
+  .gauge > div {
+    flex: 1; padding: 16px 18px; position: relative;
+  }
+  .gauge > div + div { border-left: 1px dashed var(--card-border); }
+  .gauge .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); }
+  .gauge .v { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; margin-top: 4px; }
+  @media (max-width: 620px) { .gauge { flex-wrap: wrap; } .gauge > div { flex: 1 1 100%; } .gauge > div + div { border-left: none; border-top: 1px dashed var(--card-border); } }
+
+  /* ---------- sections ---------- */
+  section.chapter {
+    max-width: var(--max);
+    margin: 0 0 64px;
+    scroll-margin-top: 24px;
+  }
+
+  .chapter-kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sektion-farbe); margin: 0 0 8px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .chapter-kicker a { color: inherit; text-decoration: none; border-bottom: 1px dotted currentColor; }
+  .chapter-kicker a:hover { opacity: 0.75; }
+
+  .chapter h2 { font-size: 1.7rem; margin: 0 0 18px; font-weight: 800; }
+
+  .chapter-body {
+    background: color-mix(in srgb, var(--sektion-farbe) 6%, var(--card));
+    border-left: 3px solid var(--sektion-farbe);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 26px 28px;
+    border-top: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+  }
+  @media (max-width: 560px) { .chapter-body { padding: 20px 18px; } }
+  .chapter-body p { margin: 0 0 14px; color: var(--ink); }
+  .chapter-body p:last-child { margin-bottom: 0; }
+  .chapter-body strong { color: var(--ink); }
+  .chapter-body code {
+    font-family: var(--font-mono); font-size: 0.9em; background: color-mix(in srgb, var(--sektion-farbe) 16%, transparent);
+    padding: 2px 6px; border-radius: 5px; color: var(--ink);
+  }
+  .chapter-body ul { margin: 10px 0 14px; padding-left: 22px; }
+  .chapter-body li { margin-bottom: 8px; }
+
+  .tldr {
+    margin-top: 16px; padding-top: 14px; border-top: 1px dashed color-mix(in srgb, var(--sektion-farbe) 40%, var(--card-border));
+    font-size: 15px; color: var(--ink-dim);
+  }
+  .tldr b { color: var(--sektion-farbe); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; }
+
+  /* ---------- analogie-kasten ---------- */
+  .analogie {
+    margin: 18px 0 0; padding: 16px 18px;
+    border: 1.5px dashed color-mix(in srgb, var(--sektion-farbe) 55%, var(--card-border));
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--sektion-farbe) 5%, transparent);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .analogie .sign {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px;
+    border: 2px solid var(--sektion-farbe); color: var(--sektion-farbe);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 14px;
+  }
+  .analogie p { margin: 0; font-size: 15px; color: var(--ink-dim); }
+  .analogie b { color: var(--ink); }
+
+  /* ---------- vergleichs-karten ---------- */
+  .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: stretch; margin: 20px 0 0; }
+  @media (max-width: 560px) { .versus { grid-template-columns: 1fr; } .versus .vs { display: none; } }
+  .versus .card {
+    border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 16px 18px; background: var(--bg-soft);
+  }
+  .versus .card h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.05rem; }
+  .versus .card p { margin: 0; font-size: 14.5px; color: var(--ink-dim); }
+  .versus .vs { align-self: center; font-family: var(--font-mono); color: var(--ink-faint); font-size: 13px; }
+  .versus .card.highlight { border-color: color-mix(in srgb, var(--sektion-farbe) 45%, var(--card-border)); }
+  .versus .card.highlight h4 { color: var(--sektion-farbe); }
+
+  /* ---------- stufen-leiste ---------- */
+  .levels { margin: 20px 0 0; }
+  .levels-track { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--bg-soft); border: 1px solid var(--card-border); }
+  .levels-track div { flex: 1; }
+  .levels-track .l1 { background: var(--safe); }
+  .levels-track .l2 { background: #e8a93a; }
+  .levels-track .l3 { background: var(--danger); }
+  .levels-labels { display: flex; margin-top: 10px; gap: 10px; }
+  @media (max-width: 560px) { .levels-labels { flex-direction: column; } }
+  .levels-labels > div { flex: 1; font-size: 14px; }
+  .levels-labels .name { font-weight: 700; color: var(--ink); display: block; margin-bottom: 2px; }
+  .levels-labels .desc { color: var(--ink-faint); font-size: 13px; }
+
+  /* ---------- glossar ---------- */
+  .glossary-table { max-width: var(--max); margin: 0 0 64px; }
+  .glossary-table .scroll { overflow-x: auto; border: 1px solid var(--card-border); border-radius: var(--radius); }
+  table.gloss { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.gloss th {
+    text-align: left; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-faint); padding: 12px 16px; border-bottom: 1px solid var(--card-border); background: var(--bg-soft);
+  }
+  table.gloss td { padding: 14px 16px; border-bottom: 1px solid var(--card-border); vertical-align: top; font-size: 14.5px; }
+  table.gloss tr:last-child td { border-bottom: none; }
+  table.gloss td.term { font-weight: 700; white-space: nowrap; }
+  table.gloss td.ebene { color: var(--ink-faint); font-family: var(--font-mono); font-size: 12.5px; white-space: nowrap; }
+  table.gloss tr:hover td { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+  /* ---------- footer ---------- */
+  footer {
+    max-width: var(--max); padding-top: 32px; border-top: 1px solid var(--card-border);
+    color: var(--ink-faint); font-size: 13.5px; line-height: 1.7;
+  }
+  footer a { color: var(--ink-dim); }
+  footer .credit { margin-top: 18px; }
+
+  .section-label { max-width: var(--max); margin: 0 0 20px; }
+  .section-label h3 {
+    font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-faint); margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<button class="theme-toggle" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">
+  <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+
+<div class="shell">
+  <nav class="route" aria-label="Kapitel">
+    <div class="route-title">Route</div>
+    <a href="#einstieg" data-color="var(--k1)"><span class="t">00:19</span><span>Laien-Blick auf KI</span></a>
+    <a href="#gehirn" data-color="var(--k2)"><span class="t">04:10</span><span>Das Gehirn</span></a>
+    <a href="#intelligenz" data-color="var(--k3)"><span class="t">10:24</span><span>Intelligenz</span></a>
+    <a href="#descartes" data-color="var(--k4)"><span class="t">12:39</span><span>Descartes & Logos</span></a>
+    <a href="#kraenkung" data-color="var(--k5)"><span class="t">19:46</span><span>Vierte Kränkung</span></a>
+    <a href="#vater" data-color="var(--k6)"><span class="t">22:53</span><span>Verstehen als Lebensreise</span></a>
+    <a href="#verstehen" data-color="var(--k7)"><span class="t">30:17</span><span>Erklären vs. Verstehen</span></a>
+    <a href="#abschied" data-color="var(--k1)"><span class="t">35:37</span><span>Versenken & Staunen</span></a>
+    <a href="#offloading" data-color="var(--k2)"><span class="t">48:05</span><span>Kognitives Auslagern</span></a>
+    <a href="#regress" data-color="var(--k3)"><span class="t">51:16</span><span>Kultureller Regress?</span></a>
+    <a href="#regeln" data-color="var(--k4)"><span class="t">55:29</span><span>KI sinnvoll nutzen</span></a>
+    <a href="#fazit" data-color="var(--k5)"><span class="t">∑</span><span>Das nehme ich mit</span></a>
+    <a href="#glossar" data-color="var(--k1)"><span class="t">＋</span><span>Glossar</span></a>
+  </nav>
+
+  <main>
+    <div class="chipnav" id="chipnav">
+      <a href="#einstieg">Einstieg</a>
+      <a href="#gehirn">Gehirn</a>
+      <a href="#intelligenz">Intelligenz</a>
+      <a href="#descartes">Descartes</a>
+      <a href="#kraenkung">Kränkung</a>
+      <a href="#vater">Lebensreise</a>
+      <a href="#verstehen">Erklären</a>
+      <a href="#abschied">Staunen</a>
+      <a href="#offloading">Auslagern</a>
+      <a href="#regress">Regress</a>
+      <a href="#regeln">Regeln</a>
+      <a href="#fazit">Fazit</a>
+      <a href="#glossar">Glossar</a>
+    </div>
+
+    <div class="hero">
+      <span class="eyebrow"><span class="dot"></span> Lernseite · Companion zum Video</span>
+      <h1>Verlernen wir <em>das Denken</em>?</h1>
+      <p class="lede">
+        Gut eine Stunde Gespräch zwischen Markus Lanz und Richard David Precht (ZDF-Videopodcast „Lanz + Precht“,
+        Folge 267) über die Frage, was Denken überhaupt ist – und was geschieht, wenn wir es an KI auslagern.
+        Diese Seite gliedert das Gespräch in 11 Kapitel, damit du gezielt nachlesen kannst.
+      </p>
+      <div class="hero-meta">
+        <a class="btn btn-primary" href="https://www.youtube.com/watch?v=78s2z_8ts28" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Original-Video ansehen (1 h 01 min)
+        </a>
+        <a class="btn btn-ghost" href="#fazit">Direkt zum Fazit</a>
+      </div>
+      <p class="source-line">
+        Quelle: „Videopodcast: Verlernen wir das Denken? | Lanz + Precht, Folge 267“ ·
+        <a href="https://www.youtube.com/watch?v=78s2z_8ts28" target="_blank" rel="noopener">ZDFheute Nachrichten</a>
+      </p>
+    </div>
+
+    <div class="gauge-wrap">
+      <div class="gauge">
+        <div><div class="k">Gehirn vs. Backofen</div><div class="v">20 W statt 2000 W</div></div>
+        <div><div class="k">Ärzte ohne KI-Hilfe</div><div class="v">27 % → 22 %</div></div>
+        <div><div class="k">Erst selbst üben</div><div class="v">+64 % statt +30 %</div></div>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <section class="chapter" id="einstieg" style="--sektion-farbe:var(--k1)">
+      <div class="chapter-kicker">Einstieg · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=19s" target="_blank" rel="noopener">▶ 00:19 im Video</a></div>
+      <h2>Man muss kein Informatiker sein</h2>
+      <div class="chapter-body">
+        <p>
+          Markus Lanz steigt mit den Reaktionen auf die vorletzte KI-Folge ein: Die einen fanden sie
+          apokalyptisch, die anderen verharmlosend. Richard David Precht liest daraus ab, dass man mit
+          der Mischung wohl nicht ganz falsch lag. Beide betonen: Genau dieser <strong>Laien-Zugang</strong>
+          ist der, der gerade auf Milliarden Menschen zukommt – also muss man darüber reden.
+        </p>
+        <p>
+          Precht widerspricht dem Satz „nur Fachleute dürfen mitreden“: Die Informatiker sind sich in den
+          großen Fragen selbst völlig uneinig, und das Abschätzen der Folgen gehört gar nicht zum
+          informatischen Kerngebiet. Das Argument „im Notfall schalten wir einfach den Strom ab“ lassen
+          beide nur halb gelten – je abhängiger die Menschen werden, desto weniger einfach wird das.
+        </p>
+        <div class="analogie">
+          <div class="sign">?</div>
+          <p><b>Vergleich Atomkraft:</b> Man muss kein Kernphysiker sein, um zu fragen, ob Atomkraft sinnvoll und
+          ihr Risiko beherrschbar ist. Das sind gesellschaftliche Fragen – bei KI genauso.</p>
+        </div>
+        <p>
+          Der eigentliche Kern des Gesprächs: KI ist <strong>faszinierend und verstörend zugleich</strong>, weil sie
+          verändert, <i>wie wir denken</i>. Lanz zitiert einen Satz aus dem „Spiegel“ (laut Transkript von
+          „Gisela Schmalz“): Alle reden über künstliche Intelligenz, aber niemand weiß genau, was menschliche
+          Intelligenz eigentlich ist. Davon ausgehend fragt die Folge erst nach dem Denken selbst – und dann
+          nach dem, was KI damit macht.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Die Folge fragt nicht „Wie gefährlich ist KI?“, sondern „Was passiert mit unserem Denken?“ – und das darf jeder mitdiskutieren.</div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="chapter" id="gehirn" style="--sektion-farbe:var(--k2)">
+      <div class="chapter-kicker">Grundlagen · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=250s" target="_blank" rel="noopener">▶ 04:10 im Video</a></div>
+      <h2>20 Watt: Das Rätsel Gehirn</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz startet mit einem Größenvergleich: Das Gehirn leistet sein Wunderwerk mit rund
+          <strong>20 Watt</strong> – ein Backofen braucht 2000. Anders als bei Herz (Pumpe), Lunge (Blasebalg)
+          oder Niere (Filter) sieht man dem Gehirn nicht an, wie es funktioniert.
+        </p>
+        <p>
+          Precht gibt den Neurowissenschaftler Henning Beck wieder: Schaut man ins Gehirn, findet man keine
+          Information, keine Erinnerung, keinen Gedanken – nur etwa anderthalb Kilo Nervenzellen aus Fett und
+          Eiweiß, die elektrochemisch miteinander kommunizieren. Es gibt <strong>keine „Großmutter-Zelle“</strong>:
+          Ein Gedanke ist immer das Ergebnis eines Zusammenspiels. Beck vergleicht das mit einem Chor, der
+          je nach Abstimmung ganz verschiedene Lieder singen kann; der Hippocampus ist darin eine Art Dirigent
+          des Erinnerns.
+        </p>
+        <div class="analogie">
+          <div class="sign">∑</div>
+          <p><b>Emergenz:</b> Einzelne Nervenzellen, Synapsen und Axone haben kein Bewusstsein – aber ihr
+          Zusammenspiel hat eins. Genauso besteht Leben aus unbelebten Bausteinen. Wie genau das funktioniert,
+          weiß niemand: „So viel wir wissen, so viel wissen wir auch nicht.“</p>
+        </div>
+        <p style="margin-top:14px">
+          Auch was das Gehirn für <em>erinnerungswürdig</em> hält, ist nicht genau geklärt. Precht erzählt von seiner
+          Begegnung mit dem Nobelpreisträger Eric Kandel (2007 in New York), der das Erinnern an einer
+          Meeresschnecke (<i>Aplysia</i>) erforschte. Kandels Lehrer hatte ihm als Student gesagt, wo Freuds
+          Ich, Es und Über-Ich im Gehirn sitzen, werde er auch am Ende seiner Karriere nicht wissen – man müsse
+          Schritt für Schritt vorgehen. Fazit: Wir wissen viel im Detail, aber wenig im großen Ganzen.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Das Gehirn ist ein Zusammenspiel, kein Speicher – und wir verstehen davon erstaunlich wenig.</div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="chapter" id="intelligenz" style="--sektion-farbe:var(--k3)">
+      <div class="chapter-kicker">Begriffe · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=624s" target="_blank" rel="noopener">▶ 10:24 im Video</a></div>
+      <h2>Verstehen statt Auswendiglernen</h2>
+      <div class="chapter-body">
+        <p>
+          Beck sagt: Die Stärke des Gehirns ist nicht das klassische Auswendiglernen, sondern das
+          <strong>Verstehen</strong> – also zu erfassen, wie Informationen zusammenhängen. Lanz und Precht scherzen über
+          Menschen, die ein Telefonbuch auswendig aufsagen können: Dahinter stecke wenig Verstehensleistung.
+        </p>
+        <p>
+          Für „Intelligenz“ gibt es keine allgemeine Definition. Precht mag eine Formulierung, die er Jean Piaget
+          zuschreibt, und stellt sie dem üblichen Verständnis gegenüber:
+        </p>
+        <div class="versus">
+          <div class="card">
+            <h4>Intelligenz als Problemlösen</h4>
+            <p>So messen es die meisten Tests: Muster in Zahlenreihen erkennen, Figuren im Raum drehen – wer
+            schneller mehr Probleme löst, gilt als intelligenter.</p>
+          </div>
+          <div class="vs">vs.</div>
+          <div class="card highlight">
+            <h4>Intelligenz, wenn man nicht weiß, was zu tun ist</h4>
+            <p>Das gelangweilte Kind, das aus Bauklötzen ein „altes Assyrien“ baut und sich eine Geschichte
+            dazu ausdenkt, setzt Intelligenz ein – ohne dass ein Problem gelöst wird.</p>
+          </div>
+        </div>
+        <p style="margin-top:18px">
+          Precht: Die Verkürzung auf Problemlösen, die sich beim Reden über Intelligenz so oft einschleicht, wird
+          dem komplexen Phänomen nicht gerecht.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Intelligenz ist mehr als Aufgaben lösen: Verstehen, Zusammenhänge sehen, Eigenes entwerfen.</div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="chapter" id="descartes" style="--sektion-farbe:var(--k4)">
+      <div class="chapter-kicker">Philosophie · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=759s" target="_blank" rel="noopener">▶ 12:39 im Video</a></div>
+      <h2>Ich denke – und der Logos</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz bringt Descartes ins Spiel: Mit 23 Jahren, als junger Soldat in einer Stube, kommt er auf den Gedanken,
+          man könne an allem zweifeln – nur nicht daran, dass man da sein muss, um zweifeln zu können. Daraus wird
+          „Ich denke, also bin ich“. Precht ergänzt eine Fußnote: Das „also“ wird in der Philosophie belächelt,
+          weil es die Gültigkeit logischer Schlüsse schon voraussetzt, die Descartes eigentlich auch anzweifeln wollte.
+        </p>
+        <p>
+          Das Revolutionäre: Früher fragte die Philosophie, <em>wie die Welt ist</em>, als wäre sie unabhängig vom
+          Denken. Seit Descartes beginnt die <strong>Bewusstseinsphilosophie</strong> – die Welt ist zuerst Welt in
+          meinem Bewusstsein, und der subjektive Anteil rückt ins Zentrum. (Eine ähnliche Formulierung gibt es schon
+          bei Augustinus; Descartes holt sie aus dem Theologischen heraus und versachlicht sie.)
+        </p>
+        <p>
+          Dagegen stehen die alten Griechen mit dem <strong>Logos</strong>: Vernunft gibt es an sich, unabhängig vom
+          Menschen – eine Art rationaler Weltgeist, an dem man teilhaben kann. Precht nennt drei Quellen dieser
+          Vorstellung:
+        </p>
+        <ul>
+          <li><strong>Mathematik</strong> – gilt unabhängig davon, was jemand fühlt oder anzweifelt.</li>
+          <li><strong>Gerechtigkeit</strong> – soll ebenso unabhängig von Menschen „rational existieren“.</li>
+          <li><strong>Geld</strong> – folgt einer eigenen Logik und verändert dabei auch den Charakter dessen, der es besitzt.</li>
+        </ul>
+        <p>
+          Der Logos rückte oft an die Stelle der Götter – und mit ihm die Idee, dass man sich <strong>kraft des
+          Denkens vom Stand befreien</strong> kann. Für das Bürgertum im Kampf gegen den Adel wurde das wichtig.
+          Lanz ergänzt: Das Denken ist der Grund für den Erfolg des Menschen; stärker als Mammut oder Säbelzahntiger
+          waren wir nie, nur schlauer.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Seit Descartes steht das denkende Ich im Zentrum; der Logos der Griechen machte Vernunft zur Befreiung von Herkunft.</div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="chapter" id="kraenkung" style="--sektion-farbe:var(--k5)">
+      <div class="chapter-kicker">These · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=1186s" target="_blank" rel="noopener">▶ 19:46 im Video</a></div>
+      <h2>Die vierte narzisstische Kränkung</h2>
+      <div class="chapter-body">
+        <p>
+          Wenn Denken unser Selbstverständnis ausmacht, bekommt dieses Selbstverständnis durch KI Risse. Precht greift
+          die These von Rüdiger Safranski auf: KI sei die <strong>vierte narzisstische Kränkung</strong> der Menschheit.
+          Die ersten drei stammen aus Freuds Aufzählung:
+        </p>
+        <ul>
+          <li><strong>Kopernikus:</strong> Die Erde dreht sich um die Sonne, der Mensch wohnt nicht im Zentrum von allem.</li>
+          <li><strong>Darwin:</strong> Wir stammen von affenartigen Vorfahren ab – keine Sonderschöpfung.</li>
+          <li><strong>Freud:</strong> Wir sind nicht „Herr im eigenen Haus“, sondern von Trieben gesteuert, die wir aus der Kindheit mitschleppen.</li>
+          <li><strong>KI (Safranski):</strong> Maschinen denken in vielem besser als wir – und uns bleibt am Ende vielleicht wenig übrig.</li>
+        </ul>
+        <div class="analogie">
+          <div class="sign">!</div>
+          <p><b>Precht rechnet nicht mit Kränkung bei allen:</b> Viele werden gar nicht merken, wie sehr sie gekränkt
+          werden, sondern die Annehmlichkeiten genießen – Wissen auf Knopfdruck, Rationalität auslagern, in der Schule
+          kaum noch etwas lernen müssen. Man könne die Kulturleistungen von Jahrtausenden „im Eiltempo abreißen“ und
+          trotzdem Mitglied der Gesellschaft sein. Vielleicht empfinden viele es sogar als Erleichterung, sich nicht
+          mehr anstrengen zu müssen.</p>
+        </div>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Die eigentliche Gefahr ist nicht Kränkung, sondern Bequemlichkeit: Wer das Denken gern abgibt, merkt den Verlust nicht.</div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="chapter" id="vater" style="--sektion-farbe:var(--k6)">
+      <div class="chapter-kicker">Persönliches · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=1373s" target="_blank" rel="noopener">▶ 22:53 im Video</a></div>
+      <h2>Verstehen als lebenslange Reise</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz fragt nach Prechts Vater (Jahrgang 1933). Die Generation, die als Kind das Ende des Dritten Reichs
+          erlebte, machte „Verstehen“ zur Lebensaufgabe. Prechts Vater sah mit zwölf in Göttingen die ausgehängten
+          Bilder der befreiten Konzentrationslager – von dem Deutschland, dem er den Sieg gewünscht hatte. Daraus entstand
+          die Frage: <em>Wie konnte es dazu kommen?</em> Einfache Erklärungen („das Volk wurde von einem Dämon verführt“)
+          fand er unbefriedigend; er suchte sozialpsychologische und wirtschaftliche Zusammenhänge.
+        </p>
+        <p>
+          Der Unterschied zu heute: Er konnte keine KI fragen. Er musste Bücher auffinden, wissen, welche Autoren er
+          lesen sollte, mit Freunden abends darüber sprechen – eine lange Reise, die für ihn auch <strong>Freude</strong>
+          war, selbst wenn man nie etwas endgültig versteht. Precht fragt sich: Wie viel von diesem Verstehen bleibt,
+          wenn auf jede Neugier sofort die passende Antwort bereitsteht – die ich mir nicht mehr merken muss, die nicht
+          mehr in mir arbeitet? Das „Outsourcen“ von Verstehen bereite ihm große Sorge.
+        </p>
+        <div class="analogie">
+          <div class="sign">Ab</div>
+          <p><b>Lesen baut Bilder im Kopf:</b> Lanz erinnert daran, dass die böse Hexe im Märchen beim Lesen für jeden
+          anders aussieht, vor dem Bildschirm aber für alle gleich. Er schreibt sich faszinierende Gedanken auf, ohne
+          unmittelbaren Zweck – weil es seine innere Welt bereichert. Wenn das Denken ausgelagert wird, verschwinde viel
+          mehr als nur Denken: innerer Reichtum und ein Stück Kultur.</p>
+        </div>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Verstehen ist ein langer, lustvoller Weg – und genau den kann eine sofortige Antwort überspringen.</div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="chapter" id="verstehen" style="--sektion-farbe:var(--k7)">
+      <div class="chapter-kicker">Kernbegriff · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=1817s" target="_blank" rel="noopener">▶ 30:17 im Video</a></div>
+      <h2>Erklären ersetzt Verstehen</h2>
+      <div class="chapter-body">
+        <p>
+          Precht greift eine alte Debatte aus dem 19. Jahrhundert auf. Als die Naturwissenschaften ihren Siegeszug
+          begannen, fragten sich die Geisteswissenschaften, was sie unterscheidet. Antwort: In den Naturwissenschaften
+          gilt eine Erklärung unabhängig davon, wie ich mich fühle (zwei und zwei sind vier, auch wenn es sich für mich
+          wie fünf anfühlt). In den Geisteswissenschaften spielt dagegen meine <strong>Subjektivität</strong> eine
+          Rolle: Warum 1933 die Nazis an die Macht kamen, ist keine Frage mit einer einzigen objektiven Antwort,
+          sondern ein <strong>Verstehensprozess</strong>, in den Erfahrung und Weltbild einfließen – selbst wenn das Ergebnis am
+          Ende für andere nachvollziehbar sein soll.
+        </p>
+        <p>
+          Als aktuelles Beispiel nennt er die Debatten über den Ukrainekrieg: Die einen sehen die Ursache vor allem in der
+          Politik des Westens, die anderen in Putins Imperialismus – und die Vorprägung spielt dabei eine Rolle.
+        </p>
+        <p>
+          Precht befürchtet: KI liefert auf jede Frage eine Erklärung wie in den Naturwissenschaften. Der
+          <strong>unendliche Abgleich mit den eigenen Erfahrungen</strong> findet dann nicht mehr statt – Reifung und
+          <strong>Urteilskraft</strong> verlieren an Bedeutung. Am Ende hätten wir Informationen, reagierten aber maximal
+          emotional, weil das tiefere Verständnis fehlt – und das nicht bei wenigen, sondern millionenfach.
+        </p>
+        <div class="versus">
+          <div class="card">
+            <h4>Logik technischer Systeme</h4>
+            <p>Frage – Antwort, Problem – Lösung, Bedürfnis – Befriedigung. Für die Zugabfahrt völlig in Ordnung.</p>
+          </div>
+          <div class="vs">vs.</div>
+          <div class="card highlight">
+            <h4>Der Weg des Verstehens</h4>
+            <p>Erlebnis – Nachdenken – Lesen – Verstehen. Eine längere Kette, in der die innere Welt während des
+            Prozesses wächst.</p>
+          </div>
+        </div>
+        <p style="margin-top:18px">
+          Wird das Hauptwissen über die Welt zum fertigen „Dossier“ der KI, verkürzt das die Verstehensleistung enorm –
+          so nützlich das Dossier auch ist.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Eine fertige Erklärung ist nicht dasselbe wie Verstehen – ohne eigenen Abgleich mit Erfahrung reift keine Urteilskraft.</div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="chapter" id="abschied" style="--sektion-farbe:var(--k1)">
+      <div class="chapter-kicker">Persönliches · Natur · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=2137s" target="_blank" rel="noopener">▶ 35:37 im Video</a></div>
+      <h2>Abschied, Versenken und Staunen</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz fragt nach dem Vater. Precht erzählt, dass sein Vater in der Woche vor der Aufnahme mit 93 Jahren
+          gestorben ist, nach einem langen Sterbeprozess, in dem sie sich über alles austauschen konnten – er war zwar
+          dement, hatte aber bis zuletzt ein „taghelles Bewusstsein“. Seine Trauer, sagt Precht, habe mehr mit den
+          Zurückbleibenden zu tun als mit dem Verstorbenen: Es war ein erfülltes, aufgeräumtes Leben ohne Neid und
+          ohne Geltungsbedürfnis.
+        </p>
+        <p>
+          Der Vater war Industriedesigner und schrieb sein Leben lang, um zu verstehen – nie, um zu veröffentlichen.
+          Ein Beispiel: Er untersuchte Kanaldeckel in Marokko und erkannte nach einer zweiten Reise Anfang 80 an Wappen
+          und Zeichen darauf ganze Kolonial- und Kulturgeschichte. Diese Fähigkeit, sich zu <strong>versenken</strong> und
+          in den Dingen plötzlich etwas zu erkennen, schwinde in der Welt schneller Reize. Mit seiner Generation
+          verschwinde etwas, was künftige Generationen womöglich nicht mehr kennen.
+        </p>
+        <div class="analogie">
+          <div class="sign">❄</div>
+          <p><b>Lanz in der Eiswüste:</b> Erst ist alles weiß; nach Tagen sieht man zartes Blau, Grau, Rosa, Grün. Nicht
+          die Welt ändert sich, sondern der Blick – und mit jeder Antwort („welche Farben kann Schnee haben?“) tauchen
+          neue Fragen auf. Wichtig: erst wirken lassen, dann fragen.</p>
+        </div>
+        <p style="margin-top:14px">
+          Beide unterscheiden zwei Arten, die Natur zu erleben: Stimmung genießen (Sonne, feuchte Erde, Vogelstimmen)
+          oder die Welt wie ein „Wimmelbuch“ erforschen (welcher Vogel singt da?). Die Kunst sei, beides stehen zu
+          lassen. Das erste nennt Precht den <strong>Bergson-Moment</strong>: gelebte Zeit statt gemessener Zeit, das
+          Fließen des Bewusstseinsstroms – für ihn auch das Fundament aller Spiritualität. Menschen, die eng an der
+          Natur leben (Bergbauer in Südtirol, Kaffeebauer in Äthiopien, Jäger in Ostgrönland), wollen Teil des Ganzen
+          sein, statt alles zu optimieren. Genau das gehe verloren, und im KI-Zeitalter bekomme der Prozess „den
+          Turbo“.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Staunen, Versenken und lange Fragen sind eine Form des Denkens, die in der Reizflut – und mit KI – leicht verkümmert.</div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="chapter" id="offloading" style="--sektion-farbe:var(--k2)">
+      <div class="chapter-kicker">Studien · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=2885s" target="_blank" rel="noopener">▶ 48:05 im Video</a></div>
+      <h2>Kognitives Auslagern: Was passiert im Kopf?</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz nennt konkrete Studien. <strong>Ärzte</strong>, die über Monate bei Darmkrebs-Screenings von KI unterstützt
+          wurden und danach wieder ohne arbeiteten, waren schon nach drei Monaten weniger aufmerksam und
+          engagiert: Sie erkannten nur noch <strong>22 %</strong> der Erkrankungen – vorher waren es 27 %. Precht zieht zwei
+          Konsequenzen: Erstens wird man solche Diagnostik bald ganz der KI überlassen, weil sie weniger Fehler macht.
+          Zweitens gehen dabei menschliche Fähigkeiten verloren – und das wird für Millionen anderer Tätigkeiten
+          genauso gelten.
+        </p>
+        <p>
+          Dafür gibt es einen Fachbegriff: <strong>kognitives Offloading</strong> (Auslagern, Abladen). Beispiele:
+        </p>
+        <ul>
+          <li><strong>Londoner Taxifahrer</strong> mussten sich rund 26.000 Straßen merken; das intensive Training ließ
+          nachweislich neue Nervenzellen entstehen. Dieser Effekt kann sich umkehren, wenn wir ständig das Navi nutzen.</li>
+          <li><strong>Piloten</strong>, die immer mehr dem Autopiloten überlassen, fliegen mit der Zeit schlechter.</li>
+        </ul>
+        <p>
+          Das Gehirn wirft Ballast ab und schafft Platz für anderes – angenehm. Aber wer die ganze Welt im Smartphone
+          mit sich trägt, merkt sich Informationen nicht mehr, sondern nur noch, wie man an sie herankommt.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Wer Fähigkeiten dauerhaft auslagert, verliert sie schneller, als man denkt – belegt an Ärzten, Taxifahrern und Piloten.</div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="chapter" id="regress" style="--sektion-farbe:var(--k3)">
+      <div class="chapter-kicker">Kritik · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=3076s" target="_blank" rel="noopener">▶ 51:16 im Video</a></div>
+      <h2>Kultureller Regress – und was bleibt für uns?</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz beschreibt eine Übung: Er schreibt jede Anmoderation selbst und versucht, den Kern eines Films in 20 Sekunden so
+          zu fassen, dass man Lust bekommt, ihn zu sehen. Das ist mühsam – und ließe sich von der KI machen. Aber damit
+          verliert man Verstehens- und Schreibleistung, originellen Witz. Precht nennt das einen
+          <strong>kulturellen Regress</strong>.
+        </p>
+        <p>
+          Der Einwand „das hat man bei jedem neuen Medium gesagt“ (Fernsehen verdummt, selbst die Schrift galt in der
+          Antike als Gedächtnisgefahr) zieht für ihn nicht: Diesmal können wir unsere <strong>gesamte Rationalität auslagern</strong>.
+        </p>
+        <p>
+          Die Standardantwort „dann kümmern sich die Menschen eben um Empathie und Kreativität“ überzeugt ihn nicht:
+        </p>
+        <ul>
+          <li>Seit der Digitalisierung seien Menschen nicht empathischer, sondern eher egozentrischer geworden (Precht räumt ein, dass sich das schwer beweisen lässt).</li>
+          <li>KI dringt in Kreativberufe ein – er nennt Simultandolmetscher, Fotografen, Synchronsprecher als Beispiele.</li>
+          <li>Wir hätten vielleicht mehr Zeit für Kreativität, wären darin aber viel schlechter als die Maschinen. Dann stellt sich die Frage, wie viel Spaß das noch macht.</li>
+        </ul>
+        <div class="analogie">
+          <div class="sign">⟲</div>
+          <p><b>Strickmaschine:</b> Die Erfindung der Strickmaschine hat nicht verhindert, dass Menschen weiter Pullover
+          stricken – es hat nur keine richtige Bedeutung mehr. Das könnte in ganz vielen Kulturbereichen passieren.</p>
+        </div>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Auslagern ist nicht neu, aber diesmal betrifft es das Denken selbst – und die Trostformel „Empathie und Kreativität bleiben uns“ trägt nicht.</div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="chapter" id="regeln" style="--sektion-farbe:var(--k4)">
+      <div class="chapter-kicker">Praxis · <a href="https://www.youtube.com/watch?v=78s2z_8ts28&t=3329s" target="_blank" rel="noopener">▶ 55:29 im Video</a></div>
+      <h2>Wie man KI klug nutzt</h2>
+      <div class="chapter-body">
+        <p>
+          Lanz will es nicht kulturpessimistisch enden lassen und nennt Regeln, die die FAZ für einen klugen Umgang
+          mit KI-Assistenten aufgestellt hat. Die erste (im Gespräch ausführlich besprochen): <strong>Erst selbst
+          denken, dann die KI einschalten.</strong> Dazu gibt es Studien: Kinder, die erst eigenständig üben mussten,
+          verbesserten sich um <strong>64 %</strong>; wer die KI jederzeit nutzen durfte, nur um <strong>30 %</strong>.
+          Praktisch: vor jeder Anfrage mindestens fünf Minuten selbst an der Aufgabe arbeiten.
+        </p>
+        <div class="versus">
+          <div class="card">
+            <h4>KI als Antwortautomat</h4>
+            <p>„Schreib mir eine Zusammenfassung.“ „Löse diese Aufgabe.“ Der Lerneffekt droht verloren zu gehen.</p>
+          </div>
+          <div class="vs">vs.</div>
+          <div class="card highlight">
+            <h4>KI als Sparringspartner</h4>
+            <p>„Wo liegen die zentralen Widersprüche in diesem Text?“ „Mein Ansatz ist so – wo könnte mein Denkfehler liegen?“
+            Oder nur Verständnisfragen stellen.</p>
+          </div>
+        </div>
+        <p style="margin-top:18px">
+          Precht stimmt zu: Wer Verstehen, Urteilskraft und Kreativität <em>ohne</em> KI entwickelt hat, für den ist sie
+          später ein sinnvolles Hilfsmittel. Er selbst schlägt Dinge nach, lässt sich aber keine Texte schreiben, weil
+          ihm das Schreiben Freude macht. Es brauche <strong>Schutzzonen</strong> in Schule und Bildung, in denen man
+          die Grundfähigkeiten ohne KI lernt – ob das schnell genug gelingt, sei offen, zumal das Bildungssystem
+          strukturkonservativ ist. Er erwartet, dass nur wenige Elternhäuser konsequent sind – die bringen dann
+          deutlich klügere Kinder hervor.
+        </p>
+        <div class="analogie">
+          <div class="sign">5%</div>
+          <p><b>Studie der University of Texas in Austin:</b> Ausgewertet wurden über eine Million KI-Interaktionen von mehr
+          als 2500 Beschäftigten über etwa sieben bis acht Monate. Nur <b>5 %</b> der Nutzer zeigten durchgängig Verhalten, das
+          zu hochwertigen Ergebnissen führt. Entscheidend war nicht die Nutzungshäufigkeit oder technisches Wissen, sondern die
+          Art der Aufgaben: Die Besten bringen ihre <i>schwierigsten</i> Probleme zur KI und steigen nicht bei jeder Gelegenheit
+          mit „mach du mal“ ein. Passt zur Notiz <a href="grenze-fragen.html">„Bis an die Grenze fragen“</a> und zum
+          Bildungs-Kapitel in <a href="ki-wir-haben-noch-nichts-gesehen.html">„KI – wir haben noch gar nichts gesehen“</a>.</p>
+        </div>
+        <p style="margin-top:14px">
+          Lanz’ Schlusspunkt: Genau deshalb dürfen wir nicht alle Rationalität an die Maschinen auslagern – wir müssen
+          weiter in der Lage sein, rational mit ihnen umzugehen.
+        </p>
+ 
+        <div class="tldr"><b>Kurz gesagt</b>Erst selbst denken, dann KI als Sparringspartner nutzen – und die schwierigen Fragen mitbringen, nicht die leichten.</div>
+      </div>
+    </section>
+
+    <!-- Fazit -->
+    <section class="chapter" id="fazit" style="--sektion-farbe:var(--k5)">
+      <div class="chapter-kicker">Zusammenfassung</div>
+      <h2>Das nehme ich mit</h2>
+      <div class="chapter-body">
+        <ul>
+          <li><strong>Kein Fach-Monopol:</strong> Über KI mitreden kann und soll jeder – es sind gesellschaftliche Fragen.</li>
+          <li><strong>Gehirn = Zusammenspiel:</strong> Gedanken sind kein Speicherinhalt, sondern Ergebnis vieler Zellen im Chor (Emergenz).</li>
+          <li><strong>Verstehen > Wissen:</strong> Die Stärke des Menschen liegt im Verbinden und Begreifen, nicht im Anhäufen.</li>
+          <li><strong>Erklären ≠ Verstehen:</strong> Fertige Antworten ersetzen den Abgleich mit der eigenen Erfahrung – und damit Reifung und Urteilskraft.</li>
+          <li><strong>Auslagern hat Preis:</strong> Ärzte (27 % → 22 %), Taxifahrer, Piloten: Was wir abgeben, verlernen wir.</li>
+          <li><strong>Staunen schützen:</strong> Versenken, langes Fragen, Zeit in der Natur sind Denkformen, die in der Reizflut verkümmern.</li>
+          <li><strong>Erst selbst denken:</strong> Vor jeder KI-Anfrage ein paar Minuten allein arbeiten (+64 % statt +30 % Lernzuwachs).</li>
+          <li><strong>KI als Sparringspartner:</strong> Nach Widersprüchen und Denkfehlern fragen statt „mach mal“ – und die schwierigsten Aufgaben mitbringen.</li>
+        </ul>
+        <div class="tldr"><b>Zum Mitnehmen</b>KI ist auch ein Werkzeug fürs Denken – aber nur, wenn man das Denken
+        vorher selbst geübt hat und KI als Gegenüber statt als Ersatz nutzt.</div>
+      </div>
+    </section>
+
+    <div class="section-label" id="glossar"><h3>Zum Nachschlagen</h3></div>
+    <div class="glossary-table">
+      <div class="scroll">
+        <table class="gloss">
+          <thead>
+            <tr><th>Begriff</th><th>Bereich</th><th>Kurz erklärt</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="term">Emergenz</td><td class="ebene">Gehirn</td><td>Neue Eigenschaft, die erst aus dem Zusammenspiel vieler Teile entsteht (z. B. Bewusstsein aus Nervenzellen, Leben aus unbelebten Bausteinen).</td></tr>
+            <tr><td class="term">Hippocampus</td><td class="ebene">Gehirn</td><td>Hirnregion, die eng mit dem Erinnern verbunden ist – im Chor-Bild von Beck der „Dirigent“.</td></tr>
+            <tr><td class="term">Cogito</td><td class="ebene">Philosophie</td><td>„Ich denke, also bin ich“ (Descartes): Selbst wer zweifelt, muss existieren.</td></tr>
+            <tr><td class="term">Bewusstseinsphilosophie</td><td class="ebene">Philosophie</td><td>Denkrichtung seit Descartes: Man geht vom denkenden Ich aus und fragt, wie es sich die Welt erklärt.</td></tr>
+            <tr><td class="term">Logos</td><td class="ebene">Philosophie</td><td>Griechisch für Vernunft/Rationalität, gedacht als unabhängig vom Menschen existierend – gespeist aus Mathematik, Gerechtigkeit und Geld.</td></tr>
+            <tr><td class="term">Narzisstische Kränkung</td><td class="ebene">Psychologie</td><td>Freuds Bezeichnung für Erkenntnisse, die das Selbstbild des Menschen erschüttern (Kopernikus, Darwin, Freud – laut Safranski nun KI).</td></tr>
+            <tr><td class="term">Erklären vs. Verstehen</td><td class="ebene">Wissenschaft</td><td>Naturwissenschaftliche Erklärung gilt unabhängig von mir; Verstehen schließt meine Erfahrung und Deutung ein.</td></tr>
+            <tr><td class="term">Urteilskraft</td><td class="ebene">Bildung</td><td>Fähigkeit, Informationen einzuordnen und abzuwägen – wächst durch Verstehensleistungen über ein Leben hinweg.</td></tr>
+            <tr><td class="term">Kognitives Offloading</td><td class="ebene">KI & Lernen</td><td>Denkleistungen an Werkzeuge auslagern (Navi, Taschenrechner, KI). Bequem, kann aber die eigene Fähigkeit schwächen.</td></tr>
+            <tr><td class="term">Bergson-Moment</td><td class="ebene">Philosophie</td><td>Nach Henri Bergson: Das Erleben gelebter, fließender Zeit statt gemessener Uhrzeit – ein Moment reinen Seins.</td></tr>
+            <tr><td class="term">Sparringspartner</td><td class="ebene">KI & Lernen</td><td>KI nutzen, um sich herausfordern zu lassen (Widersprüche, Denkfehler suchen), statt fertige Lösungen zu bestellen.</td></tr>
+            <tr><td class="term">Schutzzonen</td><td class="ebene">Bildung</td><td>Lernräume, in denen Grundfähigkeiten ohne KI geübt werden, bevor man sie als Hilfsmittel einsetzt.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Diese Seite ist eine eigenständige Zusammenfassung auf Basis von „Videopodcast: Verlernen wir das Denken? |
+        Lanz + Precht, Folge 267“ (ZDFheute Nachrichten) — keine Abschrift. Grundlage war das automatisch erzeugte
+        YouTube-Transkript; Namen, Zahlen und Studien sind die des Gesprächs und wurden nicht unabhängig geprüft
+        (die Namensschreibung einzelner Personen und Studien kann im Transkript fehlerhaft sein). Aussagen wie
+        „laut Precht“ sind seine Einschätzungen, keine gesicherten Fakten.
+      </p>
+      <p class="credit">Zusammengestellt von Guido Walther mit Claude.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    // theme toggle
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var stored = null;
+    try { stored = localStorage.getItem('notiz-theme'); } catch (e) {}
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var effectiveCurrent = current || (prefersDark ? 'dark' : 'light');
+      var next = effectiveCurrent === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('notiz-theme', next); } catch (e) {}
+    });
+
+    // progress bar
+    var bar = document.getElementById('progress');
+    function updateProgress() {
+      var h = document.documentElement;
+      var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (isFinite(scrolled) ? scrolled : 0) + '%';
+    }
+    document.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // scrollspy
+    var sections = Array.from(document.querySelectorAll('section.chapter, .section-label'));
+    var routeLinks = Array.from(document.querySelectorAll('.route a'));
+    var chipLinks = Array.from(document.querySelectorAll('.chipnav a'));
+
+    function setActive(id) {
+      routeLinks.forEach(function (a) {
+        var isActive = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', isActive);
+        if (isActive && a.dataset.color) a.style.setProperty('--sektion-farbe', a.dataset.color);
+      });
+      chipLinks.forEach(function (a) {
+        var isActive = a.getAttribute('href') === '#' + id;
+        a.classList.toggle('active', isActive);
+        if (isActive) a.scrollIntoView({ block: 'nearest', inline: 'center' });
+      });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) setActive(entry.target.id);
+      });
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+</script>
+</body>
+</html>
