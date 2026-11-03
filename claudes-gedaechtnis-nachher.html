@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Claudes Gedächtnis · nachher</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #131b34;
+    --linie: #26304f;
+    --text: #e9edf8;
+    --muted: #9ca8cb;
+    --global: #ffb84d;
+    --projekt: #4da3ff;
+    --memory: #c77dff;
+    --memory-hell: #e4b8ff;
+    --memory-dunkel: #8f4be0;
+    --notiz: #3ddc97;
+    --skill: #2fd4d4;
+    --geheim: #ff5d6c;
+    --geist: #6b7596;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 18px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .rahmen { max-width: 1500px; margin: 0 auto; padding: 24px 16px 60px; }
+  header h1 { margin: 0 0 4px; font-size: 32px; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); }
+  .legende { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 18px; font-size: 16px; }
+  .legende span { display: inline-flex; align-items: center; gap: 8px; }
+  .legende i { width: 14px; height: 14px; border-radius: 50%; background: var(--f); box-shadow: 0 0 10px var(--f); }
+
+  .film { position: relative; background: radial-gradient(ellipse at 50% 0%, #17224a 0%, var(--bg) 70%); border: 1px solid var(--linie); border-radius: 18px; overflow: hidden; }
+  svg#karte { display: block; width: 100%; height: auto; cursor: default; }
+
+  .steuerung { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 18px; border-top: 1px solid var(--linie); background: var(--panel); }
+  .steuerung button { font: inherit; font-size: 16px; color: var(--text); background: #1d2748; border: 1px solid #33407066; border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .steuerung button:hover { background: #26335e; }
+  .steuerung .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+  .steuerung .chips button { font-size: 14px; padding: 5px 12px; color: var(--muted); }
+  .steuerung .chips button.aktiv { color: var(--bg); background: var(--text); border-color: var(--text); }
+  .laufhinweis { position: absolute; top: 14px; right: 16px; display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: #0b1020cc; border: 1px solid #ffb84d88; font-size: 16px; color: var(--text); pointer-events: none; transition: opacity .4s; }
+  .laufhinweis i { width: 10px; height: 10px; border-radius: 50%; background: var(--global); box-shadow: 0 0 10px var(--global); animation: blinken 1.2s ease-in-out infinite; }
+  .laufhinweis.pausiert i { animation: none; background: var(--muted); box-shadow: none; }
+  .laufhinweis.weg { opacity: 0; }
+  @keyframes blinken { 50% { opacity: .25; } }
+  .fortschritt { height: 7px; background: #1d2748; }
+  .fortschritt div { height: 100%; width: 0; background: linear-gradient(90deg, var(--global), var(--memory)); }
+
+  .text { padding: 20px 22px 24px; background: var(--panel); border-top: 1px solid var(--linie); min-height: 170px; }
+  .text h2 { margin: 0 0 6px; font-size: 26px; }
+  .text p { margin: 0; font-size: 20px; color: #cfd6ee; max-width: 1100px; }
+  .infozeile { margin-top: 10px; font-size: 16px; color: var(--muted); min-height: 1.5em; }
+  .infozeile b { color: var(--text); }
+
+  .sim { display: none; margin-top: 14px; }
+  .sim.an { display: block; }
+  .startwahl { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .startwahl button { font: inherit; font-size: 17px; color: var(--text); background: #1d2748; border: 2px solid #33407066; border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+  .startwahl button.aktiv { border-color: var(--global); background: #2c2a35; }
+  .messer { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; align-items: center; font-size: 17px; max-width: 1100px; }
+  .messer .balken { height: 18px; border-radius: 9px; background: #1d2748; overflow: hidden; display: flex; }
+  .messer .balken div { height: 100%; transition: width .8s cubic-bezier(.3,.8,.3,1); }
+  .sim .hinweis { margin-top: 12px; font-size: 19px; color: #cfd6ee; max-width: 1100px; }
+
+  section.befunde { margin-top: 34px; }
+  section.befunde > h2 { font-size: 26px; margin: 0 0 14px; }
+  .karten { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .karte {
+    --sektion-farbe: var(--projekt);
+    background: color-mix(in srgb, var(--sektion-farbe) 9%, var(--panel));
+    border-left: 5px solid var(--sektion-farbe);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .karte h3 { margin: 0 0 6px; color: var(--sektion-farbe); font-size: 20px; }
+  .karte p { margin: 0; color: #d3d9ef; }
+  .karte code { font-size: 15px; background: #0006; padding: 1px 6px; border-radius: 6px; }
+  .fassung { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+  .fassung a, .fassung span { font-size: 16px; padding: 7px 16px; border-radius: 999px; border: 1px solid #33407088; color: var(--muted); text-decoration: none; background: #131b34; }
+  .fassung .aktiv { color: var(--bg); background: var(--global); border-color: var(--global); font-weight: 700; }
+  .fassung .folgt { border-style: dashed; }
+  section.filmbereich, section.zusammenhang { margin-top: 34px; }
+  section.filmbereich > h2, section.zusammenhang > h2 { font-size: 26px; margin: 0 0 8px; }
+  section.filmbereich p { color: #cfd6ee; margin: 0 0 14px; max-width: 1100px; }
+  section.filmbereich video { display: block; width: 100%; max-width: 1100px; height: auto; border-radius: 14px; border: 1px solid var(--linie); background: #000; }
+  .zusammenhang .karten { grid-template-columns: 1fr; }
+  footer { margin-top: 26px; color: var(--muted); font-size: 15px; }
+
+  /* ---------- SVG-Animation ---------- */
+  .lage { transition: opacity .7s ease; }
+  .lage.gedimmt { opacity: .22; }
+  .pop { opacity: 0; transform: scale(.15); transition: transform .8s cubic-bezier(.2,1.5,.4,1) var(--d, 0s), opacity .5s ease var(--d, 0s); }
+  .lage.an .pop { opacity: 1; transform: none; }
+  .kante { fill: none; stroke-dasharray: 1 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.4s ease var(--d, 0s), opacity .6s ease; }
+  .lage.an .kante { stroke-dashoffset: 0; }
+  .fluss { fill: none; stroke-dasharray: .012 .03; opacity: 0; transition: opacity .6s ease 1.2s; }
+  .lage.an .fluss { opacity: .9; animation: fliessen 1.4s linear infinite; }
+  @keyframes fliessen { to { stroke-dashoffset: -.042; } }
+  .mempunkt { transform: translate(0px, 0px) scale(0); transition: transform 1s cubic-bezier(.2,1.3,.4,1) var(--d, 0s); }
+  .lage.an .mempunkt { transform: translate(var(--x), var(--y)) scale(1); }
+  .puls { animation: puls 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes puls { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: .8; transform: scale(1.04); } }
+  .titelbild { transition: opacity .8s ease; }
+  .knoten { transition: opacity .6s ease; cursor: pointer; }
+
+  /* Simulator: nur das Geladene leuchtet */
+  svg.simmodus .knoten { opacity: .12; }
+  svg.simmodus .knoten.halb { opacity: .55; }
+  svg.simmodus .knoten.lit { opacity: 1; filter: url(#glow); }
+  svg.simmodus .lage .kante, svg.simmodus .lage .fluss { opacity: 0; }
+  svg.simmodus .lage .kante.lit { opacity: 1; }
+  svg.simmodus .lage .fluss.lit { opacity: .9; }
+  svg.simmodus .lage.gedimmt { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pop, .kante, .mempunkt, .fluss, .lage { transition: none !important; animation: none !important; }
+  }
+  @media (max-width: 700px) {
+    header h1 { font-size: 26px; }
+    .text h2 { font-size: 22px; }
+    .text p, .sim .hinweis { font-size: 18px; }
+    .steuerung .chips { margin-left: 0; }
+    .messer { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="rahmen">
+  <header>
+    <div class="fassung"><a href="claudes-gedaechtnis-vorher.html">Vorher · Stand 3.11.2026</a><span class="aktiv">Nachher · nach dem Aufräumen</span></div>
+    <h1>Claudes Gedächtnis</h1>
+    <p>Wie CLAUDE.md-Dateien, Auto-Memory und Nachschlage-Dateien in Guidos ClaudeDaten-Ordner zusammenhängen – erfasst und erklärt von Claude. Das ist der Stand <b>nach</b> dem Aufräumen am 3.11.2026 – zum Vergleich gibt es die Vorher-Fassung.</p>
+    <div class="legende">
+      <span style="--f:var(--global)"><i></i>Globale CLAUDE.md</span>
+      <span style="--f:var(--projekt)"><i></i>Projekt-CLAUDE.md</span>
+      <span style="--f:var(--memory)"><i></i>Auto-Memory</span>
+      <span style="--f:var(--notiz)"><i></i>Nachschlage-Dateien</span>
+      <span style="--f:var(--skill)"><i></i>Skills</span>
+      <span style="--f:var(--geheim)"><i></i>Zugangsdaten</span>
+      <span style="--f:var(--geist)"><i></i>Altlasten</span>
+    </div>
+  </header>
+
+  <div class="film">
+    <svg id="karte" viewBox="0 0 1600 1000" role="img" aria-label="Animierte Karte von Claudes Gedächtnis">
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glowStark" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="12" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+    </svg>
+    <div class="laufhinweis" id="laufhinweis"><i></i><span id="laufText">Film läuft</span></div>
+    <div class="fortschritt"><div id="fortschritt"></div></div>
+    <div class="steuerung">
+      <button id="zurueck" type="button">Zurück</button>
+      <button id="spielen" type="button">Pause</button>
+      <button id="weiter" type="button">Weiter</button>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="text">
+      <h2 id="szTitel"></h2>
+      <p id="szText"></p>
+      <div class="sim" id="sim">
+        <div class="startwahl" id="startwahl"></div>
+        <div class="messer" id="messer"></div>
+        <div class="hinweis" id="hinweis"></div>
+      </div>
+      <div class="infozeile" id="infozeile">Tipp: Tippe oder klicke auf einen Kreis, um Pfad und Umfang zu sehen.</div>
+    </div>
+  </div>
+
+  <section class="zusammenhang">
+    <h2>So hängt mein Gedächtnis zusammen</h2>
+    <div class="karten">
+      <div class="karte" style="--sektion-farbe: var(--global)">
+        <h3>Ebene 1 – die globale CLAUDE.md</h3>
+        <p><code>~/.claude/CLAUDE.md</code>, 152 Zeilen. Wird in jeder Sitzung geladen, egal in welchem Ordner Guido startet: Sprache, Hosting-Rahmen, Upload-Liste, Design-Vorlieben, Sprachausgabe.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--projekt)">
+        <h3>Ebene 2 – 25 Projekt-CLAUDE.md</h3>
+        <p>Jede gilt nur in ihrem Ordner. Startet die Sitzung im Wurzelordner ClaudeDaten, lese ich sie erst, wenn ich im jeweiligen Unterordner arbeite.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--memory)">
+        <h3>Ebene 3 – das Auto-Memory</h3>
+        <p><code>~/.claude/projects/</code>: ein eigener Memory-Ordner pro Startordner. Das Hauptgedächtnis hat 49 Erinnerungen und wird nur beim Start in ClaudeDaten geladen – und davon beim Start nur der Index <code>MEMORY.md</code>; die einzelnen Erinnerungen lese ich bei Bedarf.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--memory-dunkel)">
+        <h3>Zeiger statt Doppelungen</h3>
+        <p>Viele Erinnerungen sind nur noch Kurzverweise auf eine Projekt-CLAUDE.md, zum Beispiel „Details in raspi/CLAUDE.md“. Das Dauerwissen steht im Projekt-Handbuch, weil es dort in jedem neuen Chat sofort da ist.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--notiz)">
+        <h3>Nachschlage-Dateien</h3>
+        <p>OFFEN.md, HISTORIE.md und HINWEISE.md lese ich nur, wenn eine Regel darauf zeigt – seit dem Aufräumen auch HISTORIE.md, OFFEN-UNTERRICHT.md und MOODLE-TESTS.md im Unterricht-Ordner. Von den 31 Skills kenne ich anfangs nur die Kurzbeschreibung. Die Zugangsdaten in den <code>.env</code>-Dateien liest nur das Deploy-Skript – ich sehe sie nie.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="befunde">
+    <h2>Was sich durch das Aufräumen geändert hat</h2>
+    <div class="karten">
+      <div class="karte" style="--sektion-farbe: var(--projekt)">
+        <h3>Unterricht-Handbuch: 312 → 63 KB</h3>
+        <p>Die Bau-Chronik steht jetzt in <code>HISTORIE.md</code>, die offenen Punkte in <code>OFFEN-UNTERRICHT.md</code>, der Moodle-Workflow in <code>MOODLE-TESTS.md</code> – wortgleich verschoben, per Skript geprüft: keine Zeile verloren. Neu ist ein Abschnitt mit den daraus verdichteten Dauerregeln.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--memory)">
+        <h3>Memory: 18 → 12 Ordner</h3>
+        <p>Die 10 Erinnerungen aus verwaisten Ordnern sind gesichtet: Abiturrechner-Regeln stehen jetzt im Schulportal-Handbuch, die iPad-Regel und „Guido liest Code gut“ in der globalen CLAUDE.md. Falsche Einträge („siezt“, „kann nicht programmieren“) liegen im Archiv.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--geist)">
+        <h3>Worktrees: 10 → 5</h3>
+        <p>Fünf freie Neben-Arbeitskopien entfernt, rund 165 MB – jede vorher geprüft, alles war schon im Hauptstand. Die übrigen fünf gehören noch zu Sitzungen in der Seitenleiste und bleiben.</p>
+      </div>
+      <div class="karte" style="--sektion-farbe: var(--global)">
+        <h3>Was bleibt</h3>
+        <p>Mit 63 KB liegt das Unterricht-Handbuch immer noch über den empfohlenen rund 40.000 Zeichen; größter Brocken ist der Abschnitt „Optik“ (17 KB), den ich nur nach Rücksprache anfasse. Das Stundenplan-Handbuch liegt mit 40 KB genau an der Grenze.</p>
+      </div>
+    </div>
+  </section>
+  <section class="filmbereich">
+    <h2>Der Film dazu</h2>
+    <p>Dieselbe Geschichte nach dem Aufräumen – 63 Sekunden, mit leisem Klangteppich.</p>
+    <video controls preload="metadata" poster="claudes-gedaechtnis-nachher-poster.jpg" src="claudes-gedaechtnis-nachher.mp4"></video>
+  </section>
+  <footer>Stand 3.11.2026, nach dem Aufräumen · Die Zahlen sind von Hand erfasst · Erstellt mit Claude Code</footer>
+</div>
+
+<script>
+// ---------- Daten (zum Aktualisieren hier anpassen) ----------
+const PROJEKTE = [
+  { id: 'stundenplan',     kurz: 'Stundenplan',      pfad: 'Stundenplan/CLAUDE.md',                    z: 526, g: 0 },
+  { id: 'werbefilm',       kurz: 'Werbefilm',        pfad: 'Stundenplan/Werbefilm/spot-v2/CLAUDE.md',  z: 107, g: 0 },
+  { id: 'sekretariat',     kurz: 'Sekretariat',      pfad: 'Sekretariat/CLAUDE.md',                    z: 225, g: 0 },
+  { id: 'sportkurswahl',   kurz: 'Sportkurswahl',    pfad: 'Schulseiten/sportkurswahl/CLAUDE.md',      z: 294, g: 0 },
+  { id: 'schulportal',     kurz: 'Schulportal',      pfad: 'Schulseiten/schulportal/CLAUDE.md',        z: 176, g: 0 },
+  { id: 'anleitung',       kurz: 'Anleitungen',      pfad: 'Schulseiten/Anleitung-Portal/CLAUDE.md',   z: 71,  g: 0 },
+  { id: 'pfandbons',       kurz: 'Pfandbons',        pfad: 'Pfandbons/CLAUDE.md',                      z: 132, g: 0 },
+  { id: 'praktikum',       kurz: 'Praktikumskarte',  pfad: 'Praktikumskarte/CLAUDE.md',                z: 88,  g: 0 },
+  { id: 'erasmus',         kurz: 'Erasmus-Tool',     pfad: 'Internationalisierung/CLAUDE.md',          z: 83,  g: 0 },
+  { id: 'foto',            kurz: 'Foto-Seite',       pfad: 'FotoSocialMediaSeite/CLAUDE.md',           z: 181, g: 0 },
+  { id: 'namen',           kurz: 'Namenslerner',     pfad: 'Namenslerner/CLAUDE.md',                   z: 73,  g: 0 },
+  { id: 'unterricht',      kurz: 'Unterricht',       pfad: 'Unterricht/CLAUDE.md (63 KB, vorher 312 KB)', z: 1060, g: 1 },
+  { id: 'abgen',           kurz: 'AB-Generator',     pfad: 'Arbeitsblattgenerator-Analyse/CLAUDE.md',  z: 157, g: 1 },
+  { id: 'ablagecad',       kurz: 'Ablage/cad',       pfad: 'Unterricht/Ablage/cad/CLAUDE.md',          z: 101, g: 1 },
+  { id: 'cadunt',          kurz: 'CAD-Unterricht',   pfad: 'CAD-Unterricht/CLAUDE.md',                 z: 101, g: 1 },
+  { id: 'pumpe',           kurz: 'Pumpenmodell',     pfad: 'Pumpenmodell/CLAUDE.md',                   z: 85,  g: 1 },
+  { id: 'arbeitsblaetter', kurz: 'Arbeitsblätter',   pfad: 'Arbeitsblätter/CLAUDE.md',                 z: 26,  g: 1 },
+  { id: 'bedarf',          kurz: 'Bedarfsanmeldung', pfad: 'Bedarfsanmeldung/CLAUDE.md',               z: 26,  g: 1 },
+  { id: 'ha',              kurz: 'HomeAssistant',    pfad: 'HomeAssistant/CLAUDE.md',                  z: 175, g: 2 },
+  { id: 'cad3d',           kurz: 'CAD & 3D-Druck',   pfad: 'CAD Skizzen und 3D Druck/CLAUDE.md',       z: 153, g: 2 },
+  { id: 'raspi',           kurz: 'raspi (Pi5)',      pfad: 'raspi/CLAUDE.md',                          z: 138, g: 2 },
+  { id: 'wallbox',         kurz: 'Wallbox',          pfad: 'Wallbox-Dashboard/CLAUDE.md',              z: 136, g: 2 },
+  { id: 'portfolio',       kurz: 'Portfolio',        pfad: 'private webseite/portfolio/CLAUDE.md',     z: 58,  g: 2 },
+  { id: 'verbrauch',       kurz: 'Verbrauch',        pfad: 'Verbrauchs-Dashboard/CLAUDE.md',           z: 31,  g: 2 },
+  { id: 'gedfilm',         kurz: 'Gedächtnis-Film',  pfad: 'werkzeuge/gedaechtnis-film/CLAUDE.md (von HyperFrames angelegt)', z: 111, g: 2 },
+];
+const SPALTEN = [
+  { x: 40,  titel: 'Schule & Verwaltung' },
+  { x: 330, titel: 'Unterricht' },
+  { x: 620, titel: 'Privat & Zuhause' },
+];
+// Hauptgedächtnis: Abschnitte aus MEMORY.md (Ringe von innen nach außen)
+const HAUPT_KATEGORIEN = [
+  { name: 'Arbeitsweise', n: 18, farbe: 'var(--memory-hell)' },
+  { name: 'Projekte',     n: 22, farbe: 'var(--memory)' },
+  { name: 'Nachschlagen', n: 9,  farbe: 'var(--memory-dunkel)' },
+];
+// Wie oft das Hauptgedächtnis auf eine Projekt-CLAUDE.md verweist
+const VERWEISE = { unterricht: 8, raspi: 5, anleitung: 3, verbrauch: 3, stundenplan: 3, ha: 3, wallbox: 2, erasmus: 1, cad3d: 1 };
+const MEM_ORDNER = [
+  { id: 'm-schulseiten',     name: 'Schulseiten',     n: 9 },
+  { id: 'm-unterricht',      name: 'Unterricht',      n: 8 },
+  { id: 'm-sekretariat',     name: 'Sekretariat',     n: 5 },
+  { id: 'm-foto',            name: 'Foto-Seite',      n: 4 },
+  { id: 'm-arbeitsblaetter', name: 'Arbeitsblätter',  n: 4 },
+  { id: 'm-sport',           name: 'Sportkurswahl',   n: 3 },
+  { id: 'm-stundenplan',     name: 'Stundenplan',     n: 2 },
+  { id: 'm-privweb',         name: 'private webseite', n: 2 },
+  { id: 'm-privinfos',       name: 'private_infos',   n: 1 },
+  { id: 'm-raspi',           name: 'raspi',           n: 0 },
+];
+const NOTIZEN = [
+  { id: 'offen',    name: 'OFFEN.md',     sub: 'ClaudeDaten/ · offene Punkte',   farbe: 'var(--notiz)' },
+  { id: 'untnach',  name: 'Unterricht: 3 Dateien', sub: 'HISTORIE · OFFEN · MOODLE', farbe: 'var(--notiz)' },
+  { id: 'historie', name: 'HISTORIE.md',  sub: 'Stundenplan/ · Chronik',         farbe: 'var(--notiz)' },
+  { id: 'hinweise', name: 'HINWEISE.md',  sub: 'bbs-deploy/ · Deploy-Technik',   farbe: 'var(--notiz)' },
+  { id: 'skills',   name: '31 Skills',    sub: '~/.claude/skills/ · Kurztext',   farbe: 'var(--skill)' },
+  { id: 'env',      name: '8 × .env',     sub: 'Zugangsdaten · nie sichtbar',    farbe: 'var(--geheim)' },
+];
+const STARTS = [
+  { id: 'claudedaten', name: 'ClaudeDaten', projekt: null, bedarf: PROJEKTE.map(p => p.id), mem: 'm-haupt', memN: 49, idxZ: 57,
+    hinweis: 'Der Normalfall. Im Wurzelordner gibt es keine eigene CLAUDE.md – die Projekt-Handbücher lade ich nach, sobald ich in einem Unterordner Dateien lese (halb hell). Dafür ist das große Hauptgedächtnis da.' },
+  { id: 'unterricht', name: 'Unterricht', projekt: 'unterricht', bedarf: ['ablagecad'], mem: 'm-unterricht', memN: 8, idxZ: 10,
+    notiz: ['untnach'],
+    hinweis: 'Das Handbuch Unterricht kommt jetzt mit 1.060 statt 4.212 Zeilen mit. Die Chronik (HISTORIE.md) lese ich nur, wenn ich an einer bestehenden Themengruppe weiterbaue. Das Hauptgedächtnis bleibt hier weiterhin unsichtbar – Dauerwissen gehört deshalb ins Projekt-Handbuch.' },
+  { id: 'stundenplan', name: 'Stundenplan', projekt: 'stundenplan', bedarf: ['werbefilm'], notiz: ['historie'], mem: 'm-stundenplan', memN: 2, idxZ: 2,
+    hinweis: 'Schlankes Memory mit 2 Einträgen – einer davon sagt sogar: Das Wissen steht in der CLAUDE.md. HISTORIE.md lese ich bei Bedarf.' },
+  { id: 'sekretariat', name: 'Sekretariat', projekt: 'sekretariat', bedarf: [], mem: 'm-sekretariat', memN: 5, idxZ: 5,
+    hinweis: 'Eigenes Handbuch plus 5 eigene Erinnerungen. Das Hauptgedächtnis bleibt außen vor.' },
+  { id: 'schulseiten', name: 'Schulseiten', projekt: null, bedarf: ['schulportal', 'sportkurswahl', 'anleitung'], mem: 'm-schulseiten', memN: 9, idxZ: 11,
+    hinweis: 'Keine CLAUDE.md direkt in Schulseiten/, aber drei in den Unterordnern, die bei Bedarf dazukommen. Das Memory mit 9 Einträgen stammt teils aus der Zeit vor dem Schulportal.' },
+  { id: 'raspi', name: 'raspi', projekt: 'raspi', bedarf: [], mem: 'm-raspi', memN: 0, idxZ: 0,
+    hinweis: 'Der Memory-Ordner existiert, ist aber leer: Alles steht im Handbuch raspi/CLAUDE.md. So ist es gedacht.' },
+];
+const GLOBAL_Z = 152;
+const VORHER = { claudedaten: 206, unterricht: 4371, stundenplan: 677, sekretariat: 379, schulseiten: 160, raspi: 287 };
+
+const SZENEN = [
+  { chip: 'Start', dauer: 3500, lagen: [], fokus: [],
+    h: 'Nach dem Aufräumen: so hängt mein Gedächtnis zusammen',
+    t: 'Drei Ebenen kommen beim Start einer Sitzung zusammen – und eine Regel bestimmt, welche: in welchem Ordner du startest.' },
+  { chip: 'Global', dauer: 6000, lagen: ['global'], fokus: ['global'],
+    h: 'Ebene 1 – die globale CLAUDE.md',
+    t: 'Liegt in ~/.claude/ und wird in jeder Sitzung geladen, egal wo du startest. 152 Zeilen: Sprache, Hosting-Rahmen, Upload-Liste, Design-Vorlieben, Jarvis – neu auch „Guido liest Code gut“ und die iPad-Regel. Die Linien zeigen: Sie gilt für jedes Projekt.' },
+  { chip: 'Projekte', dauer: 6500, lagen: ['global', 'proj'], fokus: ['proj'],
+    h: 'Ebene 2 – 25 Projekt-Handbücher',
+    t: 'Jede Projekt-CLAUDE.md gilt nur in ihrem Ordner. Die Kreisgröße zeigt den Umfang in Zeilen. Unterricht ist von 4.212 auf 1.060 Zeilen geschrumpft (312 → 63 KB) – die Bau-Chronik steht jetzt in HISTORIE.md. Neu dazugekommen ist das Handbuch des Gedächtnis-Films.' },
+  { chip: 'Memory', dauer: 7000, lagen: ['global', 'proj', 'mem'], fokus: ['mem'],
+    h: 'Ebene 3 – das Auto-Memory',
+    t: 'Liegt unter ~/.claude/projects/, ein Ordner pro Startordner. Das Hauptgedächtnis (Start in ClaudeDaten) hat 49 Einzel-Erinnerungen in drei Ringen. Beim Start lese ich nur den Index MEMORY.md, die Einzeldateien erst bei Bedarf. Statt 18 gibt es nur noch 12 Memory-Ordner – alle zu Ordnern, die es wirklich gibt.' },
+  { chip: 'Zeiger', dauer: 6500, lagen: ['global', 'proj', 'mem', 'verweis'], fokus: ['verweis', 'mem', 'proj'],
+    h: 'Zeiger statt doppelter Pflege',
+    t: 'Viele Erinnerungen sind nur noch Kurz-Zeiger wie „Details in raspi/CLAUDE.md“. Das Dauerwissen steht im Projekt-Handbuch, denn das ist in jedem neuen Chat im Projekt sofort da. Dickere Linie = mehr Verweise.' },
+  { chip: 'Nachschlagen', dauer: 7000, lagen: ['global', 'proj', 'mem', 'verweis', 'notiz'], fokus: ['notiz', 'global'],
+    h: 'Nachschlage-Dateien',
+    t: 'Werden nicht automatisch geladen, sondern gelesen, wenn eine Regel darauf zeigt: OFFEN.md, HISTORIE.md, HINWEISE.md – neu die drei Unterricht-Dateien, die vorher im Handbuch steckten. Von den 31 Skills kenne ich anfangs nur die Kurzbeschreibung. Die .env-Zugangsdaten liest nur das Deploy-Skript – ich sehe sie nie.' },
+  { chip: 'Aufgeräumt', dauer: 7000, lagen: ['global', 'proj', 'mem', 'verweis', 'notiz', 'alt'], fokus: ['alt'],
+    h: 'Was vom Aufräumen übrig ist',
+    t: 'Die 10 Erinnerungen aus verwaisten Ordnern sind gesichtet: 3 Punkte stehen jetzt im Schulportal-Handbuch, der Rest liegt im Archiv. 5 Worktrees sind entfernt, 4 gehören noch zu offenen Sitzungen (8 Handbuch-Kopien). Die 29 Worktree-Ordner unter ~/.claude/projects/ enthalten nur Chat-Verläufe und bleiben.' },
+  { chip: 'Ausprobieren', dauer: 0, lagen: ['global', 'proj', 'mem', 'verweis', 'notiz', 'alt'], fokus: [], sim: true,
+    h: 'Probier es aus: Wo startest du die Sitzung?',
+    t: 'Hell leuchtet, was beim Start geladen wird. Halb hell ist, was ich bei Bedarf nachlese. Alles andere sehe ich in dieser Sitzung nicht.' },
+];
+
+// ---------- Aufbau des SVG ----------
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('karte');
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function text(parent, x, y, inhalt, attrs = {}) {
+  const t = el('text', { x, y, fill: 'var(--text)', 'font-family': 'inherit', ...attrs }, parent);
+  t.textContent = inhalt;
+  return t;
+}
+function kurve(x1, y1, x2, y2, modus) {
+  if (modus === 'h') { const mx = (x1 + x2) / 2; return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`; }
+  const my = (y1 + y2) / 2;
+  return `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+}
+function lage(name) { return el('g', { class: 'lage', 'data-lage': name }, svg); }
+function knoten(parent, x, y, info, extraKlasse = '') {
+  const g = el('g', { class: 'knoten ' + extraKlasse, transform: `translate(${x},${y})`, 'data-info': info }, parent);
+  return g;
+}
+
+// Ebenen: Kanten unten, Knoten oben
+const L = {
+  kGlobal: lage('global'), kNotiz: lage('notiz'), kVerweis: lage('verweis'), kZu: lage('sim'),
+  titel: el('g', { class: 'titelbild' }, svg),
+  global: lage('global'), proj: lage('proj'), mem: lage('mem'), notiz: lage('notiz'), alt: lage('alt'),
+};
+
+// Titelbild (nur Szene 0)
+text(L.titel, 800, 440, 'Claudes Gedächtnis', { 'text-anchor': 'middle', 'font-size': 72, 'font-weight': 700, filter: 'url(#glow)' });
+text(L.titel, 800, 500, 'CLAUDE.md · Memory · Nachschlage-Dateien', { 'text-anchor': 'middle', 'font-size': 28, fill: 'var(--muted)' });
+[['var(--global)', 650], ['var(--projekt)', 750], ['var(--memory)', 850], ['var(--notiz)', 950]].forEach(([f, x], i) => {
+  const c = el('circle', { cx: x, cy: 570, r: 10, fill: f, class: 'puls', filter: 'url(#glow)' }, L.titel);
+  c.style.animationDelay = (i * .3) + 's';
+});
+
+// Bereichsüberschriften (gehören zu den Ebenen)
+text(L.proj, 40, 178, 'Projekt-Handbücher · ClaudeDaten/', { 'font-size': 20, 'font-weight': 700, fill: 'var(--projekt)', class: 'pop' });
+text(L.mem, 960, 178, 'Auto-Memory · ~/.claude/projects/', { 'font-size': 20, 'font-weight': 700, fill: 'var(--memory)', class: 'pop' });
+
+// Globaler Knoten
+const gG = knoten(L.global, 800, 80, '<b>~/.claude/CLAUDE.md</b> · 149 Zeilen · wird in jeder Sitzung geladen', 'k-global');
+const gPop = el('g', { class: 'pop' }, gG);
+el('rect', { x: -250, y: -44, width: 500, height: 88, rx: 44, fill: 'none', stroke: 'var(--global)', 'stroke-width': 2, class: 'puls', filter: 'url(#glowStark)' }, gPop);
+el('rect', { x: -240, y: -38, width: 480, height: 76, rx: 38, fill: '#2a2213', stroke: 'var(--global)', 'stroke-width': 2.5 }, gPop);
+text(gPop, 0, -4, 'Globale CLAUDE.md', { 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 700, fill: 'var(--global)' });
+text(gPop, 0, 22, '~/.claude/CLAUDE.md · 149 Zeilen · gilt überall', { 'text-anchor': 'middle', 'font-size': 16, fill: '#e8d6b4' });
+
+// Projekte anordnen (Spalten, größte zuerst)
+const rad = z => Math.min(64, 12 + Math.sqrt(z) * 0.9);
+SPALTEN.forEach((sp, gi) => {
+  text(L.proj, sp.x + 140, 210, sp.titel, { 'text-anchor': 'middle', 'font-size': 16, fill: 'var(--muted)', class: 'pop', 'letter-spacing': '.04em' });
+  const liste = PROJEKTE.filter(p => p.g === gi).sort((a, b) => b.z - a.z);
+  let y = 232, i = 0;
+  while (i < liste.length) {
+    const reihe = rad(liste[i].z) > 40 ? [liste[i]] : liste.slice(i, i + 2);
+    const maxR = Math.max(...reihe.map(q => rad(q.z)));
+    const cy = y + maxR;
+    reihe.forEach((q, k) => { q.r = rad(q.z); q.x = reihe.length === 1 ? sp.x + 140 : sp.x + 70 + k * 140; q.y = cy; });
+    y = cy + maxR + 44;
+    i += reihe.length;
+  }
+});
+const P = Object.fromEntries(PROJEKTE.map(p => [p.id, p]));
+PROJEKTE.forEach((p, i) => {
+  const k = knoten(L.proj, p.x, p.y, `<b>${p.pfad}</b> · ${p.z.toLocaleString('de-DE')} Zeilen · gilt nur in diesem Ordner`, 'k-proj');
+  k.dataset.id = p.id;
+  const pop = el('g', { class: 'pop' }, k);
+  pop.style.setProperty('--d', (i * 0.06) + 's');
+  el('circle', { r: p.r, fill: '#12284a', stroke: 'var(--projekt)', 'stroke-width': 2.5, filter: 'url(#glow)' }, pop);
+  if (p.r >= 16) text(pop, 0, Math.min(16, p.r * .5) * .36, p.z.toLocaleString('de-DE'), { 'text-anchor': 'middle', 'font-size': Math.min(22, p.r * .52), 'font-weight': 700, fill: '#cfe5ff' });
+  text(pop, 0, p.r + 20, p.kurz, { 'text-anchor': 'middle', 'font-size': 15, fill: 'var(--text)' });
+  // Globale Kanten
+  const pfad = el('path', { d: kurve(800, 122, p.x, p.y - p.r, 'v'), class: 'kante k-glob', stroke: 'var(--global)', 'stroke-width': 1.2, 'stroke-opacity': .35, pathLength: 1 }, L.kGlobal);
+  pfad.style.setProperty('--d', (i * 0.04) + 's');
+});
+
+// Hauptgedächtnis (Sonnenblumen-Muster)
+const HX = 1130, HY = 420;
+const hk = knoten(L.mem, HX, HY, '<b>~/.claude/projects/…ClaudeDaten/memory/</b> · 49 Erinnerungen · Index MEMORY.md mit 57 Zeilen', 'k-mem');
+hk.dataset.id = 'm-haupt';
+el('circle', { r: 132, fill: 'none', stroke: 'var(--memory)', 'stroke-opacity': .25, 'stroke-dasharray': '3 6', class: 'pop' }, hk);
+const kern = el('g', { class: 'pop' }, hk);
+kern.style.setProperty('--d', '0.2s');
+el('circle', { r: 26, fill: '#2b1745', stroke: 'var(--memory)', 'stroke-width': 2, filter: 'url(#glow)' }, kern);
+text(kern, 0, 5, 'Index', { 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700, fill: 'var(--memory-hell)' });
+let idx = 0;
+HAUPT_KATEGORIEN.forEach(kat => {
+  for (let j = 0; j < kat.n; j++, idx++) {
+    const w = idx * 137.508 * Math.PI / 180, r = 16.5 * Math.sqrt(idx + 4);
+    const c = el('circle', { r: 7.5, fill: kat.farbe, class: 'mempunkt' }, hk);
+    c.style.setProperty('--x', (Math.cos(w) * r).toFixed(1) + 'px');
+    c.style.setProperty('--y', (Math.sin(w) * r).toFixed(1) + 'px');
+    c.style.setProperty('--d', (0.3 + idx * 0.03) + 's');
+  }
+});
+const hLab = el('g', { class: 'pop' }, hk);
+hLab.style.setProperty('--d', '0.6s');
+text(hLab, 0, 162, 'Hauptgedächtnis', { 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: 'var(--memory)' });
+text(hLab, 0, 186, 'Start in ClaudeDaten · 49 Erinnerungen', { 'text-anchor': 'middle', 'font-size': 16, fill: 'var(--muted)' });
+let lx = -170;
+HAUPT_KATEGORIEN.forEach(kat => {
+  el('circle', { cx: lx, cy: 209, r: 6, fill: kat.farbe }, hLab);
+  text(hLab, lx + 11, 214, `${kat.name} ${kat.n}`, { 'font-size': 14, fill: 'var(--muted)' });
+  lx += 120;
+});
+
+// Weitere Memory-Ordner
+text(L.mem, 1360, 210, 'Weitere Memory-Ordner', { 'font-size': 16, fill: 'var(--muted)', class: 'pop', 'letter-spacing': '.04em' });
+const MO = {};
+MEM_ORDNER.forEach((m, i) => {
+  const x = 1375, y = 245 + i * 44;
+  MO[m.id] = { x, y };
+  const k = knoten(L.mem, x, y, `<b>Memory-Ordner ${m.name}</b> · ${m.n} Erinnerungen · nur sichtbar beim Start in diesem Ordner`, 'k-mem');
+  k.dataset.id = m.id;
+  const pop = el('g', { class: 'pop' }, k);
+  pop.style.setProperty('--d', (0.8 + i * 0.08) + 's');
+  if (m.n === 0) {
+    el('circle', { r: 11, fill: 'none', stroke: 'var(--memory)', 'stroke-dasharray': '3 3', 'stroke-opacity': .7 }, pop);
+  } else {
+    for (let j = 0; j < m.n; j++) {
+      const w = j * 137.508 * Math.PI / 180, r = m.n === 1 ? 0 : 5.2 * Math.sqrt(j + .6);
+      el('circle', { cx: (Math.cos(w) * r).toFixed(1), cy: (Math.sin(w) * r).toFixed(1), r: 4, fill: 'var(--memory)' }, pop);
+    }
+  }
+  text(pop, 30, 6, `${m.name} · ${m.n === 0 ? 'leer' : m.n}`, { 'font-size': 16, fill: 'var(--text)' });
+});
+
+// Verweise Hauptgedächtnis → Projekt-CLAUDE.md
+Object.entries(VERWEISE).forEach(([id, n], i) => {
+  const p = P[id];
+  const d = kurve(HX - 132, HY, p.x + p.r, p.y, 'h');
+  const base = el('path', { d, class: 'kante k-verw', stroke: 'var(--memory)', 'stroke-width': 1 + n * .55, 'stroke-opacity': .45, pathLength: 1 }, L.kVerweis);
+  base.style.setProperty('--d', (i * 0.12) + 's');
+  el('path', { d, class: 'fluss', stroke: 'var(--memory-hell)', 'stroke-width': 1.5 + n * .4, 'stroke-linecap': 'round', pathLength: 1 }, L.kVerweis);
+});
+
+// Nachschlage-Dateien unten
+const NX = [150, 412, 674, 936, 1198, 1460], NY = 900;
+const NO = {};
+NOTIZEN.forEach((n, i) => {
+  NO[n.id] = { x: NX[i], y: NY };
+  const k = knoten(L.notiz, NX[i], NY, `<b>${n.name}</b> · ${n.sub}`, 'k-notiz');
+  k.dataset.id = n.id;
+  const pop = el('g', { class: 'pop' }, k);
+  pop.style.setProperty('--d', (i * 0.12) + 's');
+  el('rect', { x: -122, y: -38, width: 244, height: 76, rx: 22, fill: '#0f1e1d', stroke: n.farbe, 'stroke-width': 2, 'stroke-dasharray': n.id === 'env' ? '6 4' : 'none', filter: 'url(#glow)' }, pop);
+  text(pop, 0, -4, n.name, { 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700, fill: n.farbe });
+  text(pop, 0, 20, n.sub, { 'text-anchor': 'middle', 'font-size': 13.5, fill: 'var(--muted)' });
+});
+// Kanten: Global über die Mittelachse nach unten, Stundenplan → HISTORIE
+function wirbel(x2) { return `M800,122 C880,140 905,170 905,240 L905,800 C905,835 ${x2},830 ${x2},862`; }
+[['offen', 'var(--notiz)'], ['hinweise', 'var(--notiz)'], ['skills', 'var(--skill)'], ['env', 'var(--geheim)']].forEach(([id, f], i) => {
+  const e = el('path', { d: wirbel(NO[id].x), class: 'kante', stroke: f, 'stroke-width': 1.8, 'stroke-opacity': .6, 'stroke-dasharray': '1 1', pathLength: 1 }, L.kNotiz);
+  e.style.setProperty('--d', (0.3 + i * 0.15) + 's');
+});
+const pu = P.unterricht;
+el('path', { d: kurve(pu.x, pu.y + pu.r + 26, NO.untnach.x, 862, 'v'), class: 'kante k-untnach', stroke: 'var(--notiz)', 'stroke-width': 1.8, 'stroke-opacity': .6, pathLength: 1 }, L.kNotiz);
+const sp = P.stundenplan;
+el('path', { d: kurve(sp.x, sp.y + sp.r + 26, NO.historie.x, 862, 'v'), class: 'kante k-hist', stroke: 'var(--notiz)', 'stroke-width': 1.8, 'stroke-opacity': .6, pathLength: 1 }, L.kNotiz);
+
+// Altlasten
+const geist = knoten(L.alt, 950, 690, '<b>Archiv: 10 alte Erinnerungen</b> · 3 Punkte ins Schulportal-Handbuch übernommen, der Rest liegt in ~/.claude/_Archiv-memory-2026-11-03/', 'k-alt');
+const gp = el('g', { class: 'pop' }, geist);
+el('rect', { x: 0, y: 0, width: 300, height: 100, rx: 16, fill: '#151a2b', stroke: 'var(--geist)', 'stroke-dasharray': '6 5', 'stroke-width': 1.5 }, gp);
+text(gp, 16, 28, 'Archiv: 10 alte Erinnerungen', { 'font-size': 17, 'font-weight': 700, fill: '#aab3d1' });
+for (let j = 0; j < 10; j++) el('circle', { cx: 24 + j * 25, cy: 54, r: 6.5, fill: j < 3 ? 'var(--notiz)' : 'var(--geist)', 'fill-opacity': .8 }, gp);
+text(gp, 16, 86, '3 übernommen (grün), 7 archiviert', { 'font-size': 13.5, fill: 'var(--muted)' });
+
+const wt = knoten(L.alt, 1270, 690, '<b>29 Worktree-Ordner</b> unter ~/.claude/projects/ · nur Chat-Verläufe, kein Memory · bleiben bewusst', 'k-alt');
+const wp = el('g', { class: 'pop' }, wt);
+wp.style.setProperty('--d', '0.2s');
+el('rect', { x: 0, y: 0, width: 310, height: 100, rx: 16, fill: '#151a2b', stroke: 'var(--geist)', 'stroke-dasharray': '6 5', 'stroke-width': 1.5 }, wp);
+text(wp, 16, 28, '29 Worktree-Verläufe', { 'font-size': 17, 'font-weight': 700, fill: '#aab3d1' });
+for (let j = 0; j < 29; j++) el('rect', { x: 18 + (j % 15) * 18.5, y: 40 + Math.floor(j / 15) * 16, width: 11, height: 11, rx: 2, fill: 'var(--geist)', 'fill-opacity': .7 }, wp);
+text(wp, 16, 86, 'nur Chats, kein Memory – bleiben', { 'font-size': 13.5, fill: 'var(--muted)' });
+
+[['unterricht', '+8 Kopien']].forEach(([id, txt], i) => {
+  const p = P[id];
+  const b = knoten(L.alt, p.x + p.r * .7, p.y - p.r * .85, `<b>${txt}</b> von ${p.pfad} in Worktrees`, 'k-alt');
+  const bp = el('g', { class: 'pop' }, b);
+  bp.style.setProperty('--d', (0.4 + i * .15) + 's');
+  const w = txt.length * 8 + 18;
+  el('rect', { x: -4, y: -15, width: w, height: 26, rx: 13, fill: '#1b2033', stroke: 'var(--geist)', 'stroke-dasharray': '4 3' }, bp);
+  text(bp, w / 2 - 4, 3, txt, { 'text-anchor': 'middle', 'font-size': 13.5, fill: '#c3cae3' });
+});
+
+// ---------- Szenen-Steuerung ----------
+const chips = document.getElementById('chips');
+SZENEN.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = s.chip;
+  b.addEventListener('click', () => zeige(i, true));
+  chips.appendChild(b);
+});
+let szene = -1, laeuft = true, t0 = 0, vergangen = 0;
+const lagen = [...svg.querySelectorAll('.lage')];
+
+function zeige(i, vonHand) {
+  szene = Math.max(0, Math.min(SZENEN.length - 1, i));
+  const s = SZENEN[szene];
+  lagen.forEach(g => {
+    const name = g.dataset.lage;
+    g.classList.toggle('an', s.lagen.includes(name));
+    g.classList.toggle('gedimmt', s.fokus.length > 0 && !s.fokus.includes(name));
+  });
+  L.titel.style.opacity = szene === 0 ? 1 : 0;
+  [...chips.children].forEach((c, k) => c.classList.toggle('aktiv', k === szene));
+  document.getElementById('szTitel').textContent = s.h;
+  document.getElementById('szText').textContent = s.t;
+  document.getElementById('sim').classList.toggle('an', !!s.sim);
+  if (s.sim) waehleStart(aktuellerStart || 'claudedaten');
+  else svg.classList.remove('simmodus');
+  t0 = performance.now(); vergangen = 0;
+  zeigeLaufhinweis();
+  if (vonHand && s.sim) setzeLaeuft(false);
+}
+function zeigeLaufhinweis() {
+  const h = document.getElementById('laufhinweis');
+  h.classList.toggle('weg', !!SZENEN[szene].sim);
+  h.classList.toggle('pausiert', !laeuft);
+  document.getElementById('laufText').textContent = (laeuft ? 'Film läuft' : 'Pausiert') + ` · Szene ${szene + 1} von ${SZENEN.length}`;
+}
+function setzeLaeuft(an) {
+  laeuft = an;
+  document.getElementById('spielen').textContent = an ? 'Pause' : 'Abspielen';
+  if (an) t0 = performance.now() - vergangen;
+  zeigeLaufhinweis();
+}
+function takt(now) {
+  const s = SZENEN[szene];
+  if (laeuft && s.dauer) {
+    vergangen = now - t0;
+    const anteil = Math.min(1, vergangen / s.dauer);
+    document.getElementById('fortschritt').style.width = ((szene + anteil) / (SZENEN.length - 1) * 100) + '%';
+    if (anteil >= 1) zeige(szene + 1);
+  } else if (s.sim) {
+    document.getElementById('fortschritt').style.width = '100%';
+  }
+  requestAnimationFrame(takt);
+}
+document.getElementById('spielen').addEventListener('click', () => {
+  if (SZENEN[szene].sim) { zeige(0); setzeLaeuft(true); return; }
+  setzeLaeuft(!laeuft);
+});
+document.getElementById('weiter').addEventListener('click', () => zeige(szene + 1, true));
+document.getElementById('zurueck').addEventListener('click', () => zeige(szene - 1, true));
+
+// ---------- Simulator ----------
+let aktuellerStart = null;
+const startwahl = document.getElementById('startwahl');
+STARTS.forEach(st => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = 'Start in ' + st.name; b.dataset.id = st.id;
+  b.addEventListener('click', () => waehleStart(st.id));
+  startwahl.appendChild(b);
+});
+const MAX_Z = 4371; // Maßstab der Vorher-Fassung, damit der Unterschied sichtbar bleibt
+
+function waehleStart(id) {
+  aktuellerStart = id;
+  const st = STARTS.find(s => s.id === id);
+  svg.classList.add('simmodus');
+  [...startwahl.children].forEach(b => b.classList.toggle('aktiv', b.dataset.id === id));
+  svg.querySelectorAll('.knoten').forEach(k => k.classList.remove('lit', 'halb'));
+  svg.querySelectorAll('.kante.lit, .fluss.lit').forEach(k => k.classList.remove('lit'));
+  L.kZu.innerHTML = '';
+
+  const setze = (sel, cls) => svg.querySelectorAll(sel).forEach(k => k.classList.add(cls));
+  setze('.k-global', 'lit');
+  if (st.projekt) setze(`.k-proj[data-id="${st.projekt}"]`, 'lit');
+  st.bedarf.forEach(b => { if (b !== st.projekt) setze(`.k-proj[data-id="${b}"]`, 'halb'); });
+  setze(`.k-mem[data-id="${st.mem}"]`, 'lit');
+  setze('.k-notiz[data-id="offen"], .k-notiz[data-id="hinweise"], .k-notiz[data-id="skills"]', 'halb');
+  (st.notiz || []).forEach(n => setze(`.k-notiz[data-id="${n}"]`, 'halb'));
+
+  // Verbindung Memory-Ordner → geladenes Handbuch
+  const ziel = st.projekt ? P[st.projekt] : null;
+  if (st.mem === 'm-haupt') {
+    // Zeiger des Hauptgedächtnisses zeigen
+    svg.querySelectorAll('[data-lage="verweis"] path').forEach(p => p.classList.add('lit'));
+  } else if (ziel) {
+    const m = MO[st.mem];
+    const d = kurve(m.x - 14, m.y, ziel.x + ziel.r, ziel.y, 'h');
+    el('path', { d, class: 'kante lit', stroke: 'var(--memory)', 'stroke-width': 3, 'stroke-opacity': .8, pathLength: 1 }, L.kZu);
+    el('path', { d, class: 'fluss lit', stroke: 'var(--memory-hell)', 'stroke-width': 3, 'stroke-linecap': 'round', pathLength: 1 }, L.kZu);
+  }
+  if (ziel) {
+    svg.querySelectorAll('.k-glob').forEach(p => {
+      if (p.getAttribute('d').endsWith(`${ziel.x},${ziel.y - ziel.r}`)) p.classList.add('lit');
+    });
+  }
+  if ((st.notiz || []).includes('historie')) svg.querySelector('.k-hist').classList.add('lit');
+  if ((st.notiz || []).includes('untnach')) svg.querySelector('.k-untnach').classList.add('lit');
+  L.kZu.classList.add('an');
+
+  // Ladungs-Anzeige
+  const pz = st.projekt ? P[st.projekt].z : 0;
+  const summe = GLOBAL_Z + pz + st.idxZ;
+  const pct = v => (v / MAX_Z * 100).toFixed(2) + '%';
+  document.getElementById('messer').innerHTML = `
+    <span>Beim Start geladen</span>
+    <div class="balken">
+      <div style="width:${pct(GLOBAL_Z)};background:var(--global)"></div>
+      <div style="width:${pct(pz)};background:var(--projekt)"></div>
+      <div style="width:${pct(st.idxZ)};background:var(--memory)"></div>
+    </div>
+    <span></span>
+    <span><b>${summe.toLocaleString('de-DE')} Zeilen</b> = Global ${GLOBAL_Z} + Handbuch ${pz.toLocaleString('de-DE')} + Memory-Index ${st.idxZ} (${st.memN} Erinnerungen bei Bedarf) · <b>vorher ${VORHER[st.id].toLocaleString('de-DE')}</b></span>`;
+  document.getElementById('hinweis').textContent = st.hinweis;
+}
+
+// Klick auf Knoten → Info
+svg.addEventListener('click', e => {
+  const k = e.target.closest('[data-info]');
+  if (k) document.getElementById('infozeile').innerHTML = k.dataset.info;
+});
+
+zeige(0);
+requestAnimationFrame(takt);
+</script>
+</body>
+</html>
