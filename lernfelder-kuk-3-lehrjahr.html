@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lernfelder 3. Ausbildungsjahr KuK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: eine Lesespalte; je Fachrichtung ein farbig gekennzeichneter Bereich (getönter Grund, linker Rand, farbige Überschrift) */
+:root {
+  --bg: #f7f8f9; --fl: #ffffff; --fg: #1c2127; --muted: #59616b; --linie: #d9dde2;
+  --ft: #1d5f8a; --hz: #9a5205; --qs: #0f6b64; --hoch: #0f6b64; --mittel: #8a6a00; --gering: #6b7280;
+  --f-titel: "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
+  --f-text: "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-zahl: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15181c; --fl: #1d2126; --fg: #e7eaee; --muted: #a3abb5; --linie: #343a42;
+  --ft: #7cb8e0; --hz: #f0a95a; --qs: #5fd0c4; --hoch: #5fd0c4; --mittel: #e2c25a; --gering: #a3abb5; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15181c; --fl: #1d2126; --fg: #e7eaee; --muted: #a3abb5; --linie: #343a42;
+  --ft: #7cb8e0; --hz: #f0a95a; --qs: #5fd0c4; --hoch: #5fd0c4; --mittel: #e2c25a; --gering: #a3abb5; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font: 18px/1.55 var(--f-text); }
+.seite { max-width: 62rem; margin: 0 auto; padding-block: 2rem 3rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 2rem; }
+.stapel { display: grid; gap: 2rem; min-width: 0; }
+h1, h2, h3, h4 { font-family: var(--f-titel); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 700; }
+h2 { font-size: 1.6rem; font-weight: 700; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+h4 { font-size: 1.1rem; font-weight: 600; }
+p { margin: 0; }
+.kicker { font-family: var(--f-titel); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-size: .95rem; }
+.kopf { display: grid; gap: .6rem; }
+.kopf .lead { font-size: 1.15rem; max-width: 46rem; }
+.quelle-kurz { color: var(--muted); font-size: .95rem; }
+.zahl { font-family: var(--f-zahl); font-variant-numeric: tabular-nums; font-size: .85em; }
+
+/* Farbige Bereichs-Kennzeichnung */
+.sektion { --sektion-farbe: var(--qs); background: color-mix(in srgb, var(--sektion-farbe) 7%, var(--bg));
+  border-left: 6px solid var(--sektion-farbe); border-radius: 0 10px 10px 0; padding: 1.25rem 1.25rem 1.4rem; display: grid; gap: 1rem; min-width: 0; }
+.sektion > h2 { color: var(--sektion-farbe); }
+.sektion .unter { color: var(--muted); }
+.ft { --sektion-farbe: var(--ft); } .hz { --sektion-farbe: var(--hz); } .qs { --sektion-farbe: var(--qs); }
+.neutral { --sektion-farbe: var(--muted); }
+
+ul.punkte { margin: 0; padding-left: 1.2rem; display: grid; gap: .45rem; }
+.sprung { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sprung a { text-decoration: none; color: var(--sektion-farbe); border: 1.5px solid var(--sektion-farbe); border-radius: 999px;
+  padding: .3rem .85rem; font-weight: 600; font-size: .95rem; background: var(--fl); }
+.sprung a:hover, .sprung a:focus-visible { background: color-mix(in srgb, var(--sektion-farbe) 14%, var(--fl)); outline: none; }
+
+/* Tabellen (einheitlich) */
+.tabelle-huelle { overflow-x: auto; border: 1px solid var(--linie); border-radius: 10px; background: var(--fl); }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+table.breit { min-width: 46rem; }
+th, td { padding: .6rem .7rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--linie); }
+thead th { font-family: var(--f-titel); font-size: 1.05rem; color: var(--sektion-farbe); border-bottom: 3px solid var(--sektion-farbe); }
+thead th.ft { color: var(--ft); border-bottom-color: var(--ft); } thead th.hz { color: var(--hz); border-bottom-color: var(--hz); }
+tbody th { font-family: var(--f-zahl); color: var(--muted); font-weight: 500; white-space: nowrap; }
+td .h { display: block; color: var(--muted); font-family: var(--f-zahl); font-size: .8rem; }
+td.r, th.r { text-align: right; font-family: var(--f-zahl); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.summe td, tr.summe th { font-weight: 700; border-top: 2px solid var(--linie); }
+tr:last-child th, tr:last-child td { border-bottom: 0; }
+
+/* Überschneidungs-Marken */
+.grad { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .03em; padding: .05rem .55rem; border-radius: 999px; white-space: nowrap;
+  color: var(--g); border: 1px solid var(--g); background: color-mix(in srgb, var(--g) 10%, var(--fl)); }
+.grad.identisch, .grad.hoch { --g: var(--hoch); } .grad.mittel { --g: var(--mittel); } .grad.gering, .grad.keine { --g: var(--gering); }
+
+/* Lernfeld-Karten */
+.lf-liste { display: grid; gap: .9rem; }
+.lf { background: var(--fl); border: 1px solid var(--linie); border-radius: 8px; padding: 1rem 1.1rem; display: grid; gap: .6rem; min-width: 0; }
+.lf-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .8rem; }
+.lf-nr { font-family: var(--f-zahl); color: var(--sektion-farbe); font-weight: 500; }
+.lf-kopf h3 { flex: 1 1 18rem; }
+.lf-meta { font-family: var(--f-zahl); font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.feld { display: grid; grid-template-columns: 9.5rem 1fr; gap: .2rem 1rem; }
+.feld dt { font-weight: 700; color: var(--sektion-farbe); font-size: .95rem; }
+.feld dd { margin: 0; min-width: 0; }
+.feld dd.stich { color: var(--fg); }
+.leer { color: var(--muted); font-style: italic; }
+.marke { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .03em; padding: .05rem .5rem; border-radius: 999px;
+  color: var(--sektion-farbe); border: 1px solid var(--sektion-farbe); }
+
+/* Varianten */
+.varianten { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: 1rem; }
+.variante { background: var(--fl); border: 1px solid var(--linie); border-radius: 8px; padding: 1rem 1.1rem; display: grid; gap: .8rem; align-content: start; min-width: 0; }
+.variante .pro { display: grid; gap: .3rem; font-size: .95rem; }
+.variante .pro b { color: var(--sektion-farbe); }
+
+.fuss { color: var(--muted); font-size: .92rem; display: grid; gap: .5rem; border-top: 1px solid var(--linie); padding-top: 1.2rem; }
+a { color: inherit; }
+@media (max-width: 560px) {
+  body { font-size: 17px; } .sektion { padding: 1rem .9rem 1.1rem; }
+  .feld { grid-template-columns: 1fr; } .feld dd { margin-bottom: .4rem; }
+}
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.theme-toggle { position: fixed; top: 16px; right: max(16px, env(safe-area-inset-right, 0px)); z-index: 60; width: 42px; height: 42px; border-radius: 50%;
+  background: var(--fl); border: 1px solid var(--linie); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.theme-toggle:hover, .theme-toggle:focus-visible { color: var(--fg); border-color: var(--fg); outline: none; }
+.theme-toggle svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+<main class="seite">
+  <header class="kopf">
+    <span class="kicker">Kunststoff- und Kautschuktechnologe/-in · BBS Walsrode</span>
+    <h1>Lernfelder im 3. Ausbildungsjahr</h1>
+    <p class="lead">Fachrichtungen <b>Formteile</b> und <b>Halbzeuge / Compound- und Masterbatchherstellung</b>: Was steht in welchem Lernfeld, wo überschneiden sich die beiden, und wie ließe sich die Arbeit auf zwei Lehrkräfte verteilen?</p>
+    <p class="quelle-kurz">Grundlage: KMK-Rahmenlehrplan, Beschluss vom 22.03.2012 in der Fassung vom 31.03.2023. Die Seitenzahlen beziehen sich auf dieses Dokument. Die übrigen vier Fachrichtungen sind hier bewusst weggelassen.</p>
+  </header>
+
+  <section class="sektion neutral" aria-labelledby="vorab">
+    <h2 id="vorab">Das Wichtigste vorab</h2>
+    <ul class="punkte">
+      <li>Beide Fachrichtungen haben im 3. Jahr je <b>280 Stunden</b> in 6 Lernfeldern. Das ist je ein großes Lernfeld mit 80 h und fünf mit 40 h. Bei 40 Schulwochen sind das rund 7 Wochenstunden. <span class="zahl">(S. 9–10)</span></li>
+      <li>Nur ein Lernfeld ist in beiden Fachrichtungen gleich: <b>LF 14 „Produkt- und Prozessqualität überwachen und optimieren“</b>. Inhalte und Wortlaut sind identisch. <span class="zahl">(S. 24 und S. 31)</span></li>
+      <li><b>Halbzeuge</b> und <b>Compound/Masterbatch</b> werden immer zusammen unterrichtet. Einzige Ausnahme ist LF 13: Halbzeuge haben 13A „Schäumen“, Compound/Masterbatch hat 13B „Compounds herstellen, prüfen und modifizieren“. <span class="zahl">(S. 7)</span></li>
+      <li>Werden Formteile und Halbzeuge in einer Klasse zusammen unterrichtet, sieht der Rahmenlehrplan eine „sequenzielle Differenzierung“ vor. Bei unterschiedlichen Inhalten kann das mehr Stunden brauchen. <span class="zahl">(S. 7)</span></li>
+      <li>Vor der Aufteilung klären: <b>Wie viele Auszubildende gibt es je Fachrichtung</b>, und ist jemand aus <b>Compound/Masterbatch</b> dabei? Davon hängt ab, ob LF 13B gebraucht wird.</li>
+    </ul>
+  </section>
+
+  <section class="sektion qs" aria-labelledby="vergleich">
+    <h2 id="vergleich">Gegenüberstellung und Überschneidungen</h2>
+    <p class="unter">Die Spalte „Überschneidung“ ist eine eigene Einschätzung anhand der Inhaltslisten im Rahmenlehrplan. Nur LF 14 ist dort ausdrücklich gleich.</p>
+    <div class="tabelle-huelle"><table class="breit" id="vergleich-tabelle"></table></div>
+  </section>
+
+  <nav class="sprung" aria-label="Zu den Fachrichtungen springen">
+    <a class="ft" href="#fr-ft">Formteile</a>
+    <a class="hz" href="#fr-hz">Halbzeuge / Compound und Masterbatch</a>
+    <a class="qs" href="#aufteilung">Aufteilung</a>
+  </nav>
+
+  <div id="fachrichtungen" class="stapel"></div>
+
+  <section class="sektion qs" id="aufteilung" aria-labelledby="h-aufteilung">
+    <h2 id="h-aufteilung">Zwei Möglichkeiten für die Aufteilung</h2>
+    <p class="unter">Beide Varianten sind Vorschläge, keine Vorgabe aus dem Rahmenlehrplan. Die Stunden sind Zeitrichtwerte je Lerngruppe.</p>
+    <div class="varianten" id="varianten"></div>
+  </section>
+
+  <footer class="fuss">
+    <p><b>Quelle:</b> Rahmenlehrplan für den Ausbildungsberuf Kunststoff- und Kautschuktechnologe und Kunststoff- und Kautschuktechnologin, Beschluss der Kultusministerkonferenz vom 22.03.2012 i. d. F. vom 31.03.2023. Hinweise zur Beschulung im 3. Jahr S. 7, Übersicht der fachrichtungsbezogenen Lernfelder S. 8, Zeitrichtwerte S. 9–10, Formteile S. 19–24, Halbzeuge / Compound- und Masterbatchherstellung S. 25–31.</p>
+    <p>„Was die Auszubildenden tun“ fasst die Zielformulierung des Lernfelds mit eigenen Worten zusammen. „Inhalte“ gibt die Inhaltsliste des Rahmenlehrplans vollständig wieder. „Rechnen“ nennt die Berechnungen, die dort ausdrücklich genannt sind. Überschneidungen und Aufteilungsvarianten sind eigene Einschätzungen. Verbindlich ist nur der Rahmenlehrplan selbst.</p>
+    <p>Zusammengestellt am 3. November 2026.</p>
+  </footer>
+</main>
+
+<script>
+// Datenquelle: je Fachrichtung die Lernfelder. tun = Zusammenfassung der Zielformulierung, inhalte = Inhaltsliste RLP, rechnen = ausdrücklich genannte Berechnungen
+const QS = { titel: "Produkt- und Prozessqualität überwachen und optimieren", h: 40,
+  tun: "Die Aufgaben des Qualitätsmanagements kennen und die Qualitätspolitik des eigenen Betriebs einordnen. Für ein Produkt die Qualitätsmerkmale festlegen und daraus einen Prüfplan entwickeln. Den laufenden Prozess über Kenngrößen überwachen und aus den Qualitätsdaten Verbesserungen ableiten und präsentieren.",
+  inhalte: "Qualitätsnormen; Qualitätsplanung, messbare und qualitative Merkmale, Fehlerarten, Zehnerregel; Qualitätslenkung, Histogramm, Ursache-Wirkungs-Diagramm; Qualitätsprüfung, Qualitätsaudit, Prüfmittelüberwachung; Qualitätsregelkarte, Normalverteilung, Mittelwert, Streuung; Prüfmaß; statistische Prozesslenkung, Prozessfähigkeit, Maschinenfähigkeit; Personaleinsatz; Materialfluss",
+  rechnen: "Mittelwert, Streuung, Prozess- und Maschinenfähigkeit" };
+
+const FR = [
+ { id: "ft", kurz: "FT", name: "Formteile", seiten: "19–24", lf: [
+  { nr: "9", titel: "Formteile durch Spritzgießen herstellen", h: 80, s: 19,
+    tun: "Ein Spritzgießverfahren für das Formteil festlegen und Maschine, Werkzeug und Peripherie analysieren. Zeichnungen und Stücklisten des Werkzeugs lesen. Werkzeug einbauen, Peripherie anschließen, Parameter berechnen und einstellen, anfahren. In der Produktion den Prozess optimieren, auch nach Energie und Material.",
+    inhalte: "Schließsystem (hydraulisch, elektrisch, mechanisch); Spritzeinheit, Drei-Zonen-Schnecke, Rückstromsperre, offene Düse, Verschlussdüse; Zusatzgeräte, Temperiersysteme; Werkzeugaufbau, Angusssystem, Entformung; Automatisierung, Handhabungsgeräte; Verfahrensablauf; verfahrensspezifische Polymereigenschaften, Alternativmaterialien; Umschaltkriterien (Weg, Zeit, Werkzeuginnendruck, Hydraulikdruck); Einstellparameter; Zuhaltekraft, Volumenstrom, Dosierung, Schwindung; Füllstudie, Siegelpunkt; Kautschukverarbeitung; Spritzgießfehler; Sonderverfahren; Nachbehandlung, Tempern, Konditionieren; Datenblätter; Rezepturen",
+    rechnen: "Zuhaltekraft, Volumenstrom, Dosierung, Schwindung, Mischungsberechnung, Trocknung, Wärmemenge" },
+  { nr: "10", titel: "Formteile durch Pressen herstellen", h: 40, s: 20,
+    tun: "Aus Auftrag und Anforderungsprofil ein Pressverfahren auswählen und die Verarbeitungseigenschaften des Materials bestimmen. Presswerkzeug anhand von Zeichnungen verstehen, Arbeitsplan erstellen, Maschine rüsten und anfahren. Pressteile nach Prüfplan prüfen und die Einstellungen optimieren.",
+    inhalte: "Form-, Spritz- und Schichtpressen; Presszyklus; verfahrensspezifische Polymereigenschaften; Pressmassenaufbereitung, Tablettierung, Hochfrequenzvorwärmung; Vulkanisation; Bauformen, Kniehebelpresse, hydraulische Presse; Überlauf-, Füllraum- und Transferpresswerkzeuge; Längen- und Volumenausdehnung, Schwindung; Pressfehler; Nachbehandlung, Entgraten; Maschineneinstellkarte; Datenblätter",
+    rechnen: "Längen- und Volumenausdehnung, Schwindung" },
+  { nr: "11", titel: "Formteile durch Blasformen herstellen", h: 40, s: 21,
+    tun: "Den Produktionsprozess für Hohlkörper planen, auch Materialfluss, Transport und Lagerung. Blaswerkzeug mit Hebezeug einbauen und Parameter einstellen. Formteile prüfen, den Prozess über die Parameter regeln und optimieren, Fertigungsdaten und Prüfprotokolle digital dokumentieren.",
+    inhalte: "Extrusionsblasformen; Spritzblasformen; verfahrensspezifische Polymereigenschaften; Schlauch-, Pinolenkopf-, Dornhalter- und Speicherkopfwerkzeug; Wanddickenregulierung; Spreizvorrichtung; Blaswerkzeug; Blasdorn, Hohlnadel; Butzenabtrennung; Sonderverfahren; Produktkontrolle, Dichtheitsprüfung; Wiederverwertung; Energie-, Wasser- und Luftbedarf",
+    rechnen: "Energie-, Wasser- und Luftbedarf" },
+  { nr: "12", titel: "Formteile durch Thermoformen herstellen", h: 40, s: 22,
+    tun: "Ein Thermoformverfahren auswählen, Maschine und Prozess analysieren und die Verarbeitungseigenschaften des Materials bestimmen. Werkzeug anhand von Zeichnungen verstehen, Arbeitsplan erstellen, Maschine rüsten und anfahren. Formteile prüfen und die Einstellungen optimieren.",
+    inhalte: "Streckziehen, Vakuumformen; Thermoformzyklus; verfahrensspezifische Polymereigenschaften; Material-Recycling; Materialaufbereitung, Vorwärmung; Bauformen; Thermoformfehler; mechanisches und pneumatisches Verfahren; Sonderverfahren, Skin- und Blisterverfahren; Längen- und Volumenausdehnung, Schwindung; Nachbehandlung; Maschineneinstellkarte; Datenblätter; Wärmemenge",
+    rechnen: "Wärmemenge, Längen- und Volumenausdehnung, Schwindung" },
+  { nr: "13", titel: "Formteile durch Schäumen herstellen", h: 40, s: 23,
+    tun: "Geschäumte Kunststoffe nach Schäumprozess und Eigenschaften unterscheiden. Material- und Maschineneinsatz planen und berechnen, Maschine und Werkzeug festlegen. Anlage anfahren, Formteile beim Anfahren und in der Fertigung prüfen und korrigieren. Das nächste Produktionsteam einweisen und die Unterlagen übergeben.",
+    inhalte: "schäumbare Kunststoffe, blähfähige Einzelteile, flüssige Ausgangskomponenten, Thermoplastschmelzen; Zellstruktur (offen-, geschlossen-, gemischtzellig); Hart-, Weich- und Integralschaum; verfahrensspezifische Polymereigenschaften, ökologische Alternativen; Raumgewicht; Treibmittel (chemisch, physikalisch); Bechertest; Formfüllstudie; Hoch- und Niederdruckverfahren; Styroporverfahren; Hinterschäumen; Einlegeteile; Einstellbericht; Datenblätter; Nachfolgeeinrichtungen, Entgraten",
+    rechnen: "Raumgewicht; laut Ziel außerdem Material- und Maschineneinsatz berechnen" },
+  { nr: "14", s: 24, ...QS } ] },
+
+ { id: "hz", kurz: "HZ/CM", name: "Halbzeuge / Compound- und Masterbatchherstellung", seiten: "25–31", lf: [
+  { nr: "9", titel: "Halbzeuge durch Extrudieren herstellen", h: 80, s: 25,
+    tun: "Ein Extrusionsverfahren festlegen und Extruder, Werkzeug und Nachfolgeeinrichtungen analysieren. Zeichnungen des Formgebungswerkzeugs lesen. Werkzeug einbauen, Nachfolge anschließen, Parameter einstellen und anfahren. So lange prüfen und korrigieren, bis das Halbzeug stimmt. Produktionsabfälle in den Prozess zurückführen.",
+    inhalte: "Einschnecken- und Doppelschneckenextruder; Schneckenbauarten, Scherteile, Mischteile; System Schnecke–Zylinder; Profil-, Flachfolien-, Schlauchfolien- und Plattenextrusion; Kautschukverarbeitung; Düsen, Kalibrierung; Prüfmaß, Kontur- und Dickenprüfung; Nachfolgeeinrichtungen (Temperierung, Abzug, Trennung); Ummantelung, Coextrusion; Massedurchsatz (flächen- und längenbezogen); Drücke, Geschwindigkeiten; Extrusionsfehler; Wärmemenge; verfahrenstechnische Berechnungen; Regranulierung",
+    rechnen: "Massedurchsatz (flächen- und längenbezogen), Drücke, Geschwindigkeiten, Wärmemenge, weitere verfahrenstechnische Berechnungen" },
+  { nr: "10", titel: "Halbzeuge durch Kalandrieren herstellen", h: 40, s: 26,
+    tun: "Kalander und Nachfolgeeinrichtungen für das Halbzeug festlegen, die Anlage analysieren und berechnen. Verarbeitungseigenschaften und Parameter ermitteln, Arbeitsplan erstellen, Anlage rüsten. Beim Anfahren die Qualität beurteilen und korrigieren, in der Produktion optimieren.",
+    inhalte: "Kalanderbauformen; Antrieb, Temperierung; Strömung im Walzenspalt; Walzendurchbiegung; Lagerkräfte, Flächenpressung; Massedurchsatz; Geschwindigkeiten; Hoch- und Niedertemperaturverfahren; Schneiden, Prägen, Recken, Wickler",
+    rechnen: "Lagerkräfte, Flächenpressung, Massedurchsatz, Geschwindigkeiten" },
+  { nr: "11", titel: "Halbzeuge durch Beschichten herstellen", h: 40, s: 27,
+    tun: "Ein Beschichtungsverfahren festlegen und die Anlage analysieren. Parameter ermitteln, Material- und Maschineneinsatz planen und berechnen. Materialfluss sichern, Anlage und Nachfolge rüsten, anfahren. Das Halbzeug laufend prüfen und die Ergebnisse im Team präsentieren.",
+    inhalte: "Beschichtungsmassen, Organosole, Plastisole; Trägerstoffe (Textil, Papier, Kunststoff); Gewebe, Gewirke, Vliese; Vorbehandlung, Imprägnieren, Sengen; Streichen, Gießen, Tauchen, Walzenauftrag; Extrusions- und Kalanderbeschichtung, indirektes Beschichten; Gelieren; Kühlung; Warenspeicher",
+    rechnen: "in den Inhalten keine genannt; laut Ziel Material- und Maschineneinsatz berechnen" },
+  { nr: "12", titel: "Compounds und Masterbatches herstellen", h: 40, s: 28,
+    tun: "Mischer und Nachfolgeeinrichtungen für das Compound festlegen, die Anlage analysieren und berechnen. Verarbeitungseigenschaften bestimmen, Arbeitsplan erstellen, Anlage rüsten und einstellen. Prüfverfahren auswählen und nach Prüfplan prüfen.",
+    inhalte: "diskontinuierliche und kontinuierliche Mischverfahren; Mischungsberechnungen; Masseanteile; Rezepturen; Viskosität, Schmelzindex; Rieselfähigkeit, Korngrößenverteilung; Farbprüfung; Dosiersysteme",
+    rechnen: "Mischungsberechnung, Masseanteile, Rezepturen, Schmelzindex" },
+  { nr: "13A", titel: "Halbzeuge durch Schäumen herstellen", h: 40, s: 29, nur: "nur Fachrichtung Halbzeuge",
+    tun: "Wie beim Schäumen von Formteilen, aber für Halbzeuge wie Blockschaum: Schaumart unterscheiden, Material- und Maschineneinsatz berechnen, Anlage und Nachfolge festlegen, anfahren, prüfen und an das nächste Team übergeben.",
+    inhalte: "schäumbare Kunststoffe, blähfähige Einzelteile, flüssige Ausgangskomponenten, Thermoplastschmelzen, ökologische Alternativen; Zellstruktur (offen-, geschlossen-, gemischtzellig); Hart- und Weichschaum, Integralschaum; Treibmittel (chemisch, physikalisch); Bechertest; Blockschäumanlage; Hoch- und Niederdruckverfahren; Styroporverfahren; Einstellbericht; Datenblätter; Trennverfahren",
+    rechnen: "in den Inhalten keine genannt; laut Ziel Material- und Maschineneinsatz berechnen" },
+  { nr: "13B", titel: "Compounds und Masterbatches herstellen, prüfen und modifizieren", h: 40, s: 30, nur: "nur Fachrichtung Compound/Masterbatch, statt 13A",
+    tun: "Vertieft LF 12: Prüfverfahren und Parameter selbst festlegen und in der Produktion optimieren. Bei Abweichungen die Ursache in Material oder Verfahren finden und die Folgen für die Gebrauchseigenschaften abschätzen. Aus den Prüfergebnissen veränderte Formmassen entwickeln.",
+    inhalte: "diskontinuierliche und kontinuierliche Mischverfahren; Mischungsberechnungen; Masseanteile; Rezepturen; Viskosität, Schmelzindex; Rieselfähigkeit, Korngrößenverteilung; elektrische, elektrostatische und thermische Eigenschaften; Farb- und Nuancenprüfung; Dosiersysteme; Vorschriften zum Umwelt- und Arbeitsschutz",
+    rechnen: "Mischungsberechnung, Masseanteile, Rezepturen" },
+  { nr: "14", s: 31, ...QS } ] }
+];
+
+// Überschneidung je Zeile der Gegenüberstellung (eigene Einschätzung)
+const VERGLEICH = [
+  { ft: "9", hz: ["9"], grad: "mittel", text: "Beide arbeiten mit Schnecke, Zylinder, Plastifizierung, Kautschukverarbeitung und Wärmemenge. Ein gemeinsamer Grundlagenblock ist möglich, danach geht es mit Werkzeug und Zyklus gegen Düse und Nachfolge auseinander." },
+  { ft: "10", hz: ["10"], grad: "gering", text: "Pressen und Kalandrieren haben kaum Gemeinsamkeiten. Wärmeausdehnung und Schwindung tauchen allerdings in mehreren Lernfeldern auf." },
+  { ft: "11", hz: ["11"], grad: "gering", text: "Blasformen und Beschichten passen nicht zueinander. Das Extrusionsblasformen nutzt aber Schlauchköpfe (Pinolen-, Dornhalter-, Speicherkopf), die zu den Düsen in HZ/CM 9 passen." },
+  { ft: "12", hz: ["12"], grad: "gering", text: "Thermoformen und Compoundieren haben kaum Gemeinsamkeiten. Mischungsberechnung und Rezepturen stehen aber auch in FT 9." },
+  { ft: "13", hz: ["13A", "13B"], grad: "hoch", text: "FT 13 und HZ 13A sind zu etwa zwei Dritteln gleich: Schaumstoffe, Zellstruktur, Treibmittel, Bechertest, Hoch- und Niederdruck, Styropor. Unterschiede: Formteile mit Hinterschäumen und Einlegeteilen, Halbzeuge mit Blockschäumanlage und Trennverfahren. 13B (Compound) gehört dagegen zu HZ/CM 12." },
+  { ft: "14", hz: ["14"], grad: "identisch", text: "Wortgleich in beiden Fachrichtungen. Kann ohne Einschränkung gemeinsam unterrichtet werden." }
+];
+
+const VARIANTEN = [
+  { titel: "Variante A: nach Fachrichtung", teile: [
+      { wer: "Lehrkraft 1 – Formteile", lf: [["FT 9", "Spritzgießen", 80], ["FT 10", "Pressen", 40], ["FT 11", "Blasformen", 40], ["FT 12", "Thermoformen", 40], ["FT 13", "Schäumen", 40]] },
+      { wer: "Lehrkraft 2 – Halbzeuge / Compound", lf: [["HZ/CM 9", "Extrudieren", 80], ["HZ/CM 10", "Kalandrieren", 40], ["HZ/CM 11", "Beschichten", 40], ["HZ/CM 12", "Compounds", 40], ["HZ 13A / CM 13B", "Schäumen bzw. Compounds modifizieren", 40]] },
+      { wer: "Gemeinsam für beide Gruppen", lf: [["LF 14", "Qualität (eine Lehrkraft oder geteilt)", 40]] } ],
+    pro: ["Klare Zuständigkeit: Jede Lehrkraft kennt ihre Fachrichtung und deren Betriebe.", "Ausgeglichen: je 240 h, dazu 40 h Qualität."],
+    contra: ["Wenn beide Fachrichtungen in einer Klasse sitzen, braucht es Teilungsunterricht zur selben Zeit.", "Werden 13A und 13B beide gebraucht, kommen bei Lehrkraft 2 noch einmal 40 h dazu."] },
+  { titel: "Variante B: nach Verfahrensfamilie", teile: [
+      { wer: "Lehrkraft 1 – Schnecke, Schmelze, Werkzeug", lf: [["FT 9", "Spritzgießen", 80], ["HZ/CM 9", "Extrudieren", 80], ["FT 11", "Blasformen", 40], ["HZ/CM 10", "Kalandrieren", 40]] },
+      { wer: "Lehrkraft 2 – weitere Verfahren, Mischen, Qualität", lf: [["FT 10", "Pressen", 40], ["FT 12", "Thermoformen", 40], ["FT 13 / HZ 13A", "Schäumen (gemeinsam mit Differenzierung)", 40], ["HZ/CM 11", "Beschichten", 40], ["HZ/CM 12", "Compounds", 40], ["LF 14", "Qualität (gemeinsam)", 40]] } ],
+    pro: ["Spritzgießen und Extrusion mit den gemeinsamen Grundlagen liegen in einer Hand.", "Die beiden gut zusammenlegbaren Lernfelder (Schäumen, Qualität) liegen bei Lehrkraft 2 und sparen Teilungsstunden.", "Ausgeglichen: je 240 h."],
+    contra: ["Beide Lehrkräfte müssen sich in beide Fachrichtungen einarbeiten.", "Falls CM 13B gebraucht wird: +40 h bei Lehrkraft 2."] }
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const finde = (id, nr) => FR.find(f => f.id === id).lf.find(l => l.nr === nr);
+const GRAD = { identisch: "identisch", hoch: "hoch", mittel: "teilweise", gering: "gering" };
+
+// Gegenüberstellung
+let t = `<thead><tr><th scope="col" class="qs">LF</th><th scope="col" class="ft">Formteile</th><th scope="col" class="hz">Halbzeuge / Compound</th><th scope="col">Überschneidung</th></tr></thead><tbody>`;
+for (const v of VERGLEICH) {
+  const a = finde("ft", v.ft);
+  const b = v.hz.map(n => finde("hz", n));
+  t += `<tr><th scope="row">${v.ft}</th><td>${esc(a.titel)}<span class="h">${a.h} h · S. ${a.s}</span></td><td>` +
+    b.map(l => `${b.length > 1 ? "<b>" + l.nr + "</b> " : ""}${esc(l.titel)}<span class="h">${l.h} h · S. ${l.s}</span>`).join("<br>") +
+    `</td><td><span class="grad ${v.grad}">${GRAD[v.grad]}</span><br>${esc(v.text)}</td></tr>`;
+}
+t += `<tr class="summe"><th scope="row">Σ</th><td>280 h</td><td>280 h</td><td></td></tr></tbody>`;
+document.getElementById("vergleich-tabelle").innerHTML = t;
+
+// Fachrichtungs-Bereiche mit Lernfeld-Karten
+document.getElementById("fachrichtungen").innerHTML = FR.map(f => `
+  <section class="sektion ${f.id}" id="fr-${f.id}" aria-labelledby="h-${f.id}">
+    <h2 id="h-${f.id}">Fachrichtung ${esc(f.name)}</h2>
+    <p class="unter">Kürzel ${f.kurz} · 280 Stunden · Rahmenlehrplan S. ${f.seiten}</p>
+    <div class="lf-liste">` + f.lf.map(l => `
+      <article class="lf">
+        <div class="lf-kopf"><span class="lf-nr">${f.kurz} ${l.nr}</span><h3>${esc(l.titel)}</h3><span class="lf-meta">${l.h} h · S. ${l.s}</span></div>
+        ${l.nur ? `<p><span class="marke">${esc(l.nur)}</span></p>` : ""}
+        <dl class="feld">
+          <dt>Was die Auszubildenden tun</dt><dd>${esc(l.tun)}</dd>
+          <dt>Inhalte</dt><dd class="stich">${esc(l.inhalte)}</dd>
+          <dt>Rechnen</dt><dd>${l.rechnen ? esc(l.rechnen) : '<span class="leer">keine Berechnung ausdrücklich genannt</span>'}</dd>
+        </dl>
+      </article>`).join("") + `</div>
+  </section>`).join("");
+
+// Aufteilungsvarianten
+document.getElementById("varianten").innerHTML = VARIANTEN.map(v => `
+  <article class="variante">
+    <h3>${esc(v.titel)}</h3>
+    ${v.teile.map(teil => `
+      <div class="tabelle-huelle"><table>
+        <thead><tr><th scope="col" colspan="2">${esc(teil.wer)}</th><th scope="col" class="r">h</th></tr></thead>
+        <tbody>${teil.lf.map(([nr, name, h]) => `<tr><th scope="row">${esc(nr)}</th><td>${esc(name)}</td><td class="r">${h}</td></tr>`).join("")}
+        ${teil.lf.length > 1 ? `<tr class="summe"><th scope="row"></th><td>Summe</td><td class="r">${teil.lf.reduce((a, x) => a + x[2], 0)}</td></tr>` : ""}</tbody>
+      </table></div>`).join("")}
+    <div class="pro"><b>Dafür</b>${v.pro.map(p => `<span>${esc(p)}</span>`).join("")}</div>
+    <div class="pro"><b>Dagegen</b>${v.contra.map(p => `<span>${esc(p)}</span>`).join("")}</div>
+  </article>`).join("");
+</script>
+
+<script>
+  // Hell/Dunkel wie auf den übrigen Notizseiten (gemeinsamer Speicher 'notiz-theme')
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('themeToggle'), stored = null;
+    try { stored = localStorage.getItem('notiz-theme'); } catch (e) {}
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('notiz-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>
