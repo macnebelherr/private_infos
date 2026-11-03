@@ -107,7 +107,9 @@ tr:last-child th, tr:last-child td { border-bottom: 0; }
 .variante { background: var(--fl); border: 1px solid var(--linie); border-radius: 8px; padding: 1rem 1.1rem; display: grid; gap: .9rem; align-content: start; min-width: 0; }
 .variante .pro { display: grid; gap: .3rem; font-size: .95rem; }
 .variante .pro b { color: var(--sektion-farbe); }
-.variante .listen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: .8rem; align-items: start; }
+.variante .listen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); gap: .8rem; align-items: start; }
+.variante .listen table { table-layout: fixed; }
+.variante .listen tbody th { white-space: normal; }
 .variante .wertung { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: .8rem; }
 
 /* Lehrkräfte: Farbe je Lehrkraft (w1, w2), w0 = noch offen */
@@ -130,6 +132,8 @@ a { color: inherit; }
 @media (max-width: 560px) {
   body { font-size: 17px; } .sektion { padding: 1rem .9rem 1.1rem; }
   .feld { grid-template-columns: 1fr; } .feld dd { margin-bottom: .4rem; }
+  .raster { min-width: 40rem; }
+  .variante .listen tbody th { font-size: .8rem; }
 }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -288,11 +292,11 @@ const VARIANTEN = [
     raster: [
       { zeile: "ft", lf: 9, name: "Spritz\u00ADgießen", h: 80, wer: 1 }, { zeile: "ft", lf: 10, name: "Pressen", h: 40, wer: 1 },
       { zeile: "ft", lf: 11, name: "Blas\u00ADformen", h: 40, wer: 1 }, { zeile: "ft", lf: 12, name: "Thermo\u00ADformen", h: 40, wer: 1 },
-      { zeile: "ft", lf: 13, name: "Schäumen", h: 40, wer: 1 },
+      { zeile: "ft", lf: 13, name: "Schäu\u00ADmen", h: 40, wer: 1 },
       { zeile: "hz", lf: 9, name: "Extru\u00ADdieren", h: 80, wer: 2 }, { zeile: "hz", lf: 10, name: "Kalan\u00ADdrieren", h: 40, wer: 2 },
       { zeile: "hz", lf: 11, name: "Be\u00ADschichten", h: 40, wer: 2 }, { zeile: "hz", lf: 12, name: "Com\u00ADpounds", h: 40, wer: 2 },
       { zeile: "hz", lf: 13, name: "13A / 13B", h: 40, wer: 2 },
-      { zeile: "beide", lf: 14, name: "Qualität", h: 40, wer: 0, notiz: "gemeinsam, noch offen" } ],
+      { zeile: "beide", lf: 14, name: "Quali\u00ADtät", h: 40, wer: 0, notiz: "gemeinsam, noch offen" } ],
     teile: [
       { wer: "Lehrkraft 1 – Formteile", nr: 1, lf: [["FT 9", "Spritzgießen", 80], ["FT 10", "Pressen", 40], ["FT 11", "Blasformen", 40], ["FT 12", "Thermoformen", 40], ["FT 13", "Schäumen", 40]] },
       { wer: "Lehrkraft 2 – Halbzeuge / Compound", nr: 2, lf: [["HZ/CM 9", "Extrudieren", 80], ["HZ/CM 10", "Kalandrieren", 40], ["HZ/CM 11", "Beschichten", 40], ["HZ/CM 12", "Compounds", 40], ["HZ 13A / CM 13B", "Schäumen bzw. Compounds modifizieren", 40]] },
@@ -305,8 +309,8 @@ const VARIANTEN = [
       { zeile: "ft", lf: 11, name: "Blas\u00ADformen", h: 40, wer: 1 }, { zeile: "ft", lf: 12, name: "Thermo\u00ADformen", h: 40, wer: 2 },
       { zeile: "hz", lf: 9, name: "Extru\u00ADdieren", h: 80, wer: 1 }, { zeile: "hz", lf: 10, name: "Kalan\u00ADdrieren", h: 40, wer: 1 },
       { zeile: "hz", lf: 11, name: "Be\u00ADschichten", h: 40, wer: 2 }, { zeile: "hz", lf: 12, name: "Com\u00ADpounds", h: 40, wer: 2 },
-      { zeile: "beide", lf: 13, name: "Schäumen", h: 40, wer: 2, notiz: "gemeinsam" },
-      { zeile: "beide", lf: 14, name: "Qualität", h: 40, wer: 2, notiz: "gemeinsam" } ],
+      { zeile: "beide", lf: 13, name: "Schäu\u00ADmen", h: 40, wer: 2, notiz: "gemeinsam" },
+      { zeile: "beide", lf: 14, name: "Quali\u00ADtät", h: 40, wer: 2, notiz: "gemeinsam" } ],
     teile: [
       { wer: "Lehrkraft 1 – Schnecke, Schmelze, Werkzeug", nr: 1, lf: [["FT 9", "Spritzgießen", 80], ["HZ/CM 9", "Extrudieren", 80], ["FT 11", "Blasformen", 40], ["HZ/CM 10", "Kalandrieren", 40]] },
       { wer: "Lehrkraft 2 – weitere Verfahren, Mischen, Qualität", nr: 2, lf: [["FT 10", "Pressen", 40], ["FT 12", "Thermoformen", 40], ["FT 13 / HZ 13A", "Schäumen (gemeinsam mit Differenzierung)", 40], ["HZ/CM 11", "Beschichten", 40], ["HZ/CM 12", "Compounds", 40], ["LF 14", "Qualität (gemeinsam)", 40]] } ],
@@ -366,6 +370,7 @@ document.getElementById("varianten").innerHTML = VARIANTEN.map(v => `
     ${raster(v)}
     <div class="listen">${v.teile.map(teil => `
       <div class="tabelle-huelle"><table>
+        <colgroup><col style="width:30%"><col><col style="width:3.6rem"></colgroup>
         <thead><tr><th scope="col" colspan="2" class="w${teil.nr}">${esc(teil.wer)}</th><th scope="col" class="r w${teil.nr}">h</th></tr></thead>
         <tbody>${teil.lf.map(([nr, name, h]) => `<tr><th scope="row">${esc(nr)}</th><td>${esc(name)}</td><td class="r">${h}</td></tr>`).join("")}
         ${teil.lf.length > 1 ? `<tr class="summe"><th scope="row"></th><td>Summe</td><td class="r">${teil.lf.reduce((a, x) => a + x[2], 0)}</td></tr>` : ""}</tbody>
