@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Busänderungen Walsrode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Entwurf einer Seite "Busänderungen" fürs Schulportal.
+   Aufbau datengetrieben: Linien stehen in LINIEN, Meldungen in MELDUNGEN, Fahrpläne in FAHRPLAENE (unten im Skript).
+   Jede Linie hat eine eigene Farbe (--sektion-farbe): getönter Grund, farbiger linker Rand, farbige Linien-Marke. */
+:root {
+  --bg: #f6f7f8; --fl: #ffffff; --fg: #1b2026; --muted: #56606b; --linie: #d8dce1;
+  --ok: #1f6f3a; --bald: #8a5a00; --aus: #6b7280; --warn: #a1261b;
+  --l500: #1d5f8a; --l502: #b8326b; --l506: #2e7a2e; --l510: #8a5a00; --l511: #6b46c1;
+  --l520: #0f6b64; --l521: #4b5563; --l550: #7a4b2a; --l600: #c2410c; --lrb38: #334155;
+  --neutral: #4b5563;
+  --f-titel: "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
+  --f-text: "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-zahl: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14171b; --fl: #1c2026; --fg: #e8ebef; --muted: #a5adb7; --linie: #343a42;
+  --ok: #6fd08f; --bald: #e8b45a; --aus: #9aa3ad; --warn: #f2877b;
+  --l500: #7cb8e0; --l502: #f08ab5; --l506: #7fd673; --l510: #e8b45a; --l511: #b9a4f2;
+  --l520: #5fd0c4; --l521: #b4bcc6; --l550: #d6a27a; --l600: #fb923c; --lrb38: #cbd5e1;
+  --neutral: #b4bcc6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #14171b; --fl: #1c2026; --fg: #e8ebef; --muted: #a5adb7; --linie: #343a42;
+  --ok: #6fd08f; --bald: #e8b45a; --aus: #9aa3ad; --warn: #f2877b;
+  --l500: #7cb8e0; --l502: #f08ab5; --l506: #7fd673; --l510: #e8b45a; --l511: #b9a4f2;
+  --l520: #5fd0c4; --l521: #b4bcc6; --l550: #d6a27a; --l600: #fb923c; --lrb38: #cbd5e1;
+  --neutral: #b4bcc6; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 18px/1.55 var(--f-text); }
+a { color: inherit; text-underline-offset: 3px; }
+.seite { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
+h1, h2, h3 { font-family: var(--f-titel); line-height: 1.15; }
+h1 { font-size: clamp(32px, 6vw, 46px); margin: 8px 0 10px; }
+h2 { font-size: 28px; margin: 0 0 12px; color: var(--sektion-farbe, var(--fg)); }
+h3 { font-size: 21px; margin: 0; }
+.zurueck { font-size: 16px; color: var(--muted); }
+.kicker { display: inline-block; font-size: 15px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--warn); border: 1.5px solid var(--warn); border-radius: 999px; padding: 3px 12px; margin-top: 18px; }
+.lead { font-size: 20px; color: var(--muted); margin: 0 0 8px; max-width: 46em; }
+
+/* Farbige Bereiche */
+.sektion { --sektion-farbe: var(--neutral); margin-top: 30px; padding: 20px 20px 22px; border-left: 6px solid var(--sektion-farbe);
+  border-radius: 4px 14px 14px 4px; background: color-mix(in srgb, var(--sektion-farbe) 7%, var(--fl)); }
+.sektion.blau { --sektion-farbe: var(--l500); }
+.sektion.gruen { --sektion-farbe: var(--l520); }
+.sektion.violett { --sektion-farbe: var(--l511); }
+.sektion p { margin: 0 0 10px; }
+.unter { font-size: 16px; color: var(--muted); }
+
+/* Heute-Leiste */
+.heute { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: end; justify-content: space-between; }
+.heute-datum { font-family: var(--f-titel); font-size: 30px; font-weight: 700; }
+.heute-zahl { font-size: 19px; }
+.heute-zahl b { color: var(--ok); }
+.probe label { display: block; font-size: 15px; color: var(--muted); margin-bottom: 4px; }
+.probe input { font: 17px var(--f-text); padding: 7px 12px; border-radius: 10px; border: 1.5px solid var(--linie); background: var(--fl); color: var(--fg); }
+
+/* Linien-Filter */
+.filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.filter button { font: 600 16px var(--f-text); padding: 7px 15px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--sektion-farbe, var(--muted)); color: var(--sektion-farbe, var(--fg)); background: transparent; }
+.filter button[aria-pressed="true"] { background: var(--sektion-farbe, var(--fg)); color: var(--bg); }
+.filter-hinweis { font-size: 15px; color: var(--muted); margin-top: 8px; }
+
+/* Meldungs-Karten */
+.gruppe-titel { font-family: var(--f-titel); font-size: 22px; margin: 26px 0 10px; color: var(--muted); }
+.karten { display: grid; gap: 14px; }
+.karte { --sektion-farbe: var(--neutral); padding: 16px 18px 14px; border-left: 6px solid var(--sektion-farbe);
+  border-radius: 4px 14px 14px 4px; background: color-mix(in srgb, var(--sektion-farbe) 11%, var(--fl)); }
+.karte.beendet { opacity: .72; }
+.karte-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 6px; }
+.marke { font: 700 16px var(--f-zahl); padding: 2px 10px; border-radius: 8px; background: var(--sektion-farbe); color: var(--bg); white-space: nowrap; }
+.status { font-size: 15px; font-weight: 700; padding: 2px 10px; border-radius: 999px; border: 1.5px solid currentColor; white-space: nowrap; }
+.status.aktiv { color: var(--ok); } .status.bald { color: var(--bald); } .status.aus { color: var(--aus); }
+.zeitraum { font-size: 16px; color: var(--muted); font-family: var(--f-zahl); }
+.karte h3 { color: var(--sektion-farbe); margin: 4px 0 6px; }
+.karte ul { margin: 0 0 8px; padding-left: 22px; }
+.karte li { margin: 3px 0; }
+.ersatz { margin: 6px 0 8px; padding: 8px 12px; border-radius: 10px; background: var(--fl); border: 1px solid var(--linie); }
+.ersatz b { color: var(--sektion-farbe); }
+.klaeren { margin: 6px 0 8px; padding: 8px 12px; border-radius: 10px; border: 1.5px dashed var(--warn); font-size: 16px; }
+.klaeren b { color: var(--warn); }
+.quelle { font-size: 15px; color: var(--muted); }
+details.alt { margin-top: 18px; }
+details.alt summary { cursor: pointer; font-family: var(--f-titel); font-size: 22px; color: var(--muted); }
+details.alt .karten { margin-top: 12px; }
+.leer { padding: 14px 18px; border-radius: 12px; border: 1.5px dashed var(--linie); color: var(--muted); }
+
+/* Fahrplan-Tabelle */
+.tabelle-huelle { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 17px; background: var(--fl); border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--linie); vertical-align: top; }
+th { font-size: 15px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+td.nr, td.pdf { white-space: nowrap; }
+.neu { font-size: 14px; font-weight: 700; color: var(--warn); white-space: nowrap; }
+
+/* Bearbeiten-Bereich */
+.wege { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 14px 0 6px; }
+.weg { padding: 14px 16px; border-radius: 12px; background: var(--fl); border: 1px solid var(--linie); }
+.weg h3 { color: var(--sektion-farbe); margin-bottom: 6px; }
+.weg ol { margin: 0; padding-left: 22px; }
+.weg li { margin: 4px 0; }
+.formular { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; margin-top: 16px; }
+.feld { display: grid; grid-template-columns: 8.5em 1fr; gap: 6px 12px; align-items: start; margin-bottom: 12px; }
+.feld > label, .feld > .label { font-size: 16px; font-weight: 700; color: var(--muted); padding-top: 8px; }
+.feld input[type=text], .feld input[type=date], .feld textarea {
+  font: 17px var(--f-text); width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--linie); background: var(--fl); color: var(--fg); }
+.feld textarea { min-height: 96px; resize: vertical; }
+.haken { display: flex; flex-wrap: wrap; gap: 6px 14px; padding-top: 7px; }
+.haken label { font-size: 17px; white-space: nowrap; }
+.feld-hilfe { grid-column: 2; font-size: 14px; color: var(--muted); margin-top: -2px; }
+.knoepfe { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.knopf { font: 700 17px var(--f-text); padding: 9px 20px; border-radius: 999px; border: 1.5px solid var(--sektion-farbe); cursor: pointer; }
+.knopf.voll { background: var(--sektion-farbe); color: var(--bg); }
+.knopf.leer-k { background: transparent; color: var(--sektion-farbe); }
+.vorschau-titel { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 8px; }
+.demo-hinweis { font-size: 15px; color: var(--warn); margin-top: 10px; }
+.offen li { margin: 6px 0; }
+footer { margin-top: 34px; font-size: 15px; color: var(--muted); }
+footer ul { padding-left: 20px; }
+
+@media (max-width: 940px) {
+  .formular { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .feld { grid-template-columns: 1fr; }
+  .feld > label, .feld > .label { padding-top: 0; }
+  .feld-hilfe { grid-column: 1; }
+  th:nth-child(2), td:nth-child(2) { display: none; }
+  .sektion { padding: 16px 12px 18px; }
+  th, td { padding: 8px 8px; }
+  td.pdf { white-space: normal; }
+}
+
+.theme-toggle { position: fixed; top: 14px; right: max(14px, env(safe-area-inset-right, 0px)); z-index: 60; width: 42px; height: 42px; border-radius: 50%;
+  background: var(--fl); border: 1px solid var(--linie); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.theme-toggle:hover, .theme-toggle:focus-visible { color: var(--fg); border-color: var(--fg); outline: none; }
+.theme-toggle svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Hell/Dunkel umschalten" aria-label="Hell/Dunkel umschalten">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button>
+
+<main class="seite">
+  <a class="zurueck" href="notizen.html">Zurück zu den Notizen</a><br>
+  <span class="kicker">Entwurf zur Ansicht</span>
+  <h1>Busänderungen rund um die BBS Walsrode</h1>
+  <p class="lead">So könnte die Seite im Schulportal aussehen: alle Änderungen, die <b>heute</b> gelten, auf einen Blick. Abgelaufene Meldungen verschwinden von selbst. Die Inhalte sind echte Meldungen, Stand 7. November 2026.</p>
+
+  <!-- Heute -->
+  <section class="sektion gruen" aria-labelledby="h-heute">
+    <h2 id="h-heute">Heute</h2>
+    <div class="heute">
+      <div>
+        <div class="heute-datum" id="heuteDatum"></div>
+        <div class="heute-zahl" id="heuteZahl"></div>
+      </div>
+      <div class="probe">
+        <label for="probeDatum">Anderen Tag ausprobieren</label>
+        <input type="date" id="probeDatum">
+      </div>
+    </div>
+    <div class="filter" id="filter" role="group" aria-label="Nach Linie filtern"></div>
+    <p class="filter-hinweis">Tippe deine Linie an, dann siehst du nur noch deine Änderungen. Die Auswahl merkt sich dein Gerät.</p>
+  </section>
+
+  <!-- Meldungen -->
+  <section aria-labelledby="h-meldungen">
+    <h2 id="h-meldungen" class="gruppe-titel" style="color:var(--fg);font-size:28px;margin-top:30px">Änderungen</h2>
+    <div class="gruppe-titel" id="tAktiv">Gilt heute</div>
+    <div class="karten" id="kAktiv"></div>
+    <div class="gruppe-titel" id="tBald">Demnächst</div>
+    <div class="karten" id="kBald"></div>
+    <details class="alt" id="dAus">
+      <summary id="tAus">Beendet</summary>
+      <div class="karten" id="kAus"></div>
+    </details>
+  </section>
+
+  <!-- Fahrpläne -->
+  <section class="sektion blau" aria-labelledby="h-fahrplaene">
+    <h2 id="h-fahrplaene">Gültige Fahrpläne der Walsroder Linien</h2>
+    <p>Diese Liste würde sich jeden Morgen selbst aus der Website der Verkehrsgemeinschaft Heidekreis aktualisieren. Taucht dort ein neuer Fahrplan auf, steht er hier mit dem Hinweis „neu“.</p>
+    <div class="tabelle-huelle">
+      <table>
+        <thead><tr><th>Linie</th><th>Strecke</th><th>Gültig</th><th>Fahrplan</th></tr></thead>
+        <tbody id="fahrplanTabelle"></tbody>
+      </table>
+    </div>
+    <p class="unter" style="margin-top:10px">Stand der Liste: 7.11.2026. Maßgeblich bleibt die Fahrplanauskunft der Verkehrsgemeinschaft.</p>
+  </section>
+
+  <!-- Bearbeiten -->
+  <section class="sektion violett" aria-labelledby="h-bearbeiten">
+    <h2 id="h-bearbeiten">So kommen die Meldungen auf die Seite</h2>
+    <p>Es gibt zwei Wege, die sich ergänzen. Ohne Freigabe erscheint nichts automatisch, damit keine falsche Meldung online steht.</p>
+    <div class="wege">
+      <div class="weg">
+        <h3>Automatisch: Prüfung jeden Morgen</h3>
+        <ol>
+          <li>Jeden Morgen um 6 Uhr schaut die Seite bei der Verkehrsgemeinschaft Heidekreis nach: neue Fahrpläne und neue Meldungen zu den Walsroder Linien.</li>
+          <li>Hat sich etwas geändert, liegt ein <b>Entwurf</b> bereit, und es kommt eine kurze Mail.</li>
+          <li>Die zuständige Kollegin liest ihn, ändert bei Bedarf etwas und klickt auf <b>Freigeben</b>.</li>
+        </ol>
+      </div>
+      <div class="weg">
+        <h3>Von Hand: Infos, die nur per Mail kommen</h3>
+        <ol>
+          <li>Im Schulportal anmelden und <b>Busänderungen</b> öffnen.</li>
+          <li><b>Neue Meldung</b> wählen und das Formular ausfüllen, so wie unten.</li>
+          <li><b>Speichern</b>: Die Meldung ist sofort sichtbar. Nach dem Datum „bis“ rutscht sie von selbst zu „Beendet“.</li>
+          <li>Ändern oder löschen geht später über die Liste der Meldungen.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px;color:var(--sektion-farbe)">Ausprobieren: eine Meldung eintragen</h3>
+    <p class="unter">Die Felder sind schon mit dem Beispiel aus der letzten Rundmail gefüllt. Daneben (auf dem Handy darunter) siehst du sofort, wie die Meldung aussieht.</p>
+    <div class="formular">
+      <form id="demoForm" autocomplete="off" onsubmit="return false">
+        <div class="feld">
+          <span class="label">Linie</span>
+          <div class="haken" id="demoLinien"></div>
+        </div>
+        <div class="feld">
+          <label for="dVon">Gilt ab</label>
+          <input type="date" id="dVon" value="2026-11-03">
+        </div>
+        <div class="feld">
+          <label for="dBis">Gilt bis</label>
+          <input type="date" id="dBis" value="2026-11-11">
+          <span class="feld-hilfe">Leer lassen, wenn das Ende noch nicht feststeht.</span>
+        </div>
+        <div class="feld">
+          <label for="dTitel">Überschrift</label>
+          <input type="text" id="dTitel" value="Fahrt 11:40 Uhr nach Hodenhagen entfällt">
+        </div>
+        <div class="feld">
+          <label for="dPunkte">Was ändert sich?</label>
+          <textarea id="dPunkte">Die Fahrt um 11:40 Uhr ab Walsrode Bahnhof nach Hodenhagen Bahnhof (Fahrt 009) entfällt.</textarea>
+          <span class="feld-hilfe">Jede Zeile wird ein eigener Punkt.</span>
+        </div>
+        <div class="feld">
+          <label for="dErsatz">Stattdessen</label>
+          <input type="text" id="dErsatz" value="RB 38 um 12:19 Uhr">
+          <span class="feld-hilfe">Freiwillig: Ersatzfahrt oder Ersatzhaltestelle.</span>
+        </div>
+        <div class="knoepfe">
+          <button type="button" class="knopf voll" id="dSpeichern">Speichern</button>
+          <button type="button" class="knopf leer-k" id="dLeeren">Felder leeren</button>
+        </div>
+        <p class="demo-hinweis" id="demoMeldung" role="status">Nur zur Ansicht: Hier wird nichts gespeichert.</p>
+      </form>
+      <div>
+        <div class="vorschau-titel">So sieht es auf der Seite aus</div>
+        <div id="demoVorschau"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Offene Fragen -->
+  <section class="sektion" aria-labelledby="h-offen">
+    <h2 id="h-offen">Noch zu klären</h2>
+    <ul class="offen">
+      <li><b>Woher kommen die Infos?</b> Die Änderungen aus der letzten Rundmail stehen bisher nicht auf der Website der Verkehrsgemeinschaft. Kommen sie per Mail vom Busunternehmen oder vom Landkreis?</li>
+      <li><b>Wer trägt ein?</b> Eine Person mit Vertretung, oder mehrere Kolleginnen und Kollegen?</li>
+      <li><b>Wo steht die Seite?</b> Öffentlich im Schulportal (handytauglich, ohne Anmeldung), oder als Link in der Mail/in Teams?</li>
+      <li><b>Welche Linien?</b> Hier stehen die Linien rund um Walsrode. Fehlen Linien, mit denen Schülerinnen und Schüler kommen, zum Beispiel aus Soltau oder Rethem?</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Entwurf, keine amtliche Fahrplanauskunft. Quellen der Beispiel-Meldungen:</p>
+    <ul>
+      <li>Rundmail der Schule zur Schülerbeförderung, Linien 600 und 502 (Anfang November 2026)</li>
+      <li><a href="https://www.verkehrsgemeinschaft-heidekreis.de/fahrplaene/buslinien-im-heidekreis/">Verkehrsgemeinschaft Heidekreis: Buslinien im Heidekreis</a></li>
+      <li><a href="https://www.verkehrsgemeinschaft-heidekreis.de/aktuelles/aktuelle-fahrplanaenderungen/">Verkehrsgemeinschaft Heidekreis: Aktuelle Fahrplanänderungen</a></li>
+      <li><a href="https://ms-aktuell.de/welt/l190-sperrung-walsrode-02-11-2026/">ms-aktuell: L190 bei Walsrode ab 3. November gesperrt</a></li>
+    </ul>
+  </footer>
+</main>
+
+<script>
+/* ---------- Daten (so würden sie später aus der JSON-Datei kommen) ---------- */
+const LINIEN = [
+  { nr: "500",   farbe: "--l500",  strecke: "Walsrode – Fulde – Hamwiede – Nordkampen – Kirchboitzen" },
+  { nr: "502",   farbe: "--l502",  strecke: "Walsrode – Düshorn – Ostenholz" },
+  { nr: "506",   farbe: "--l506",  strecke: "Bomlitz – Hünzingen – Walsrode" },
+  { nr: "510",   farbe: "--l510",  strecke: "Walsrode – Kirchboitzen – Böhme – Rethem – Ludwigslust" },
+  { nr: "511",   farbe: "--l511",  strecke: "Walsrode – Bomlitz – Bad Fallingbostel – Oerbke" },
+  { nr: "520",   farbe: "--l520",  strecke: "Löverschen – Bomlitz – Walsrode" },
+  { nr: "521",   farbe: "--l521",  strecke: "Walsrode – Uetzingen – Bomlitz – Benefeld – Cordingen – Borg – Walsrode" },
+  { nr: "550",   farbe: "--l550",  strecke: "Kirchboitzen – Vethem – Südkampen – Nordkampen – Vethem" },
+  { nr: "600",   farbe: "--l600",  strecke: "Eilte – Ahlden – Hodenhagen – Schwarmstedt (mit Fahrten ab Walsrode)" },
+  { nr: "RB 38", farbe: "--lrb38", strecke: "Bahn: Hannover – Walsrode – Soltau – Buchholz" }
+];
+
+const QUELLEN = {
+  schule: { text: "Rundmail der Schule (Anfang November 2026)" },
+  vgh:    { text: "Verkehrsgemeinschaft Heidekreis", link: "https://www.verkehrsgemeinschaft-heidekreis.de/aktuelles/aktuelle-fahrplanaenderungen/" },
+  presse: { text: "ms-aktuell (Presse)", link: "https://ms-aktuell.de/welt/l190-sperrung-walsrode-02-11-2026/" }
+};
+
+// von/bis als JJJJ-MM-TT; bis = null heißt "bis auf Weiteres"
+const MELDUNGEN = [
+  { linien: ["600"], von: "2026-11-03", bis: "2026-11-11",
+    titel: "Fahrt 11:40 Uhr nach Hodenhagen entfällt",
+    punkte: ["Die Fahrt um <b>11:40 Uhr ab Walsrode Bahnhof nach Hodenhagen Bahnhof</b> (Fahrt 009) entfällt."],
+    ersatz: "RB 38 um 12:19 Uhr", quellen: ["schule"] },
+
+  { linien: ["502"], von: "2026-11-04", bis: "2026-11-24",
+    titel: "Krelingen Süd entfällt, Fahrt läuft andersherum",
+    punkte: ["<b>Krelingen Süd</b> wird nicht angefahren.",
+             "Neue Reihenfolge der Haltestellen: <b>Westenholz → Ostenholz → Düshorn → Walsrode</b>.",
+             "Die Fahrten starten in Westenholz um <b>06:50 Uhr</b> (Fahrt 006) und <b>07:56 Uhr</b> (Fahrt 014)."],
+    ersatz: "Haltestelle Krelingen Burnplatz", quellen: ["schule"] },
+
+  { linien: ["502"], von: "2026-11-03", bis: "2026-11-24",
+    titel: "Verspätungen im Bereich Düshorn",
+    punkte: ["Durch Rückstaus im Bereich Düshorn kann es zu Verspätungen kommen.",
+             "Hintergrund: Die L190 ist an der Anschlussstelle Walsrode-Süd voraussichtlich bis 11.11.2026 gesperrt, die Umleitung führt über Düshorn."],
+    quellen: ["schule", "presse"] },
+
+  { linien: ["500", "502", "506", "510", "511", "550", "600"], von: "2026-08-13", bis: null,
+    titel: "Baustelle Quintusstraße: Bahnhof und Ostdeutsche Allee nicht angefahren",
+    punkte: ["Die Linien 502, 506, 511 und 600 halten nicht mehr an <b>Walsrode Bahnhof</b> und <b>Walsrode Ostdeutsche Allee</b>.",
+             "Seit 24.08.2026 gilt das auch für die Linie 500.",
+             "Die Linien 510 und 550 fahren <b>Walsrode Kirchplatz</b> und <b>Walsrode Eckernworth</b> nicht an.",
+             "Mit Verspätungen in der Innenstadt ist zu rechnen."],
+    ersatz: "Haltestelle Sunderstraße am Gymnasium",
+    klaeren: "Im neuen Fahrplan der Linie 600 (gültig ab 26.10.2026) steht die Fahrt 11:40 Uhr wieder ab „Walsrode Bahnhof“. Bitte bei der Verkehrsgemeinschaft nachfragen, ob der Bahnhof wieder angefahren wird.",
+    quellen: ["vgh"] },
+
+  { linien: ["500", "506"], von: "2026-08-13", bis: "2026-12-31",
+    titel: "Haltestelle Marktschule verlegt",
+    punkte: ["Die Haltestelle <b>Walsrode Marktschule</b> ist in die <b>Oskar-Wolff-Straße</b> verlegt, voraussichtlich bis Jahresende.",
+             "Zum sicheren Überqueren gibt es dort eine Fußgängerampel."],
+    quellen: ["vgh"] },
+
+  // Beispiele für abgelaufene Meldungen
+  { linien: ["600"], von: "2026-08-17", bis: "2026-08-18",
+    titel: "Fahrt 11:40 Uhr nach Hodenhagen fiel aus",
+    punkte: ["Wegen der Sperrung der L190 fiel die Fahrt 009 (11:40 Uhr ab Walsrode Bahnhof) aus."],
+    ersatz: "Bahn", quellen: ["vgh"] },
+  { linien: ["502"], von: "2026-08-14", bis: "2026-08-18",
+    titel: "L190 gesperrt, Verspätungen",
+    punkte: ["Die L190 zwischen Walsrode und Beetenbrück war an der Autobahnbrücke gesperrt, Umleitung über Düshorn."],
+    quellen: ["vgh"] },
+  { linien: ["RB 38"], von: "2026-08-17", bis: "2026-08-17",
+    titel: "Schienenersatzverkehr Schwarmstedt – Walsrode",
+    punkte: ["Busse statt Bahn. Schülerbus 6:30 Uhr Schwarmstedt → 6:52 Uhr Hodenhagen → 7:14 Uhr Walsrode."],
+    quellen: ["vgh"] }
+];
+
+const PDF = "https://www.verkehrsgemeinschaft-heidekreis.de/fileadmin/user/pdf/fahrplaene/";
+const FAHRPLAENE = [
+  { nr: "500", gueltig: "Baustellenfahrplan ab 24.08.2026", datei: "500_260824_BF.pdf" },
+  { nr: "502", gueltig: "Baustellenfahrplan ab 07.09.2026", datei: "502_260907_BF.pdf" },
+  { nr: "506", gueltig: "Baustellenfahrplan 13.08. – 31.12.2026", datei: "506_260813_BF.pdf" },
+  { nr: "510", gueltig: "Baustellenfahrplan ab 24.08.2026", datei: "510_260824_BF.pdf" },
+  { nr: "511", gueltig: "Baustellenfahrplan 13.08. – 31.12.2026", datei: "511_260813_BF_Walsrode.pdf" },
+  { nr: "520", gueltig: "Baustellenfahrplan 13.08. – 31.12.2026", datei: "520_260813_BF_Walsrode.pdf" },
+  { nr: "521", gueltig: "regulär ab 14.12.2025", datei: "521_251214_F.pdf" },
+  { nr: "550", gueltig: "Baustellenfahrplan ab 24.08.2026", datei: "550_260824_BF.pdf" },
+  { nr: "600", gueltig: "regulär ab 26.10.2026", datei: "600_261026_F.pdf", neu: "neu seit 26.10." }
+];
+
+/* ---------- Hilfsfunktionen ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const linie = nr => LINIEN.find(l => l.nr === nr) || { nr, farbe: "--neutral" };
+const iso = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+const deDatum = s => { const [j, m, t] = s.split("-"); return t + "." + m + "." + j; };
+const kurzDatum = s => { const [, m, t] = s.split("-"); return t + "." + m + "."; };
+
+function status(m, tag) {
+  if (m.bis && m.bis < tag) return "aus";
+  if (m.von > tag) return "bald";
+  return "aktiv";
+}
+function zeitraumText(m) {
+  if (!m.bis) return "ab " + deDatum(m.von) + ", bis auf Weiteres";
+  if (m.von === m.bis) return "am " + deDatum(m.von);
+  return deDatum(m.von) + " – " + deDatum(m.bis);
+}
+// Karte bauen; trusted = true für eigene Daten (dürfen <b> enthalten), false für Formulareingaben
+function karteHTML(m, st, trusted) {
+  const haupt = linie(m.linien[0] || "");
+  const text = s => trusted ? s : esc(s);
+  const marken = m.linien.map(nr => `<span class="marke" style="--sektion-farbe:var(${linie(nr).farbe})">${esc(nr === "RB 38" ? nr : "Linie " + nr)}</span>`).join("");
+  const stText = { aktiv: "gilt heute", bald: "ab " + kurzDatum(m.von), aus: "beendet" }[st];
+  const quellen = (m.quellen || []).map(q => {
+    const Q = QUELLEN[q]; if (!Q) return esc(q);
+    return Q.link ? `<a href="${Q.link}">${esc(Q.text)}</a>` : esc(Q.text);
+  }).join(" · ");
+  return `<article class="karte ${st === "aus" ? "beendet" : ""}" style="--sektion-farbe:var(${haupt.farbe})">
+    <div class="karte-kopf">${marken}<span class="status ${st}">${stText}</span><span class="zeitraum">${esc(zeitraumText(m))}</span></div>
+    <h3>${esc(m.titel || "Ohne Überschrift")}</h3>
+    ${m.punkte && m.punkte.length ? `<ul>${m.punkte.map(p => `<li>${text(p)}</li>`).join("")}</ul>` : ""}
+    ${m.ersatz ? `<div class="ersatz"><b>Stattdessen:</b> ${esc(m.ersatz)}</div>` : ""}
+    ${m.klaeren ? `<div class="klaeren"><b>Noch zu klären:</b> ${esc(m.klaeren)}</div>` : ""}
+    ${quellen ? `<div class="quelle">Quelle: ${quellen}</div>` : ""}
+  </article>`;
+}
+
+/* ---------- Filter (merkt sich die Auswahl) ---------- */
+let auswahl = "alle";
+try { auswahl = localStorage.getItem("bus-linie") || "alle"; } catch (e) {}
+if (auswahl !== "alle" && !LINIEN.some(l => l.nr === auswahl)) auswahl = "alle";
+
+function filterBauen() {
+  const knoepfe = [{ nr: "alle", farbe: null }].concat(LINIEN);
+  $("filter").innerHTML = knoepfe.map(l =>
+    `<button type="button" data-nr="${esc(l.nr)}" aria-pressed="${l.nr === auswahl}" ${l.farbe ? `style="--sektion-farbe:var(${l.farbe})"` : ""}>${l.nr === "alle" ? "Alle Linien" : esc(l.nr)}</button>`).join("");
+  $("filter").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    auswahl = b.dataset.nr;
+    try { localStorage.setItem("bus-linie", auswahl); } catch (e) {}
+    filterBauen(); zeichnen();
+  }));
+}
+
+/* ---------- Meldungen zeichnen ---------- */
+function zeichnen() {
+  const tag = $("probeDatum").value || iso(new Date());
+  const [j, mo, t] = tag.split("-").map(Number);
+  $("heuteDatum").textContent = new Date(j, mo - 1, t).toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+  const passend = MELDUNGEN.filter(m => auswahl === "alle" || m.linien.includes(auswahl));
+  const gruppen = { aktiv: [], bald: [], aus: [] };
+  passend.forEach(m => gruppen[status(m, tag)].push(m));
+  gruppen.aktiv.sort((a, b) => (a.bis || "9999") < (b.bis || "9999") ? -1 : 1);
+  gruppen.bald.sort((a, b) => a.von < b.von ? -1 : 1);
+  gruppen.aus.sort((a, b) => a.bis > b.bis ? -1 : 1);
+
+  const n = gruppen.aktiv.length;
+  const fuer = auswahl === "alle" ? "" : (auswahl === "RB 38" ? " für die RB 38" : " für die Linie " + auswahl);
+  $("heuteZahl").innerHTML = n === 0 ? "Heute keine Änderungen" + esc(fuer) + "."
+    : `<b>${n} ${n === 1 ? "Änderung gilt" : "Änderungen gelten"}</b> heute${esc(fuer)}.`;
+
+  const leer = text => `<div class="leer">${text}</div>`;
+  $("kAktiv").innerHTML = n ? gruppen.aktiv.map(m => karteHTML(m, "aktiv", true)).join("") : leer("Heute gilt keine Änderung.");
+  $("kBald").innerHTML = gruppen.bald.length ? gruppen.bald.map(m => karteHTML(m, "bald", true)).join("") : leer("Keine angekündigten Änderungen.");
+  $("kAus").innerHTML = gruppen.aus.length ? gruppen.aus.map(m => karteHTML(m, "aus", true)).join("") : leer("Noch keine beendeten Meldungen.");
+  $("tAus").textContent = "Beendet (" + gruppen.aus.length + ")";
+}
+
+/* ---------- Fahrplan-Tabelle ---------- */
+$("fahrplanTabelle").innerHTML = FAHRPLAENE.map(f => {
+  const l = linie(f.nr);
+  return `<tr>
+    <td class="nr"><span class="marke" style="--sektion-farbe:var(${l.farbe})">${esc(f.nr)}</span></td>
+    <td>${esc(l.strecke || "")}</td>
+    <td>${esc(f.gueltig)}${f.neu ? ` <span class="neu">${esc(f.neu)}</span>` : ""}</td>
+    <td class="pdf"><a href="${PDF + f.datei}">PDF öffnen</a></td>
+  </tr>`;
+}).join("");
+
+/* ---------- Ausprobier-Formular ---------- */
+$("demoLinien").innerHTML = LINIEN.map(l =>
+  `<label><input type="checkbox" value="${esc(l.nr)}" ${l.nr === "600" ? "checked" : ""}> ${esc(l.nr)}</label>`).join("");
+
+function demoMeldung() {
+  return {
+    linien: [...document.querySelectorAll("#demoLinien input:checked")].map(i => i.value),
+    von: $("dVon").value || iso(new Date()),
+    bis: $("dBis").value || null,
+    titel: $("dTitel").value.trim(),
+    punkte: $("dPunkte").value.split("\n").map(s => s.trim()).filter(Boolean),
+    ersatz: $("dErsatz").value.trim(),
+    quellen: []
+  };
+}
+function demoZeichnen() {
+  const m = demoMeldung();
+  const tag = $("probeDatum").value || iso(new Date());
+  $("demoVorschau").innerHTML = karteHTML(m, status(m, tag), false);
+  $("demoMeldung").textContent = "Nur zur Ansicht: Hier wird nichts gespeichert.";
+}
+document.querySelectorAll("#demoForm input, #demoForm textarea").forEach(el => el.addEventListener("input", demoZeichnen));
+$("dSpeichern").addEventListener("click", () => {
+  $("demoMeldung").textContent = "Im echten Schulportal wäre die Meldung jetzt gespeichert und sofort sichtbar. Hier ist es nur eine Vorschau.";
+});
+$("dLeeren").addEventListener("click", () => {
+  document.querySelectorAll("#demoLinien input").forEach(i => i.checked = false);
+  ["dVon", "dBis", "dTitel", "dPunkte", "dErsatz"].forEach(id => $(id).value = "");
+  demoZeichnen();
+});
+
+/* ---------- Start ---------- */
+$("probeDatum").value = iso(new Date());
+$("probeDatum").addEventListener("input", () => { zeichnen(); demoZeichnen(); });
+filterBauen(); zeichnen(); demoZeichnen();
+</script>
+
+<script>
+  // Hell/Dunkel wie auf den übrigen Notizseiten (gemeinsamer Speicher 'notiz-theme')
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('themeToggle'), stored = null;
+    try { stored = localStorage.getItem('notiz-theme'); } catch (e) {}
+    if (stored) root.setAttribute('data-theme', stored);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('notiz-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>
