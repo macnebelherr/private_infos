@@ -3,7 +3,7 @@
 <style>
 :root{--bg:#fbfaf7;--ink:#26231f;--mut:#6f695f;--line:#ddd7cc;--s:#2f6fd6;--u:#d9622b;--p:#2e9a62}
 @media (prefers-color-scheme:dark){:root{--bg:#1e1d1b;--ink:#f1ede6;--mut:#a59e93;--line:#3d3a35}}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:auto;overflow-y:auto}
 #top{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;padding:12px 20px 10px}
 #count{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;min-width:64px}
 #ctxt{color:var(--mut);font-size:15px;line-height:1.2}
@@ -131,7 +131,7 @@ var W=0,cards=[];
 function X(t){return X0+(t-T0)/(T1-T0)*(W-X0)}
 var cv=document.createElement("canvas").getContext("2d");cv.font="600 13px system-ui,-apple-system,sans-serif";
 function build(){
-W=Math.max(st.clientWidth,document.documentElement.clientWidth-40,600)-10;
+W=Math.max(document.documentElement.clientWidth-40,1000)-10;st.style.width=(W+10)+"px";
 [].slice.call(st.children).forEach(function(n){if(n!==head)st.removeChild(n)});
 cards=[];var laneInfo=[],totalRows=0;
 LANES.forEach(function(L){
