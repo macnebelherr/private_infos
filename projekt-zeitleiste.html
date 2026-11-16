@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Projekt-Zeitleiste</title>
+<style>
+:root{--bg:#fbfaf7;--ink:#26231f;--mut:#6f695f;--line:#ddd7cc;--s:#2f6fd6;--u:#d9622b;--p:#2e9a62}
+@media (prefers-color-scheme:dark){:root{--bg:#1e1d1b;--ink:#f1ede6;--mut:#a59e93;--line:#3d3a35}}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+#top{display:flex;align-items:center;flex-wrap:wrap;gap:12px 22px;padding:12px 20px 10px}
+#count{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;min-width:64px}
+#ctxt{color:var(--mut);font-size:15px;line-height:1.2}
+#ctxt b{display:block;color:var(--ink);font-size:20px}
+.stat{padding:6px 12px;border-radius:10px;border-left:4px solid var(--c);background:color-mix(in srgb,var(--c) 10%,transparent);font-size:15px}
+.stat b{color:var(--c);font-size:19px;margin-right:4px;font-variant-numeric:tabular-nums}
+#play{margin-left:auto;font:600 15px system-ui,sans-serif;padding:9px 18px;border-radius:999px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+#stage{position:relative;margin:0 20px}
+.lane{position:absolute;left:0;right:0;border-radius:12px;background:color-mix(in srgb,var(--c) 8%,transparent);border-left:5px solid var(--c)}
+.lname{position:absolute;left:14px;top:10px;font-weight:700;color:var(--c);font-size:16px;width:140px}
+.lname small{display:block;font-weight:500;color:var(--mut);font-size:13px;margin-top:2px}
+.mline{position:absolute;top:0;width:1px;background:var(--line)}
+.mlab{position:absolute;font-size:14px;color:var(--mut);transform:translateX(6px);font-weight:600}
+.card{position:absolute;height:22px;line-height:22px;padding:0 9px;border-radius:7px;background:var(--bg);border:1.5px solid var(--c);font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;opacity:0;transform:translateY(10px) scale(.85);transition:opacity .4s,transform .55s cubic-bezier(.2,1.6,.4,1),box-shadow .2s}
+.card.on{opacity:1;transform:none}
+.card.new{box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 30%,transparent)}
+.card.hi{background:var(--c);color:#fff;font-weight:800;z-index:4}
+.card.hi.on{animation:puls 2.4s ease-in-out 1s infinite}
+@keyframes puls{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--c) 28%,transparent)}}
+.card:hover,.card.sel{background:var(--c);color:#fff}
+.card::before{content:"";position:absolute;top:7px;width:8px;height:8px;border-radius:50%;background:var(--c);left:-5px}
+.card.r::before{left:auto;right:-5px}
+#head{position:absolute;top:-4px;width:3px;margin-left:-1px;background:var(--ink);border-radius:2px;opacity:0;transition:opacity .4s;z-index:5}
+#head::after{content:"";position:absolute;top:-6px;left:-5px;width:13px;height:13px;border-radius:50%;background:var(--ink)}
+#info{margin:8px 20px 0;padding:10px 14px;border-radius:10px;font-size:15px;border-left:5px solid var(--c,var(--line));background:color-mix(in srgb,var(--c,#888) 9%,transparent)}
+#info .d{color:var(--mut);margin-right:10px;font-variant-numeric:tabular-nums}
+#info b{margin-right:8px}
+</style></head><body>
+<div id="top">
+  <div id="count">0</div>
+  <div id="ctxt"><b id="when">Juni 2026</b>Projekte mit Claude</div>
+  <div class="stat" style="--c:var(--u)"><b id="nu">0</b>Unterricht</div>
+  <div class="stat" style="--c:var(--s)"><b id="ns">0</b>Schule</div>
+  <div class="stat" style="--c:var(--p)"><b id="np">0</b>Privat &amp; Zuhause</div>
+  <button id="play">Nochmal abspielen</button>
+</div>
+<div id="stage"><div id="head"></div></div>
+<div id="info">Fahre über ein Projekt oder tippe darauf, um mehr zu sehen.</div>
+<script>
+var LANES=[
+["m","u","Mathematik","Berufl. Gymnasium 11–13",[
+["07-12","Differentialrechnung","Erste Mathe-Seite, noch vor dem Portal."],
+["08-05","Steigungen","Steigungen, Änderungsraten, zeichnerisches Differenzieren."],
+["08-11","Beschreib. Statistik","Klasse 11: Datenerhebung, Kenngrößen, Infobroschüre, später Boxplot."],
+["08-16","Wahrscheinlichkeit","Grundbegriffe, mehrstufige Zufallsexperimente, bedingte Wahrscheinlichkeit."],
+["08-18","Kostentheorie","Gesamtkosten, Funktionssynthese, Betriebsoptimum, Erlös und Gewinn."],
+["08-23","Binomialverteilung","Zehn Lerneinheiten bis zu Prognoseintervallen, mit Abschlusstest."],
+["08-31","Streumaße-Folien","Beamer-Folien Varianz und Standardabweichung, Klasse 11."],
+["09-08","GeoGebra","Erste Schritte und Grafikrechner."],
+["09-12","Normalverteilung","Glockenkurve, Flächen, Standardnormalverteilung, Approximation."],
+["09-28","Geraden & Parabeln","Lineare und quadratische Funktionen, Markt, Kosten-Erlös-Gewinn."],
+["10-05","Minimalkosten","Isoquante und Kostenminimierung."],
+["10-20","Potenzfunktionen","Eigenschaften, Parametervariation, Wurzelfunktionen."],
+["11-01","Raumgeometrie","Punkte, Vektoren, Skalarprodukt, Geraden, Winkel."],
+["11-10","Matrizen","Rechnen mit Matrizen."]]],
+["k","u","Kunststoff/Kautschuk","Lernfelder 2, 5, 6",[
+["08-07","LF 2 Fertigung & Prüfung","Prüftechnik, Schneidkeil, Zeichnungsnormen, Biegen, Versandstation."],
+["08-08","LF 5 Fertigungsvorauss.","Trocknung und mehr – gebaut für einen Kollegen."],
+["08-09","LF 6 Instandhaltung","Maschinen und Anlagen instand halten."],
+["08-10","Dreisatz & Prozent","Fachrechnen mit Verhältnisrechnung und Formeln."],
+["08-16","Antriebe & Systemanalyse","LF 6: Antriebseinheiten, später Übertragungseinheiten."],
+["09-06","Verbindungseinheiten","LF 6: Verbindungs-, Stütz- und Trageinheiten."],
+["09-30","Fertigungshauptgruppen","LF 2: Überblick über die Fertigungsverfahren."],
+["10-06","Arbeits- & Umweltschutz","LF 2 mit Wiederholung."],
+["10-27","Industrie 4.0","LF 2: vernetzte Fertigung."],
+["11-15","LF 6 Techn. Zeichnen","Zusatzangebot Lagerdeckel, Papierphase."]]],
+["t","u","Metalltechnik","Lernfelder 3 und 6",[
+["07-25","CAD-Unterricht","Material für den CAD-Unterricht."],
+["08-13","Profile LF 6","Konstruktionen aus Profilen: lesen, sägen, schleifen, brennschneiden."],
+["08-25","Schutzgasschweißen","Fügen durch Schutzgasschweißen."],
+["08-27","Lichtbogenschweißen","Lichtbogenhandschweißen und Richten."],
+["09-10","Baugruppen LF 3","Baugruppenzeichnung und Stückliste."],
+["09-15","Pumpenmodell","3D-Modell und Druckteile einer Pumpe."],
+["09-17","Schrauben & Muttern","Danach Kennzeichnung, Sicherungen, Gewinde."],
+["09-29","Anziehdrehmoment","Anziehdrehmoment und Vorspannkraft."],
+["10-27","Reib- & Formschluss","Bolzen, Stifte, Reibung."],
+["11-07","Stahlbau-Prüfung","Prüfungsvorbereitung Stahlbau."]]],
+["w","u","Portal & Werkzeuge","rund um den Unterricht",[
+["07-30","Unterrichtsportal","unterricht.bbs-walsrode.de – das Zuhause aller Lerneinheiten."],
+["08-06","Recyclingprojekt","Projektseite zum Kunststoff-Recycling."],
+["08-07","Moodle-Kurse","Tests und Abgaben für Kunststoff, Metall und Mathe."],
+["08-17","Unterrichtsplanung","Interner Bereich für Lehrkräfte."],
+["08-19","Namenslerner","Fotos-und-Namen-Quiz für neue Klassen."],
+["09-06","Arbeitsblätter","Arbeitsblatt-Generator mit BBS-Kopf."],
+["10-07","Klausurergebnis Kl. 11","Erste anonyme, animierte Klausurauswertung."],
+["10-25","Klausur-Auswertungen","Skill: Klausur von der Pi-App direkt ins Portal."],
+["10-28","Infoposter","Infoposter als Handlungsprodukt."]]],
+["s","s","Schule","Verwaltung & Portale",[
+["06-05","Abiturgutachten","Gutachten-Generator – das erste gemeinsame Projekt."],
+["06-12","Schulportal","Abteilungsportal mit Aufsichtsplaner und Abiturrechner."],
+["06-20","Sportkurswahl","Online-Wahl der Sportkurse."],
+["07-02","Sekretariat","Seiten und Werkzeuge fürs Sekretariat."],
+["07-10","Foto-Social-Media","Kollegium lädt Fotos hoch, daraus werden Instagram-Posts."],
+["08-04","Willkommensseite","Begrüßungsseite für Neue an der Schule."],
+["08-17","Internationalisierung","Erasmus-Tool mit Verschlüsselung statt Klartext-IBANs."],
+["08-19","Praktikumskarte","Karte der Praktikumsbetriebe im Heidekreis."],
+["08-28","Fehlzeiten","Fehlzeiten-CSV filterbar nach Klassen."],
+["08-29","Stundenplan-App","lplan.bbs-walsrode.de – eigene Stundenplan-App, live bei ersten Kollegen und offen für das ganze Kollegium.",1],
+["08-29","Dienstjubiläum","Rechner für Dienstjubiläen."],
+["09-11","Pfandbons","Formular und Verwaltung für Pfandbons."],
+["09-26","Bedarfsanmeldung","Antrag Resin-Drucker, jetzt Muster für alle Anträge."],
+["10-09","Erklärfilme","Kurze Filme zur Portal-Anleitung."],
+["11-05","Aufsichten-Mails","Änderungs-Mails ans Kollegium, scharf geschaltet."],
+["11-09","ABI-Vorlagen","Serienbriefe der Klausurtagung über OneDrive."]]],
+["p","p","Privat & Zuhause","",[
+["06-10","Raspberry Pi 5","Homeserver mit eigener Startseite."],
+["06-28","Foto-Portfolio","Fotografie-Portfolio: Menschen, Sport, Landschaft."],
+["07-16","private_infos","PRIVAT-Hub mit Info, Notizen, Fotos, Projekten."],
+["08-15","Logo macnebelherr","Tusche-Wortmarke für macnebelherr.eu."],
+["09-02","Wallbox-Dashboard","Wallbox per Modbus, live auf dem Pi."],
+["09-05","KI-Bilder","Bildgenerierung über Replicate."],
+["09-30","3D-Druck-Kisten","Stapelbare Kisten aus CAD."],
+["10-03","Home Assistant","Hue, Meross, Apple TV, iPad-Dashboard."],
+["10-11","Portfolio-Deploy","macnebelherr.eu automatisch auf Hostinger."],
+["10-16","Tagesüberblick","Mails, Teams und Kalender am Abend auf der Pi-Startseite."],
+["10-21","Jarvis","Gesprochene Zusammenfassungen – sehr wohl, Sir."],
+["10-31","Verbrauch Gas/Strom","Verbrauchs-Dashboard mit Handy-Eingabe."],
+["11-03","Gedächtnis-Karte","Animierte Übersicht über Claudes Gedächtnis, samt Film."]]]];
+var MON=["Jan","Feb","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+var COL={s:"var(--s)",u:"var(--u)",p:"var(--p)"};
+var st=document.getElementById("stage"),head=document.getElementById("head"),info=document.getElementById("info");
+var T0=Date.parse("2026-06-01"),T1=Date.parse("2026-11-22"),X0=180,GAP=8,AX=26;
+var E={s:document.getElementById("ns"),u:document.getElementById("nu"),p:document.getElementById("np")};
+var W=0,cards=[];
+function X(t){return X0+(t-T0)/(T1-T0)*(W-X0)}
+var cv=document.createElement("canvas").getContext("2d");cv.font="600 13px system-ui,-apple-system,sans-serif";
+function build(){
+W=Math.max(st.clientWidth,document.documentElement.clientWidth-40,600)-10;
+[].slice.call(st.children).forEach(function(n){if(n!==head)st.removeChild(n)});
+cards=[];var laneInfo=[],totalRows=0;
+LANES.forEach(function(L){
+  var rows=[],items=L[4].map(function(p){
+    var t=Date.parse("2026-"+p[0]),x=X(t),w=Math.ceil(cv.measureText(p[1]).width)+22,right=x+w>W,l=right?x-w:x,r=0;
+    while(rows[r]&&rows[r].some(function(iv){return l<iv[1]+6&&l+w>iv[0]-6}))r++;
+    (rows[r]=rows[r]||[]).push([l,l+w]);
+    return{t:t,l:l,r:r,right:right,p:p,k:L[1]};
+  });
+  var n=Math.max(rows.length,2);totalRows+=n;laneInfo.push({L:L,n:n,items:items});
+});
+var avail=Math.max(window.innerHeight-st.getBoundingClientRect().top-70-AX-GAP*(LANES.length-1),totalRows*24+LANES.length*16);
+var step=Math.min(30,Math.floor((avail-LANES.length*16)/totalRows)),y=0;
+laneInfo.forEach(function(li){
+  var h=li.n*step+16,L=li.L,d=document.createElement("div");d.className="lane";
+  d.style.cssText="--c:"+COL[L[1]]+";top:"+y+"px;height:"+h+"px";
+  var nm=document.createElement("div");nm.className="lname";nm.textContent=L[2];
+  if(L[3]){var sm=document.createElement("small");sm.textContent=L[3];nm.appendChild(sm)}
+  d.appendChild(nm);st.insertBefore(d,head);
+  li.items.forEach(function(it){
+    var c=document.createElement("div");c.className="card"+(it.right?" r":"")+(it.p[3]?" hi":"");c.textContent=it.p[1];
+    c.style.cssText="--c:"+COL[it.k]+";left:"+it.l+"px;top:"+(y+8+it.r*step+(step-24)/2)+"px";
+    c.onmouseenter=c.onclick=function(){show(it,c,L)};st.appendChild(c);cards.push({t:it.t,el:c,k:it.k});
+  });
+  y+=h+GAP;
+});
+var H=y-GAP;st.style.height=(H+AX)+"px";head.style.height=(H+8)+"px";
+for(var m=5;m<=10;m++){var t=Date.UTC(2026,m,1),l=document.createElement("div");l.className="mline";l.style.cssText="left:"+X(t)+"px;height:"+(H+6)+"px";st.insertBefore(l,st.firstChild);var b=document.createElement("div");b.className="mlab";b.style.cssText="left:"+X(t)+"px;top:"+(H+6)+"px";b.textContent=MON[m];st.appendChild(b)}
+apply();
+}
+var sel=null;
+function show(it,c,L){if(sel)sel.classList.remove("sel");sel=c;c.classList.add("sel");
+  var d=new Date(it.t);info.style.setProperty("--c",COL[it.k]);info.textContent="";
+  var a=document.createElement("span");a.className="d";a.textContent=d.getUTCDate()+". "+MON[d.getUTCMonth()]+" · "+L[2];
+  var b=document.createElement("b");b.textContent=it.p[1];info.appendChild(a);info.appendChild(b);info.appendChild(document.createTextNode(it.p[2]))}
+var DUR=14000,start=0,raf=0;var E0={s:document.getElementById("ns"),u:document.getElementById("nu"),p:document.getElementById("np")};
+var cur=T0,done=false;
+function apply(){
+  head.style.left=X(cur)+"px";var cnt={s:0,u:0,p:0},all=0;
+  cards.forEach(function(c){var on=c.t<=cur;if(on&&!c.el.classList.contains("on")){c.el.classList.add("on");if(!done){c.el.classList.add("new");setTimeout(function(){c.el.classList.remove("new")},700)}}if(on){cnt[c.k]++;all++}});
+  document.getElementById("count").textContent=all;for(var k in E)E[k].textContent=cnt[k];
+  var d=new Date(Math.min(cur,Date.parse("2026-11-16")));document.getElementById("when").textContent=done?"Juni bis November 2026":MON[d.getUTCMonth()]+" 2026";
+}
+function frame(now){
+  if(!start)start=now;var f=Math.min(1,(now-start)/DUR),e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;cur=T0+e*(T1-T0);
+  if(f>=1){done=true;head.style.opacity=0}
+  apply();if(f<1)raf=requestAnimationFrame(frame);
+}
+function play(){cancelAnimationFrame(raf);cards.forEach(function(c){c.el.classList.remove("on","new")});start=0;cur=T0;done=false;head.style.opacity=1;setTimeout(function(){raf=requestAnimationFrame(frame)},400)}
+document.getElementById("play").onclick=play;
+var lastW=0,rt=0;function fit(){var w=document.documentElement.clientWidth;if(!w){setTimeout(fit,200);return}if(w&&Math.abs(w-lastW)>2){lastW=w;build()}}
+window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(fit,120)});
+fit();play();
+</script>
+</body></html>
