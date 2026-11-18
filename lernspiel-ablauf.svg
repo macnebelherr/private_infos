@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 1400" font-family="Helvetica, Arial, sans-serif">
+  <title>So läuft ein Lernfeld mit dem Lernspiel</title>
+  <defs>
+    <clipPath id="p1"><rect x="32" y="300" width="952" height="430" rx="22"/></clipPath>
+    <clipPath id="p2"><rect x="1016" y="300" width="952" height="430" rx="22"/></clipPath>
+    <clipPath id="p3"><rect x="32" y="748" width="952" height="430" rx="22"/></clipPath>
+    <clipPath id="p4"><rect x="1016" y="748" width="952" height="430" rx="22"/></clipPath>
+    <marker id="pf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#9aa3ad"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="2000" height="1400" fill="#ffffff"/>
+
+  <!-- Titel -->
+  <text x="40" y="72" font-size="44" font-weight="bold" fill="#1f2430">So läuft ein Lernfeld: Unterricht <tspan fill="#2e8b57">+ Lernspiel</tspan></text>
+  <path d="M712 90 q120 12 236 2" stroke="#7fc79f" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <text x="40" y="118" font-size="21" fill="#5b6670">Vom ersten Eindruck bis zur Note – für Schülerinnen und Schüler, Lehrkräfte und Kolleginnen und Kollegen. Gilt für jedes Lernfeld mit Lernspiel.</text>
+
+  <!-- Ablauf-Leiste (Chips mit Pfeilen) -->
+  <g font-size="20" font-weight="bold">
+    <rect x="40" y="152" width="200" height="52" rx="26" fill="#eaf1fb" stroke="#b9d3ec" stroke-width="1.5"/>
+    <text x="140" y="185" text-anchor="middle" fill="#2b6cb0">Eingangscheck</text>
+    <line x1="244" y1="178" x2="270" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="276" y="152" width="236" height="52" rx="26" fill="#e9f5ee" stroke="#bfe3cd" stroke-width="1.5"/>
+    <text x="394" y="185" text-anchor="middle" fill="#2e8b57">Lerneinheit + Spiel</text>
+    <line x1="516" y1="178" x2="542" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="548" y="152" width="200" height="52" rx="26" fill="#e9f5ee" stroke="#bfe3cd" stroke-width="1.5"/>
+    <text x="648" y="185" text-anchor="middle" fill="#2e8b57">Rote Fragen</text>
+    <line x1="752" y1="178" x2="778" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="784" y="152" width="214" height="52" rx="26" fill="#fbefdd" stroke="#f0d9b3" stroke-width="1.5"/>
+    <text x="891" y="185" text-anchor="middle" fill="#bd7d1e">Schichtführer</text>
+    <line x1="1002" y1="178" x2="1028" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="1034" y="152" width="226" height="52" rx="26" fill="#fbefdd" stroke="#f0d9b3" stroke-width="1.5"/>
+    <text x="1147" y="185" text-anchor="middle" fill="#bd7d1e">Freischaltcode</text>
+    <line x1="1264" y1="178" x2="1290" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="1296" y="152" width="170" height="52" rx="26" fill="#fbefdd" stroke="#f0d9b3" stroke-width="1.5"/>
+    <text x="1381" y="185" text-anchor="middle" fill="#bd7d1e">Prüfung</text>
+    <line x1="1470" y1="178" x2="1496" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="1502" y="152" width="180" height="52" rx="26" fill="#f3ebfb" stroke="#ddc9f0" stroke-width="1.5"/>
+    <text x="1592" y="185" text-anchor="middle" fill="#7b3fb0">Prüfcode</text>
+    <line x1="1686" y1="178" x2="1712" y2="178" stroke="#9aa3ad" stroke-width="2.5" marker-end="url(#pf)"/>
+
+    <rect x="1718" y="152" width="200" height="52" rx="26" fill="#f3ebfb" stroke="#ddc9f0" stroke-width="1.5"/>
+    <text x="1818" y="185" text-anchor="middle" fill="#7b3fb0">IHK-Note</text>
+  </g>
+
+  <!-- Ampel-Erklärung -->
+  <g font-size="19" fill="#3a3f45">
+    <text x="40" y="256" font-weight="bold" fill="#1f2430">Ampel je Frage:</text>
+    <circle cx="210" cy="250" r="10" fill="#e5484d"/><text x="228" y="256">rot = zuletzt falsch</text>
+    <circle cx="430" cy="250" r="10" fill="#e8b10f"/><text x="448" y="256">gelb = mal richtig, mal falsch</text>
+    <circle cx="742" cy="250" r="10" fill="#2fa865"/><text x="760" y="256">grün = immer oder zweimal am Stück richtig</text>
+    <circle cx="1170" cy="250" r="10" fill="#b8bec6"/><text x="1188" y="256">grau = noch nicht gesehen</text>
+    <text x="1450" y="256" fill="#5b6670">Die Spielwelt wächst mit jeder Frage, die sitzt.</text>
+  </g>
+
+  <!-- Panel 1: blau – Start -->
+  <g>
+    <rect x="32" y="300" width="952" height="430" rx="22" fill="#eaf1fb" stroke="#b9d3ec" stroke-width="2"/>
+    <g clip-path="url(#p1)"><ellipse cx="1010" cy="790" rx="420" ry="300" fill="#dbe8f6"/></g>
+    <text x="72" y="364" font-size="30" font-weight="bold" fill="#2b6cb0">1  Start: Eingangscheck (erste Stunde)</text>
+    <g fill="#3a3f45" font-size="19">
+      <text x="72" y="414" font-size="20" font-weight="bold" fill="#2b6cb0">Was passiert?</text>
+      <text x="72" y="442">14 Fragen, zwei aus jedem Bauabschnitt, ungewertet, rund 10 Minuten.</text>
+      <text x="72" y="468">Niemand muss etwas können – es geht nur um den Ausgangspunkt.</text>
+
+      <text x="72" y="522" font-size="20" font-weight="bold" fill="#2b6cb0">Wozu?</text>
+      <text x="72" y="550">Die Ampeln färben sich zum ersten Mal ein: Wo stehe ich, wo fange ich an?</text>
+      <text x="72" y="576">Das Spiel merkt sich den Vorher-Wert – wie ein Kompetenzraster am Anfang.</text>
+
+      <text x="72" y="630" font-size="20" font-weight="bold" fill="#2b6cb0">Lehrkraft</text>
+      <text x="72" y="658">Folien zum Lernfeld zeigen, Projektidee vorstellen (z. B. Versandstation),</text>
+      <text x="72" y="684">das Spiel einmal gemeinsam starten.</text>
+    </g>
+  </g>
+
+  <!-- Panel 2: grün – Unterricht -->
+  <g>
+    <rect x="1016" y="300" width="952" height="430" rx="22" fill="#e9f5ee" stroke="#bfe3cd" stroke-width="2"/>
+    <g clip-path="url(#p2)"><ellipse cx="1240" cy="240" rx="420" ry="300" fill="#daeee2"/></g>
+    <text x="1056" y="364" font-size="30" font-weight="bold" fill="#2e8b57">2  Unterricht + Lernmodus (Wochen)</text>
+    <g fill="#3a3f45" font-size="19">
+      <text x="1056" y="414" font-size="20" font-weight="bold" fill="#2e8b57">Lerneinheit, dann Bauabschnitt</text>
+      <text x="1056" y="442">Erarbeiten, Üben, Selbsttest wie bisher. Danach den passenden Bauabschnitt</text>
+      <text x="1056" y="468">spielen: 10 Fragen, 10–15 Minuten am Stundenende oder zu Hause.</text>
+
+      <text x="1056" y="522" font-size="20" font-weight="bold" fill="#2e8b57">Vorspielen ist erlaubt</text>
+      <text x="1056" y="550">Nach jeder Runde gibt es die Auflösung mit Erklärung und einem Link zur</text>
+      <text x="1056" y="576">Lerneinheit. Wer neugierig ist, lernt so schon beim Spielen.</text>
+
+      <text x="1056" y="630" font-size="20" font-weight="bold" fill="#2e8b57">Rote Fragen abarbeiten</text>
+      <text x="1056" y="658">Falsche Antworten werden rot und kommen in den nächsten Runden wieder,</text>
+      <text x="1056" y="684">bis sie gelb oder grün sind. Bonus-Abschnitte für die Zusatzangebote.</text>
+    </g>
+  </g>
+
+  <!-- Panel 3: amber – Prüfung -->
+  <g>
+    <rect x="32" y="748" width="952" height="430" rx="22" fill="#fbefdd" stroke="#f0d9b3" stroke-width="2"/>
+    <g clip-path="url(#p3)"><ellipse cx="1010" cy="690" rx="420" ry="300" fill="#f6e4c8"/></g>
+    <text x="72" y="812" font-size="30" font-weight="bold" fill="#bd7d1e">3  Prüfung (einzeln, wenn du so weit bist)</text>
+    <g fill="#3a3f45" font-size="19">
+      <text x="72" y="862" font-size="20" font-weight="bold" fill="#bd7d1e">Bedingung – vorher bekannt</text>
+      <text x="72" y="890">Du zeigst deiner Lehrkraft im Spiel den Rang Schichtführer (70 % grün).</text>
+      <text x="72" y="916">Dann bekommst du einen Freischaltcode: gilt einmal, 14 Tage lang.</text>
+
+      <text x="72" y="970" font-size="20" font-weight="bold" fill="#bd7d1e">So läuft die Prüfung</text>
+      <text x="72" y="998">Name und Freischaltcode eingeben, 30 Fragen, 45 Minuten, Tabellenbuch und</text>
+      <text x="72" y="1024">Taschenrechner erlaubt. Ergebnis und Auflösung erst ganz am Ende.</text>
+
+      <text x="72" y="1078" font-size="20" font-weight="bold" fill="#bd7d1e">Nicht auswendig lernbar</text>
+      <text x="72" y="1106">Eigener Prüfungs-Fragenpool, der im Lernmodus nie vorkommt. Jede Prüfung</text>
+      <text x="72" y="1132">zieht ihre Fragen neu – Nachbarn haben andere Fragen.</text>
+    </g>
+  </g>
+
+  <!-- Panel 4: violett – Note -->
+  <g>
+    <rect x="1016" y="748" width="952" height="430" rx="22" fill="#f3ebfb" stroke="#ddc9f0" stroke-width="2"/>
+    <g clip-path="url(#p4)"><ellipse cx="1900" cy="1140" rx="440" ry="320" fill="#e8dcf6"/></g>
+    <text x="1056" y="812" font-size="30" font-weight="bold" fill="#7b3fb0">4  Prüfcode und Note</text>
+    <g fill="#3a3f45" font-size="19">
+      <text x="1056" y="862" font-size="20" font-weight="bold" fill="#7b3fb0">Prüfcode</text>
+      <text x="1056" y="890">Am Ende erscheint ein Code, der Name, Prozentwert und Datum fälschungssicher</text>
+      <text x="1056" y="916">verbindet. Abgeschrieben passt er nicht zum eigenen Namen.</text>
+
+      <text x="1056" y="970" font-size="20" font-weight="bold" fill="#7b3fb0">Lehrkraft prüft</text>
+      <text x="1056" y="998">Name und Code auf der Lehrerseite eintippen: echt, Prozentwert, Datum, Note.</text>
+      <text x="1056" y="1024">IHK-Schlüssel: ab 92 % = 1 · 81 % = 2 · 67 % = 3 · 50 % = 4 · 30 % = 5.</text>
+
+      <text x="1056" y="1078" font-size="20" font-weight="bold" fill="#7b3fb0">Rückblick</text>
+      <text x="1056" y="1106">Vorher-Wert aus dem Eingangscheck neben das Ergebnis legen:</text>
+      <text x="1056" y="1132">„Vorher 35 % – jetzt 82 %“. Daran sieht man, was der Unterricht gebracht hat.</text>
+    </g>
+  </g>
+
+  <!-- Datenschutz-Band -->
+  <g>
+    <rect x="32" y="1196" width="1936" height="150" rx="22" fill="#f1f2f4" stroke="#c9ced5" stroke-width="2"/>
+    <text x="72" y="1254" font-size="26" font-weight="bold" fill="#1f2430">Datenschutz (DSGVO): keine Namen und keine Ergebnisse auf dem Server</text>
+    <g fill="#3a3f45" font-size="19">
+      <text x="72" y="1294">Spielstand, Ampeln und Punkte liegen nur im Browser des eigenen Geräts – kein Login, kein Konto, keine Liste der Klasse.</text>
+      <text x="72" y="1322">Der Server speichert nur, welche Freischaltcodes verbraucht sind (ohne Namen). Die Note entsteht erst bei der Lehrkraft. Keine fremden Dienste.</text>
+    </g>
+  </g>
+
+  <text x="1000" y="1384" text-anchor="middle" font-size="17" fill="#8a9099">Lernspiel-Baukasten · unterricht.bbs-walsrode.de · zuerst Kunststoff/Kautschuk LF 2, danach weitere Lernfelder · Stand November 2026</text>
+</svg>
