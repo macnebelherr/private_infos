@@ -69,8 +69,10 @@ var LANES=[
 ["09-30","Fertigungshauptgruppen","LF 2: Überblick über die Fertigungsverfahren."],
 ["10-06","Arbeits- & Umweltschutz","LF 2 mit Wiederholung."],
 ["10-27","Industrie 4.0","LF 2: vernetzte Fertigung."],
-["11-15","LF 6 Techn. Zeichnen","Zusatzangebot Lagerdeckel, Papierphase."]]],
-["t","u","Metalltechnik","Lernfelder 3 und 6",[
+["11-15","LF 6 Techn. Zeichnen","Zusatzangebot Lagerdeckel, Papierphase."],
+["11-16","Wiederholungstest LF 6","40 Fragen zur Klausurrückgabe – online, mit Antwortblatt und Lösung für den Beamer."],
+["11-18","Lernspiel LF 2","„Bau die Versandstation“ – wie eine Fahrschul-App: Ampel je Frage, Lern- und Prüfungsmodus, Punktzahl wird zur IHK-Note."]]],
+["t","u","Metalltechnik","Lernfelder 3, 6 und 9",[
 ["07-25","CAD-Unterricht","Material für den CAD-Unterricht."],
 ["08-13","Profile LF 6","Konstruktionen aus Profilen: lesen, sägen, schleifen, brennschneiden."],
 ["08-25","Schutzgasschweißen","Fügen durch Schutzgasschweißen."],
@@ -80,7 +82,9 @@ var LANES=[
 ["09-17","Schrauben & Muttern","Danach Kennzeichnung, Sicherungen, Gewinde."],
 ["09-29","Anziehdrehmoment","Anziehdrehmoment und Vorspannkraft."],
 ["10-27","Reib- & Formschluss","Bolzen, Stifte, Reibung."],
-["11-07","Stahlbau-Prüfung","Prüfungsvorbereitung Stahlbau."]]],
+["11-07","Stahlbau-Prüfung","Prüfungsvorbereitung Stahlbau."],
+["11-17","Bau die Halle","LF 9: Lernspiel, in dem mit jeder richtigen Antwort die Halle wächst – das Vorbild für den Lernspiel-Baukasten."],
+["11-18","Prüfungstraining","LF 6 als Lernspiel für die Abschlussprüfung, Rang und Prüfung je Lernfeld."]]],
 ["w","u","Portal & Werkzeuge","rund um den Unterricht",[
 ["07-30","Unterrichtsportal","unterricht.bbs-walsrode.de – das Zuhause aller Lerneinheiten."],
 ["08-06","Recyclingprojekt","Projektseite zum Kunststoff-Recycling."],
@@ -107,7 +111,8 @@ var LANES=[
 ["09-26","Bedarfsanmeldung","Antrag Resin-Drucker, jetzt Muster für alle Anträge."],
 ["10-09","Erklärfilme","Kurze Filme zur Portal-Anleitung."],
 ["11-05","Aufsichten-Mails","Änderungs-Mails ans Kollegium, scharf geschaltet."],
-["11-09","ABI-Vorlagen","Serienbriefe der Klausurtagung über OneDrive."]]],
+["11-09","ABI-Vorlagen","Serienbriefe der Klausurtagung über OneDrive."],
+["11-17","Team-Ablage","Bestandsaufnahme der Teams-Ablage fürs Social-Media-Team, als Grundlage zum gemeinsamen Aufräumen."]]],
 ["p","p","Privat & Zuhause","",[
 ["06-10","Raspberry Pi 5","Homeserver mit eigener Startseite."],
 ["06-28","Foto-Portfolio","Fotografie-Portfolio: Menschen, Sport, Landschaft."],
@@ -173,7 +178,7 @@ function apply(){
   head.style.left=X(cur)+"px";var cnt={s:0,u:0,p:0},all=0;
   cards.forEach(function(c){var on=c.t<=cur;if(on&&!c.el.classList.contains("on")){c.el.classList.add("on");if(!done){c.el.classList.add("new");setTimeout(function(){c.el.classList.remove("new")},700)}}if(on){cnt[c.k]++;all++}});
   document.getElementById("count").textContent=all;for(var k in E)E[k].textContent=cnt[k];
-  var d=new Date(Math.min(cur,Date.parse("2026-11-16")));document.getElementById("when").textContent=done?"Juni bis November 2026":MON[d.getUTCMonth()]+" 2026";
+  var d=new Date(Math.min(cur,Date.parse("2026-11-18")));document.getElementById("when").textContent=done?"Juni bis November 2026":MON[d.getUTCMonth()]+" 2026";
 }
 function frame(now){
   if(!start)start=now;var f=Math.min(1,(now-start)/DUR),e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;cur=T0+e*(T1-T0);
